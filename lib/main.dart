@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:uot_transport/auth_feature/view/screens/onboarding_screen.dart';
-import 'package:uot_transport/auth_feature/view/screens/signup_screen.dart';
+import 'package:uot_transport/auth_feature/view/screens/login_screen.dart';
+
 
 void main() {
   runApp(const MyApp());
@@ -13,8 +13,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-
-      home:  OnBoardingScreen(),
+     theme: ThemeData(
+        fontFamily: 'Almarai',
+      ),
+      home:  const LoginScreen(),
     );
   }
 }
