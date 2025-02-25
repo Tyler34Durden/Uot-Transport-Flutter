@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:uot_transport/auth_feature/view/screens/onboarding_screen.dart';
 import 'package:uot_transport/auth_feature/view/screens/signup_screen.dart';
 
 void main() {
@@ -13,7 +14,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
 
-      home:  SignupScreen(),
+      home:  OnBoardingScreen(),
     );
   }
 }
