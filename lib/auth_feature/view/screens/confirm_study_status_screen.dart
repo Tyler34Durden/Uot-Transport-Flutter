@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:uot_transport/auth_feature/view/screens/confirm_study_status_screen.dart';
 import 'package:uot_transport/auth_feature/view/widgets/app_button.dart';
+import 'package:uot_transport/auth_feature/view/widgets/app_dropdown.dart';
 import 'package:uot_transport/auth_feature/view/widgets/app_input.dart';
 import 'package:uot_transport/auth_feature/view/widgets/app_text.dart';
 import 'package:uot_transport/auth_feature/view/widgets/header.dart';
 import 'package:uot_transport/core/app_colors.dart';
-class SignupScreen extends StatelessWidget {
-  const SignupScreen({super.key});
+
+class ConfirmStudyStatusScreen extends StatelessWidget {
+  const ConfirmStudyStatusScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,8 +17,8 @@ class SignupScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(12),
-        child: BackHeader( 
+        preferredSize: const Size.fromHeight(56),
+        child: BackHeader(
           onBackbtn: () {
             Navigator.pop(context);
           },
@@ -31,7 +32,7 @@ class SignupScreen extends StatelessWidget {
           children: [
             const Center(
               child: AppText(
-                lbl: 'إنشاء حساب ',
+                lbl: 'تأكيد الحالة الدراسية',
                 style: TextStyle(
                   color: AppColors.primaryColor,
                   fontSize: 28,
@@ -42,7 +43,7 @@ class SignupScreen extends StatelessWidget {
             SizedBox(height: screenHeight * 0.02),
             const AppText(
               textAlign: TextAlign.center,
-              lbl:'أنشئ حساباً جديداً واستمتع بتجربة نقل جامعي مريحة ومميزة.',
+              lbl: 'ادخل بياناتك الدراسية ليتم التأكد منها',
               style: TextStyle(
                 color: AppColors.textColor,
                 fontSize: 20,
@@ -50,7 +51,7 @@ class SignupScreen extends StatelessWidget {
             ),
             SizedBox(height: screenHeight * 0.04),
             const AppText(
-              lbl: 'ادخل اسمك الثلاثي  ',
+              lbl: 'ادخل رقم قيدك',
               style: TextStyle(
                 color: AppColors.textColor,
                 fontSize: 14,
@@ -59,12 +60,12 @@ class SignupScreen extends StatelessWidget {
             ),
             SizedBox(height: screenHeight * 0.02),
             const AppInput(
-              hintText: 'الاسم الثلاثي ',
+              hintText: 'رقم القيد',
               textAlign: TextAlign.right,
             ),
             SizedBox(height: screenHeight * 0.02),
             const AppText(
-              lbl: 'ادخل بريدك الإلكتروني',
+              lbl: ' اختر كليتك ',
               style: TextStyle(
                 color: AppColors.textColor,
                 fontSize: 14,
@@ -72,61 +73,48 @@ class SignupScreen extends StatelessWidget {
               textAlign: TextAlign.right,
             ),
             SizedBox(height: screenHeight * 0.02),
-            const AppInput(
-              hintText: 'البريد الإلكتروني ',
-              textAlign: TextAlign.right,
-            ),
-           
-            SizedBox(height: screenHeight * 0.02),
-            const AppText(
-              lbl: 'ادخل كلمة مرورك  ',
-              style: TextStyle(
-                color: AppColors.textColor,
-                fontSize: 14,
-              ),
-              textAlign: TextAlign.right,
-            ),
-            SizedBox(height: screenHeight * 0.02),
-            const AppInput(
-              hintText: 'كلمة المرور  ',
-              textAlign: TextAlign.right,
-            ),
-           
-            SizedBox(height: screenHeight * 0.02),
-            const AppText(
-              lbl: 'تأكيد كلمة المرور',
-              style: TextStyle(
-                color: AppColors.textColor,
-                fontSize: 14,
-              ),
-              textAlign: TextAlign.right,
-            ),
-            SizedBox(height: screenHeight * 0.02),
-            const AppInput(
-              hintText: 'كلمة المرور ',
-              textAlign: TextAlign.right,
-            ),
-           
-
-
-
-
-
-
-
-            SizedBox(height: screenHeight * 0.06),
-            AppButton(
-              lbl: 'التالي ',
-              width: screenWidth * 0.4,
-              height: screenHeight * 0.07,
-              onPressed: () {
-                  Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const ConfirmStudyStatusScreen ()),
-                );
+         AppDropdown(
+              items: const ['كلية الهندسة', 'كلية الطب', 'كلية العلوم', 'كلية الآداب'],
+              hintText: 'الكلية',
+              onChanged: (String? newValue) {
+                // Handle change
               },
             ),
-          
+            SizedBox(height: screenHeight * 0.06),
+            AppButton(
+              lbl: ' مسح QR  نموذج 2 ',
+              icon: Icons.qr_code,
+              color: AppColors.secondaryColor,
+              textColor: AppColors.primaryColor,
+              onPressed: () {
+                // Handle the confirmation action
+              },
+            ),
+            SizedBox(height: screenHeight * 0.02),
+            AppText(
+              lbl: 'اين يمكنك إيجاد نموذج 2',
+              style: const TextStyle(
+                color: AppColors.primaryColor,
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                decoration: TextDecoration.underline, // Add underline
+              ),
+              textAlign: TextAlign.right,
+              onTap: () {
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(builder: (context) => const SignupScreen()),
+                // );
+              },
+            ),
+            const Spacer(),
+            AppButton(
+              lbl: 'إنشاء حساب',
+              onPressed: () {
+                // Handle the confirmation action
+              },
+            ),
+            SizedBox(height: screenHeight * 0.06),
           ],
         ),
       ),
