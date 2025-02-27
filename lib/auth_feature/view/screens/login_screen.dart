@@ -20,98 +20,100 @@ class LoginScreen extends StatelessWidget {
         preferredSize: Size.fromHeight(56),
         child: BackHeader(),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const Center(
-              child: AppText(
-                lbl: 'تسجيل الدخول',
-                style: TextStyle(
-                  color: AppColors.primaryColor,
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Center(
+                child: AppText(
+                  lbl: 'تسجيل الدخول',
+                  style: TextStyle(
+                    color: AppColors.primaryColor,
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
-            ),
-            SizedBox(height: screenHeight * 0.02),
-            const AppText(
-              textAlign: TextAlign.center,
-              lbl: 'سجّل دخولك للوصول إلى خدمات النقل الجامعي بسهولة وراحة',
-              style: TextStyle(
-                color: AppColors.textColor,
-                fontSize: 20,
+              SizedBox(height: screenHeight * 0.02),
+              const AppText(
+                textAlign: TextAlign.center,
+                lbl: 'سجّل دخولك للوصول إلى خدمات النقل الجامعي بسهولة وراحة',
+                style: TextStyle(
+                  color: AppColors.textColor,
+                  fontSize: 20,
+                ),
               ),
-            ),
-            SizedBox(height: screenHeight * 0.04),
-            const AppText(
-              lbl: 'ادخل بريدك الإلكتروني',
-              style: TextStyle(
-                color: AppColors.textColor,
-                fontSize: 14,
+              SizedBox(height: screenHeight * 0.04),
+              const AppText(
+                lbl: 'ادخل بريدك الإلكتروني',
+                style: TextStyle(
+                  color: AppColors.textColor,
+                  fontSize: 14,
+                ),
+                textAlign: TextAlign.right,
               ),
-              textAlign: TextAlign.right,
-            ),
-            SizedBox(height: screenHeight * 0.02),
-            const AppInput(
-              hintText: 'البريد الالكتروني',
-              textAlign: TextAlign.right,
-            ),
-            SizedBox(height: screenHeight * 0.04),
-            const AppText(
-              lbl: 'ادخل كلمة مرورك ',
-              style: TextStyle(
-                color: AppColors.textColor,
-                fontSize: 14,
+              SizedBox(height: screenHeight * 0.02),
+              const AppInput(
+                hintText: 'البريد الالكتروني',
+                textAlign: TextAlign.right,
               ),
-              textAlign: TextAlign.right,
-            ),
-            SizedBox(height: screenHeight * 0.02),
-            const AppInput(
-              hintText: 'كلمة المرور ',
-              textAlign: TextAlign.right,
-            ),
-            SizedBox(height: screenHeight * 0.02),
-            AppText(
-              lbl: 'هل نسيت كلمة مرورك؟',
-              style: const TextStyle(
-                color: AppColors.primaryColor,
-                fontSize: 14,
-                decoration: TextDecoration.underline, // Add underline
+              SizedBox(height: screenHeight * 0.04),
+              const AppText(
+                lbl: 'ادخل كلمة مرورك ',
+                style: TextStyle(
+                  color: AppColors.textColor,
+                  fontSize: 14,
+                ),
+                textAlign: TextAlign.right,
               ),
-              textAlign: TextAlign.right,
-              onTap: () {
-                // Handle the tap event
-                print('Text tapped!');
-              },
-            ),
-            SizedBox(height: screenHeight * 0.06),
-            AppButton(
-              lbl: 'تسجيل الدخول',
-              width: screenWidth * 0.4,
-              height: screenHeight * 0.07,
-              onPressed: () {},
-            ),
-            const Spacer(),
-            AppText(
-              lbl: 'ليس لديك حساب؟ انشىء حساب',
-              style: const TextStyle(
-                color: AppColors.primaryColor,
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
+              SizedBox(height: screenHeight * 0.02),
+              const AppInput(
+                hintText: 'كلمة المرور ',
+                textAlign: TextAlign.right,
               ),
-              textAlign: TextAlign.center,
-             onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const SignupScreen()),
-                );
-              },
-            ),
-            SizedBox(height: screenHeight * 0.02),
-          ],
+              SizedBox(height: screenHeight * 0.02),
+              AppText(
+                lbl: 'هل نسيت كلمة مرورك؟',
+                style: const TextStyle(
+                  color: AppColors.primaryColor,
+                  fontSize: 14,
+                  decoration: TextDecoration.underline, // Add underline
+                ),
+                textAlign: TextAlign.right,
+                onTap: () {
+                  // Handle the tap event
+                  print('Text tapped!');
+                },
+              ),
+              SizedBox(height: screenHeight * 0.06),
+              AppButton(
+                lbl: 'تسجيل الدخول',
+                width: screenWidth * 0.4,
+                height: screenHeight * 0.07,
+                onPressed: () {},
+              ),
+        SizedBox(height: screenHeight/6,),
+              AppText(
+                lbl: 'ليس لديك حساب؟ انشىء حساب',
+                style: const TextStyle(
+                  color: AppColors.primaryColor,
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+               onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const SignupScreen()),
+                  );
+                },
+              ),
+              SizedBox(height: screenHeight * 0.02),
+            ],
+          ),
         ),
       ),
     );
