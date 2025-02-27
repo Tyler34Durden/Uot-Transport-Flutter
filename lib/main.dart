@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:uot_transport/auth_feature/view/screens/login_screen.dart';
+import 'package:uot_transport/auth_feature/view/screens/onboarding_screen.dart';
 
 
 void main() {
@@ -18,7 +19,7 @@ class MyApp extends StatelessWidget {
 
         fontFamily: 'Almarai',
       ),
-      home:  const LoginScreen(),
+      home:  OnBoardingScreen(),
     );
   }
 }
