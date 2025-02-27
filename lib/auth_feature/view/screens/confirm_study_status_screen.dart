@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:uot_transport/auth_feature/view/screens/signup_screen.dart';
 import 'package:uot_transport/auth_feature/view/widgets/app_button.dart';
+import 'package:uot_transport/auth_feature/view/widgets/app_dropdown.dart';
 import 'package:uot_transport/auth_feature/view/widgets/app_input.dart';
 import 'package:uot_transport/auth_feature/view/widgets/app_text.dart';
 import 'package:uot_transport/auth_feature/view/widgets/header.dart';
 import 'package:uot_transport/core/app_colors.dart';
 
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+class ConfirmStudyStatusScreen extends StatelessWidget {
+  const ConfirmStudyStatusScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,9 +16,13 @@ class LoginScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
-      appBar: const PreferredSize(
-        preferredSize: Size.fromHeight(56),
-        child: BackHeader(),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(56),
+        child: BackHeader(
+          onBackbtn: () {
+            Navigator.pop(context);
+          },
+        ),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -29,7 +33,7 @@ class LoginScreen extends StatelessWidget {
             children: [
               const Center(
                 child: AppText(
-                  lbl: 'تسجيل الدخول',
+                  lbl: 'تأكيد الحالة الدراسية',
                   style: TextStyle(
                     color: AppColors.primaryColor,
                     fontSize: 28,
@@ -40,7 +44,7 @@ class LoginScreen extends StatelessWidget {
               SizedBox(height: screenHeight * 0.02),
               const AppText(
                 textAlign: TextAlign.center,
-                lbl: 'سجّل دخولك للوصول إلى خدمات النقل الجامعي بسهولة وراحة',
+                lbl: 'ادخل بياناتك الدراسية ليتم التأكد منها',
                 style: TextStyle(
                   color: AppColors.textColor,
                   fontSize: 20,
@@ -48,7 +52,7 @@ class LoginScreen extends StatelessWidget {
               ),
               SizedBox(height: screenHeight * 0.04),
               const AppText(
-                lbl: 'ادخل بريدك الإلكتروني',
+                lbl: 'ادخل رقم قيدك',
                 style: TextStyle(
                   color: AppColors.textColor,
                   fontSize: 14,
@@ -57,12 +61,13 @@ class LoginScreen extends StatelessWidget {
               ),
               SizedBox(height: screenHeight * 0.02),
               const AppInput(
-                hintText: 'البريد الالكتروني',
+                hintText: 'رقم القيد',
                 textAlign: TextAlign.right,
+                maxLength: 10,
               ),
-              SizedBox(height: screenHeight * 0.04),
+              SizedBox(height: screenHeight * 0.02),
               const AppText(
-                lbl: 'ادخل كلمة مرورك ',
+                lbl: ' اختر كليتك ',
                 style: TextStyle(
                   color: AppColors.textColor,
                   fontSize: 14,
@@ -70,48 +75,48 @@ class LoginScreen extends StatelessWidget {
                 textAlign: TextAlign.right,
               ),
               SizedBox(height: screenHeight * 0.02),
-              const AppInput(
-                hintText: 'كلمة المرور ',
-                textAlign: TextAlign.right,
-              ),
-              SizedBox(height: screenHeight * 0.02),
-              AppText(
-                lbl: 'هل نسيت كلمة مرورك؟',
-                style: const TextStyle(
-                  color: AppColors.primaryColor,
-                  fontSize: 14,
-                  decoration: TextDecoration.underline, // Add underline
-                ),
-                textAlign: TextAlign.right,
-                onTap: () {
-                  // Handle the tap event
-                  print('Text tapped!');
+           AppDropdown(
+                items: const ['كلية الهندسة', 'كلية الطب', 'كلية العلوم', 'كلية الآداب'],
+                hintText: 'الكلية',
+                onChanged: (String? newValue) {
+                  // Handle change
                 },
               ),
               SizedBox(height: screenHeight * 0.06),
               AppButton(
-                lbl: 'تسجيل الدخول',
-                width: screenWidth * 0.4,
-                height: screenHeight * 0.07,
-                onPressed: () {},
+                lbl: ' مسح QR  نموذج 2 ',
+                icon: Icons.qr_code,
+                color: AppColors.secondaryColor,
+                textColor: AppColors.primaryColor,
+                onPressed: () {
+                  // Handle the confirmation action
+                },
               ),
-        SizedBox(height: screenHeight/6,),
+              SizedBox(height: screenHeight * 0.02),
               AppText(
-                lbl: 'ليس لديك حساب؟ انشىء حساب',
+                lbl: 'اين يمكنك إيجاد نموذج 2',
                 style: const TextStyle(
                   color: AppColors.primaryColor,
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
+                  decoration: TextDecoration.underline, // Add underline
                 ),
-                textAlign: TextAlign.center,
-               onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const SignupScreen()),
-                  );
+                textAlign: TextAlign.right,
+                onTap: () {
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(builder: (context) => const SignupScreen()),
+                  // );
                 },
               ),
-              SizedBox(height: screenHeight * 0.02),
+              SizedBox(height: screenHeight/4.6,),
+              AppButton(
+                lbl: 'إنشاء حساب',
+                onPressed: () {
+                  // Handle the confirmation action
+                },
+              ),
+              SizedBox(height: screenHeight * 0.06),
             ],
           ),
         ),
