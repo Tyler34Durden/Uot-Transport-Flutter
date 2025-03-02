@@ -24,7 +24,7 @@ class OnBoardingScreen extends StatelessWidget {
                 ontap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => SignupScreen()),
+                    MaterialPageRoute(builder: (context) => const SignupScreen ()),
                   );
                 },
                 color: AppColors.primaryColor,

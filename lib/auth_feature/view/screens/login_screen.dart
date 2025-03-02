@@ -16,10 +16,7 @@ class LoginScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
-      appBar: const PreferredSize(
-        preferredSize: Size.fromHeight(56),
-        child: BackHeader(),
-      ),
+      appBar: BackHeader(),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16),
@@ -105,10 +102,10 @@ class LoginScreen extends StatelessWidget {
                 ),
                 textAlign: TextAlign.center,
                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const SignupScreen()),
-                  );
+                 Navigator.push(
+                   context,
+                   MaterialPageRoute(builder: (context) => const SignupScreen ()),
+                 );
                 },
               ),
               SizedBox(height: screenHeight * 0.02),

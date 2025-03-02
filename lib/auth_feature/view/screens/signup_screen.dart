@@ -15,13 +15,10 @@ class SignupScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(12),
-        child: BackHeader(
-          onBackbtn: () {
-            Navigator.pop(context);
-          },
-        ),
+      appBar: BackHeader(
+        onBackbtn: () {
+          Navigator.pop(context);
+        },
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
