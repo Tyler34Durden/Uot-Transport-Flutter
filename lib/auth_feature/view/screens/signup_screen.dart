@@ -111,14 +111,6 @@ class SignupScreen extends StatelessWidget {
                 textAlign: TextAlign.right,
                 maxLength: 25,
               ),
-
-
-
-
-
-
-
-
               SizedBox(height: screenHeight * 0.06),
               AppButton(
                 lbl: 'التالي ',
