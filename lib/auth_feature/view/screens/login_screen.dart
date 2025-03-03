@@ -92,7 +92,7 @@ class LoginScreen extends StatelessWidget {
                 width: screenWidth * 0.4,
                 height: screenHeight * 0.07,
                 onPressed: () {
-                  Navigator.push(
+                  Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(builder: (context) => const MainScreen()),
                   );
