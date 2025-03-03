@@ -5,7 +5,7 @@ import 'package:uot_transport/auth_feature/view/widgets/app_input.dart';
 import 'package:uot_transport/auth_feature/view/widgets/app_text.dart';
 import 'package:uot_transport/auth_feature/view/widgets/header.dart';
 import 'package:uot_transport/core/app_colors.dart';
-import 'qr_scan_screen.dart';
+// import 'qr_scan_screen.dart';
 
 class ConfirmStudyStatusScreen extends StatefulWidget {
   const ConfirmStudyStatusScreen({super.key});
@@ -112,20 +112,20 @@ class _ConfirmStudyStatusScreenState extends State<ConfirmStudyStatusScreen> {
                 color: AppColors.secondaryColor,
                 textColor: AppColors.primaryColor,
                 onPressed: () async {
-                  final result = await Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const QRScanScreen()),
-                  );
-                  if (result != null) {
-                    // Handle the scanned QR code result
-                    print('Scanned QR Code: $result');
-                    final inputText = _registrationNumberController.text;
-                    if (result.contains(inputText)) {
-                      print('Input matches QR code');
-                    } else {
-                      print('Input does not match QR code');
-                    }
-                  }
+                //   final result = await Navigator.push(
+                //     context,
+                //     MaterialPageRoute(builder: (context) => const QRScanScreen()),
+                //   );
+                //   if (result != null) {
+                //     // Handle the scanned QR code result
+                //     print('Scanned QR Code: $result');
+                //     final inputText = _registrationNumberController.text;
+                //     if (result.contains(inputText)) {
+                //       print('Input matches QR code');
+                //     } else {
+                //       print('Input does not match QR code');
+                //     }
+                //   }
                 },
               ),
               SizedBox(height: screenHeight * 0.02),

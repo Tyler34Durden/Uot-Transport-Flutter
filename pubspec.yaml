@@ -14,7 +14,7 @@ dependencies:
   dio: ^5.8.0+1
   flutter_bloc: ^9.0.0
   carousel_slider: ^5.0.0
-  flutter_svg: ^2.0.17
+  flutter_svg: ^1.0.0
   smooth_page_indicator: ^1.2.1
   mobile_scanner: ^6.0.6
 
@@ -28,7 +28,7 @@ flutter:
 
   assets:
     - assets/images/
-  
+    - assets/images/success.svg
   fonts:
     - family: Almarai
       fonts:
