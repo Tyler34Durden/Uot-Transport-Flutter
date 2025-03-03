@@ -5,6 +5,7 @@ import 'package:uot_transport/auth_feature/view/widgets/app_input.dart';
 import 'package:uot_transport/auth_feature/view/widgets/app_text.dart';
 import 'package:uot_transport/auth_feature/view/widgets/header.dart';
 import 'package:uot_transport/core/app_colors.dart';
+import 'package:uot_transport/core/main_screen.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -90,7 +91,12 @@ class LoginScreen extends StatelessWidget {
                 lbl: 'تسجيل الدخول',
                 width: screenWidth * 0.4,
                 height: screenHeight * 0.07,
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const MainScreen()),
+                  );
+                },
               ),
         SizedBox(height: screenHeight/6,),
               AppText(

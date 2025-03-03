@@ -28,7 +28,10 @@ flutter:
 
   assets:
     - assets/images/
-  
+    - assets/icons/heroicons-outline/
+    - assets/icons/heroicons-solid/
+    - assets/icons/
+
   fonts:
     - family: Almarai
       fonts:
