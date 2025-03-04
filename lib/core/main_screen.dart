@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:uot_transport/core/app_colors.dart';
 import 'package:uot_transport/core/app_icons.dart';
+import 'package:uot_transport/core/core_widgets/uot_appbar.dart';
 import 'package:uot_transport/home_feature/view/screens/home_screen.dart';
 import 'package:uot_transport/profile_feature/view/screens/profile_screen.dart';
 import 'package:uot_transport/station_feature/view/screens/station_screen.dart';
@@ -43,6 +44,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: UotAppbar(),
       body: PageView(
         controller: _pageController,
         onPageChanged: (index) {

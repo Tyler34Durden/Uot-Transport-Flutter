@@ -14,7 +14,7 @@ class AppIcons {
   static const String outline_SearchAppPath = 'assets/icons/heroicons-outline/magnifying-glass.svg';
   static const String outline_NotificationsAppPath = 'assets/icons/Vector.svg';
   static const String linePath = 'assets/icons/line.svg';
-  static const String logoPath = 'assets/icons/logo_1.svg';
+  static const String logoPath = 'assets/icons/png logo.png';
 
   static Widget homeNav({double? width, double? height, Color? color}) {
     return SvgPicture.asset(outline_HomeNavPath, width: width, height: height, color: color);

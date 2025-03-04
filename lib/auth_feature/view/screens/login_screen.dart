@@ -96,7 +96,7 @@ class LoginScreen extends StatelessWidget {
                 lbl: 'تسجيل الدخول',
          
                 onPressed: () {
-                  Navigator.push(
+                  Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(builder: (context) => const MainScreen()),
                   );
