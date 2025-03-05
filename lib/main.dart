@@ -3,6 +3,7 @@ import 'package:uot_transport/auth_feature/view/screens/forgot_password.dart';
 import 'package:uot_transport/auth_feature/view/screens/home_screen.dart';
 import 'package:uot_transport/auth_feature/view/screens/login_screen.dart';
 import 'package:uot_transport/auth_feature/view/screens/onboarding_screen.dart';
+import 'package:uot_transport/core/main_screen.dart';
 
 
 void main() {
@@ -21,7 +22,7 @@ class MyApp extends StatelessWidget {
 
         fontFamily: 'Almarai',
       ),
-      home:  const ForgotPassword(),
+      home:  const MainScreen(),
     );
   }
 }
