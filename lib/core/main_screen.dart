@@ -17,7 +17,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 3;
-  final PageController _pageController = PageController();
+  final PageController _pageController = PageController(initialPage: 3);
 
   // Lists for the icon paths
   final List<String> selectedIcons = [
