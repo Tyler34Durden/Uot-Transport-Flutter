@@ -35,9 +35,9 @@ class ActiveTripsWidget extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       const Text('من'),
-                      SizedBox(width: 5),
+                      const SizedBox(width: 5),
                       SvgPicture.asset('assets/icons/arrow-right-circle.svg'),
-                      SizedBox(width: 5),
+                      const SizedBox(width: 5),
                       const Text('الى'),
                     ],
                   ),
@@ -47,7 +47,7 @@ class ActiveTripsWidget extends StatelessWidget {
             const Spacer(),
             Column(
               children: [
-                SizedBox(height: 15),
+                const SizedBox(height: 15),
                 AppButton(
                   lbl: "حجز",
                   onPressed: () {
@@ -60,7 +60,7 @@ class ActiveTripsWidget extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(width: 20),
+            const SizedBox(width: 20),
           ],
         ),
       ),
@@ -77,7 +77,7 @@ class ActiveTripsWidget extends StatelessWidget {
         return Directionality(
           textDirection: TextDirection.rtl,
           child: AlertDialog(
-            title: Align(
+            title: const Align(
                 alignment: Alignment.centerRight,
                 child: Text('اختر المحطات')),
             content: Container(
@@ -85,7 +85,7 @@ class ActiveTripsWidget extends StatelessWidget {
               height: 260, // Set the desired height
               child: Column(
                 children: [
-                  Align(
+                  const Align(
                     alignment: Alignment.centerRight,
                     child: AppText(
                       lbl: 'من',
@@ -104,7 +104,7 @@ class ActiveTripsWidget extends StatelessWidget {
                     },
                   ),
                   const SizedBox(height: 10,),
-                  Align(
+                  const Align(
                     alignment: Alignment.centerRight,
                     child: AppText(
                       lbl: 'الى',
@@ -161,7 +161,7 @@ class ActiveTripsWidget extends StatelessWidget {
         return Directionality(
           textDirection: TextDirection.rtl,
           child: AlertDialog(
-            title: Align(
+            title: const Align(
                 alignment: Alignment.centerRight,
                 child: Text('هل انت متأكد من حجز الحافلة #')),
             content: Container(
@@ -171,8 +171,8 @@ class ActiveTripsWidget extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("سوف تقوم بحجز الحافلة من كلية الى الفرناج"),
-                  SizedBox(height: 20,),
+                  const Text("سوف تقوم بحجز الحافلة من كلية الى الفرناج"),
+                  const SizedBox(height: 20,),
                   AppButton(
                     lbl: "تأكيد الحجز",
                     onPressed: () {
@@ -217,15 +217,15 @@ class ActiveTripsWidget extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text('تم تأكيد الحجز بنجاح'),
-                SizedBox(height: 20),
+                const Text('تم تأكيد الحجز بنجاح'),
+                const SizedBox(height: 20),
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).pushReplacement(
                       MaterialPageRoute(builder: (context) => const MainScreen()),
                     );
                   },
-                  child: Text('الذهاب إلى الصفحة الرئيسية'),
+                  child: const Text('الذهاب إلى الصفحة الرئيسية'),
                 ),
               ],
             ),

@@ -3,6 +3,11 @@
         android:label="uot_transport"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDWYlvqIOJcK-hywoh9wk9sYea3VdP0wJs" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true"

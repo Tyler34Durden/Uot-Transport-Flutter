@@ -58,9 +58,7 @@ class StationScreen extends StatelessWidget {
               ],
             ),
           ),
-          const SearchBar(
-     
-          ),
+          const SearchBar(),
           StationList(stations: stations),
           // يمكنك إضافة المزيد من الويدجت هنا
         ],

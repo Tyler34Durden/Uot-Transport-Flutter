@@ -4,7 +4,7 @@ import 'package:uot_transport/auth_feature/view/screens/verify_screen.dart';
 import 'package:uot_transport/auth_feature/view/widgets/app_button.dart';
 import 'package:uot_transport/auth_feature/view/widgets/app_input.dart';
 import 'package:uot_transport/auth_feature/view/widgets/app_text.dart';
-import 'package:uot_transport/auth_feature/view/widgets/header.dart';
+import 'package:uot_transport/auth_feature/view/widgets/back_header.dart';
 import 'package:uot_transport/core/app_colors.dart';
 
 class ForgotPassword extends StatelessWidget {
@@ -17,7 +17,7 @@ class ForgotPassword extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
-      appBar: BackHeader(),
+      appBar: const BackHeader(),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16),

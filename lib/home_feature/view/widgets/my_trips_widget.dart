@@ -36,7 +36,7 @@
                     ),
                     const Spacer(), // replaces SizedBox(width: 140)
                     const Text("12:00 - 13:00"),
-                    SizedBox(width: 20,)
+                    const SizedBox(width: 20,)
                   ],
                 ),
               );

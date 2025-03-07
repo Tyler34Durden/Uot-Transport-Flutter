@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
                       import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:uot_transport/auth_feature/view/widgets/header.dart';
+import 'package:uot_transport/auth_feature/view/widgets/back_header.dart';
 import 'package:uot_transport/core/app_colors.dart';
 
                       class QRScanScreen extends StatefulWidget {

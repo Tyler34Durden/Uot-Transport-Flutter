@@ -21,9 +21,9 @@ import 'package:uot_transport/home_feature/view/widgets/my_trips_widget.dart';
                 child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    HomeSlider(),
-                    SizedBox(height: 20),
-                    Text(
+                    const HomeSlider(),
+                    const SizedBox(height: 20),
+                    const Text(
                       "رحلاتي:",
                       style: TextStyle(
                         fontSize: 20,
@@ -31,12 +31,12 @@ import 'package:uot_transport/home_feature/view/widgets/my_trips_widget.dart';
                         color: AppColors.primaryColor,
                       ),
                     ),
-                  SizedBox(height: 25),
-                  MyTripsWidget(),
-                  SizedBox(height: 10),
-                  MyTripsWidget(),
-                  SizedBox(height: 20),
-                  Text(
+                  const SizedBox(height: 25),
+                  const MyTripsWidget(),
+                  const SizedBox(height: 10),
+                  const MyTripsWidget(),
+                  const SizedBox(height: 20),
+                  const Text(
                     "رحلات اليوم:",
                     style: TextStyle(
                       fontSize: 20,
@@ -44,13 +44,13 @@ import 'package:uot_transport/home_feature/view/widgets/my_trips_widget.dart';
                       color: AppColors.primaryColor,
                     ),
                   ),
-                  SizedBox(height: 25),
+                  const SizedBox(height: 25),
                     SizedBox(
                       height: 40,
                       child: ListView(
                         shrinkWrap: true,
                         scrollDirection: Axis.horizontal,
-                        children: [
+                        children: const [
                           CityFilterItem(
                             title: 'All',
                             isSelected: true,
@@ -70,8 +70,8 @@ import 'package:uot_transport/home_feature/view/widgets/my_trips_widget.dart';
                         ],
                       ),
                     ),
-                    SizedBox(height: 20),
-                    ActiveTripsWidget(),
+                    const SizedBox(height: 20),
+                    const ActiveTripsWidget(),
 
                   ],
                 ),
