@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:uot_transport/auth_feature/view/screens/confirm_study_status_screen.dart';
+import 'package:uot_transport/auth_feature/view/screens/login_screen.dart';
+import 'package:uot_transport/auth_feature/view/screens/signup_screen.dart';
+import 'package:uot_transport/auth_feature/view/screens/verify_screen.dart';
 import 'package:uot_transport/auth_feature/view/widgets/app_button.dart';
 import 'package:uot_transport/auth_feature/view/widgets/app_input.dart';
 import 'package:uot_transport/auth_feature/view/widgets/app_text.dart';
 import 'package:uot_transport/auth_feature/view/widgets/header.dart';
+import 'package:uot_transport/auth_feature/view/widgets/success_notification.dart';
 import 'package:uot_transport/core/app_colors.dart';
-class SignupScreen extends StatelessWidget {
-  const SignupScreen({super.key});
+
+class NewPassword extends StatelessWidget {
+  const NewPassword({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,21 +19,18 @@ class SignupScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
-      appBar: BackHeader(
-        onBackbtn: () {
-          Navigator.pop(context);
-        },
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: SingleChildScrollView(
+      appBar: const BackHeader(),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              SizedBox(height: screenHeight * 0.04),
               const Center(
                 child: AppText(
-                  lbl: 'إنشاء حساب ',
+                  lbl: ' اختر كلمة مرور جديدة ',
                   style: TextStyle(
                     color: AppColors.primaryColor,
                     fontSize: 28,
@@ -40,7 +41,8 @@ class SignupScreen extends StatelessWidget {
               SizedBox(height: screenHeight * 0.02),
               const AppText(
                 textAlign: TextAlign.center,
-                lbl:'أنشئ حساباً جديداً واستمتع بتجربة نقل جامعي مريحة ومميزة.',
+                lbl:
+                    'قم بإنشاء كلمة مرور جديدة.تأكد من انه يختلف عن كلمة المرور السابقة',
                 style: TextStyle(
                   color: AppColors.textColor,
                   fontSize: 20,
@@ -48,7 +50,7 @@ class SignupScreen extends StatelessWidget {
               ),
               SizedBox(height: screenHeight * 0.04),
               const AppText(
-                lbl: 'ادخل اسمك الثلاثي  ',
+                lbl: 'ادخل كلمة مرورك',
                 style: TextStyle(
                   color: AppColors.textColor,
                   fontSize: 14,
@@ -57,43 +59,10 @@ class SignupScreen extends StatelessWidget {
               ),
               SizedBox(height: screenHeight * 0.02),
               const AppInput(
-                hintText: 'الاسم الثلاثي ',
-                textAlign: TextAlign.right,
-                maxLength: 10,
-              ),
-              SizedBox(height: screenHeight * 0.02),
-              const AppText(
-                lbl: 'ادخل بريدك الإلكتروني',
-                style: TextStyle(
-                  color: AppColors.textColor,
-                  fontSize: 14,
-                ),
+                hintText: 'كلمة المرور',
                 textAlign: TextAlign.right,
               ),
-              SizedBox(height: screenHeight * 0.02),
-              const AppInput(
-                hintText: 'البريد الإلكتروني ',
-                textAlign: TextAlign.right,
-                maxLength: 40,
-              ),
-
-              SizedBox(height: screenHeight * 0.02),
-              const AppText(
-                lbl: 'ادخل كلمة مرورك  ',
-                style: TextStyle(
-                  color: AppColors.textColor,
-                  fontSize: 14,
-                ),
-                textAlign: TextAlign.right,
-              ),
-              SizedBox(height: screenHeight * 0.02),
-              const AppInput(
-                hintText: 'كلمة المرور  ',
-                textAlign: TextAlign.right,
-                maxLength: 25,
-              ),
-
-              SizedBox(height: screenHeight * 0.02),
+              SizedBox(height: screenHeight * 0.04),
               const AppText(
                 lbl: 'تأكيد كلمة المرور',
                 style: TextStyle(
@@ -104,23 +73,25 @@ class SignupScreen extends StatelessWidget {
               ),
               SizedBox(height: screenHeight * 0.02),
               const AppInput(
-                hintText: 'كلمة المرور ',
+                hintText: 'كلمة المرور',
                 textAlign: TextAlign.right,
-                maxLength: 25,
               ),
-              SizedBox(height: screenHeight * 0.06),
+              SizedBox(height: screenHeight * 0.04),
               AppButton(
-                lbl: 'التالي ',
-                width: screenWidth * 0.4,
-                height: screenHeight * 0.07,
+                lbl: ' تحديث كلمة المرور ',
                 onPressed: () {
-                    Navigator.push(
+                  Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const ConfirmStudyStatusScreen ()),
+                    MaterialPageRoute(
+                      builder: (context) => const SuccessNotification(
+                        msg:
+                            'تم تغيير كلمة المرور الخاصة بك بنجاح.انقر فوق متابعة لتسجيل الدخول',
+                        nextRoute: LoginScreen(),
+                      ),
+                    ),
                   );
                 },
               ),
-
             ],
           ),
         ),

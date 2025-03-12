@@ -5,9 +5,17 @@ import 'package:uot_transport/auth_feature/view/widgets/app_input.dart';
 import 'package:uot_transport/auth_feature/view/widgets/app_text.dart';
 import 'package:uot_transport/auth_feature/view/widgets/header.dart';
 import 'package:uot_transport/core/app_colors.dart';
+// import 'qr_scan_screen.dart';
 
-class ConfirmStudyStatusScreen extends StatelessWidget {
+class ConfirmStudyStatusScreen extends StatefulWidget {
   const ConfirmStudyStatusScreen({super.key});
+
+  @override
+  _ConfirmStudyStatusScreenState createState() => _ConfirmStudyStatusScreenState();
+}
+
+class _ConfirmStudyStatusScreenState extends State<ConfirmStudyStatusScreen> {
+  final TextEditingController _registrationNumberController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -16,13 +24,10 @@ class ConfirmStudyStatusScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(56),
-        child: BackHeader(
-          onBackbtn: () {
-            Navigator.pop(context);
-          },
-        ),
+      appBar: BackHeader(
+        onBackbtn: () {
+          Navigator.pop(context);
+        },
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -60,7 +65,8 @@ class ConfirmStudyStatusScreen extends StatelessWidget {
                 textAlign: TextAlign.right,
               ),
               SizedBox(height: screenHeight * 0.02),
-              const AppInput(
+              AppInput(
+                controller: _registrationNumberController,
                 hintText: 'رقم القيد',
                 textAlign: TextAlign.right,
                 maxLength: 10,
@@ -75,21 +81,51 @@ class ConfirmStudyStatusScreen extends StatelessWidget {
                 textAlign: TextAlign.right,
               ),
               SizedBox(height: screenHeight * 0.02),
-           AppDropdown(
+              AppDropdown(
                 items: const ['كلية الهندسة', 'كلية الطب', 'كلية العلوم', 'كلية الآداب'],
                 hintText: 'الكلية',
                 onChanged: (String? newValue) {
                   // Handle change
                 },
               ),
+              SizedBox(height: screenHeight * 0.02),
+              const AppText(
+                lbl: ' اختر الجنس ',
+                style: TextStyle(
+                  color: AppColors.textColor,
+                  fontSize: 14,
+                ),
+                textAlign: TextAlign.right,
+              ),
+              SizedBox(height: screenHeight * 0.02),
+              AppDropdown(
+                items: const ['انثى', 'ذكر'],
+                hintText: 'الجنس',
+                onChanged: (String? newValue) {
+                  // Handle change
+                },
+              ),
               SizedBox(height: screenHeight * 0.06),
               AppButton(
-                lbl: ' مسح QR  نموذج 2 ',
+                lbl: ' مسح الرمز  بالنموذج 2 ',
                 icon: Icons.qr_code,
                 color: AppColors.secondaryColor,
                 textColor: AppColors.primaryColor,
-                onPressed: () {
-                  // Handle the confirmation action
+                onPressed: () async {
+                //   final result = await Navigator.push(
+                //     context,
+                //     MaterialPageRoute(builder: (context) => const QRScanScreen()),
+                //   );
+                //   if (result != null) {
+                //     // Handle the scanned QR code result
+                //     print('Scanned QR Code: $result');
+                //     final inputText = _registrationNumberController.text;
+                //     if (result.contains(inputText)) {
+                //       print('Input matches QR code');
+                //     } else {
+                //       print('Input does not match QR code');
+                //     }
+                //   }
                 },
               ),
               SizedBox(height: screenHeight * 0.02),
@@ -109,7 +145,7 @@ class ConfirmStudyStatusScreen extends StatelessWidget {
                   // );
                 },
               ),
-              SizedBox(height: screenHeight/4.6,),
+              SizedBox(height: screenHeight / 4.6),
               AppButton(
                 lbl: 'إنشاء حساب',
                 onPressed: () {

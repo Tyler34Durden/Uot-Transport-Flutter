@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:uot_transport/auth_feature/view/screens/forgot_password.dart';
-import 'package:uot_transport/auth_feature/view/screens/signup_screen.dart';
+import 'package:uot_transport/auth_feature/view/screens/new_password_screen.dart';
 import 'package:uot_transport/auth_feature/view/widgets/app_button.dart';
 import 'package:uot_transport/auth_feature/view/widgets/app_input.dart';
 import 'package:uot_transport/auth_feature/view/widgets/app_text.dart';
 import 'package:uot_transport/auth_feature/view/widgets/header.dart';
 import 'package:uot_transport/core/app_colors.dart';
-import 'package:uot_transport/core/main_screen.dart';
 
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+class VerifyScreen extends StatelessWidget {
+  const VerifyScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -26,9 +24,10 @@ class LoginScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              SizedBox(height: screenHeight * 0.04),
               const Center(
                 child: AppText(
-                  lbl: 'تسجيل الدخول',
+                  lbl: 'تحقق من بريدك  ',
                   style: TextStyle(
                     color: AppColors.primaryColor,
                     fontSize: 28,
@@ -39,15 +38,16 @@ class LoginScreen extends StatelessWidget {
               SizedBox(height: screenHeight * 0.02),
               const AppText(
                 textAlign: TextAlign.center,
-                lbl: 'سجّل دخولك للوصول إلى خدمات النقل الجامعي بسهولة وراحة',
+                lbl:
+                    'تم إرسال رابط رمز مكون من ستة ارقام إلى example@gmail.com',
                 style: TextStyle(
                   color: AppColors.textColor,
                   fontSize: 20,
                 ),
               ),
-              SizedBox(height: screenHeight * 0.04),
+              SizedBox(height: screenHeight * 0.06),
               const AppText(
-                lbl: 'ادخل بريدك الإلكتروني',
+                lbl: 'ادخل رمز التحقق',
                 style: TextStyle(
                   color: AppColors.textColor,
                   fontSize: 14,
@@ -60,65 +60,30 @@ class LoginScreen extends StatelessWidget {
                 textAlign: TextAlign.right,
               ),
               SizedBox(height: screenHeight * 0.04),
-              const AppText(
-                lbl: 'ادخل كلمة مرورك ',
-                style: TextStyle(
-                  color: AppColors.textColor,
-                  fontSize: 14,
-                ),
-                textAlign: TextAlign.right,
-              ),
-              SizedBox(height: screenHeight * 0.02),
-              const AppInput(
-                hintText: 'كلمة المرور ',
-                textAlign: TextAlign.right,
-              ),
-              SizedBox(height: screenHeight * 0.02),
-              AppText(
-                lbl: 'هل نسيت كلمة مرورك؟',
-                style: const TextStyle(
-                  color: AppColors.primaryColor,
-                  fontSize: 14,
-                  decoration: TextDecoration.underline, // Add underline
-                ),
-                textAlign: TextAlign.right,
-                onTap: () {
-                  Navigator.push(
+              AppButton(
+                lbl: ' التحقق من الرمز',
+                onPressed: () {
+                     Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const ForgotPassword(),
+                      builder: (context) => const NewPassword(),
                     ),
                   );
                 },
               ),
-              SizedBox(height: screenHeight * 0.06),
-              AppButton(
-                lbl: 'تسجيل الدخول',
-         
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => const MainScreen()),
-                  );
-                },
-              ),
-        SizedBox(height: screenHeight/6,),
+              SizedBox(height: screenHeight * 0.02),
               AppText(
-                lbl: 'ليس لديك حساب؟ انشىء حساب',
+                lbl: 'لم تحصل على رمز بعد؟ إعادة إرسال البريد الإلكتروني',
                 style: const TextStyle(
                   color: AppColors.primaryColor,
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
                 ),
                 textAlign: TextAlign.center,
-               onTap: () {
-                 Navigator.push(
-                   context,
-                   MaterialPageRoute(builder: (context) => const SignupScreen ()),
-                 );
+                onTap: () {
+                
                 },
               ),
-              SizedBox(height: screenHeight * 0.02),
             ],
           ),
         ),
