@@ -3,7 +3,7 @@ import 'package:uot_transport/auth_feature/view/widgets/app_button.dart';
 import 'package:uot_transport/auth_feature/view/widgets/app_dropdown.dart';
 import 'package:uot_transport/auth_feature/view/widgets/app_input.dart';
 import 'package:uot_transport/auth_feature/view/widgets/app_text.dart';
-import 'package:uot_transport/auth_feature/view/widgets/back_header.dart';
+import 'package:uot_transport/core/core_widgets/back_header.dart';
 import 'package:uot_transport/core/app_colors.dart';
 // import 'qr_scan_screen.dart';
 

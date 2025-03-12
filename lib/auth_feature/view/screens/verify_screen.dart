@@ -3,7 +3,7 @@ import 'package:uot_transport/auth_feature/view/screens/new_password_screen.dart
 import 'package:uot_transport/auth_feature/view/widgets/app_button.dart';
 import 'package:uot_transport/auth_feature/view/widgets/app_input.dart';
 import 'package:uot_transport/auth_feature/view/widgets/app_text.dart';
-import 'package:uot_transport/auth_feature/view/widgets/back_header.dart';
+import 'package:uot_transport/core/core_widgets/back_header.dart';
 import 'package:uot_transport/core/app_colors.dart';
 
 class VerifyScreen extends StatelessWidget {

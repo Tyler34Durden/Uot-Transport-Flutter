@@ -25,6 +25,11 @@ class AppIcons {
   static const String linePath = 'assets/icons/line.svg';
   static const String logoPath = 'assets/icons/png logo.png';
   static const String filterIcon = 'assets/icons/filterIcon.png';
+  static const String mapiconpin = 'assets/icons/map-pin.png';
+  static const String mapicon = 'assets/icons/map.png';
+  static const String bustracking = 'assets/icons/bustracking.png';
+  static const String outline_pin = 'assets/icons/outline_pin.svg';
+  static const String filled_pin = 'assets/icons/filled_pin.svg';
 
   static Widget homeNav({double? width, double? height, Color? color}) {
     return SvgPicture.asset(outline_HomeNavPath,

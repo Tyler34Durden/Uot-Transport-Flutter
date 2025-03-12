@@ -31,6 +31,7 @@ class Notifications extends StatelessWidget {
                 ],
               ),
             ),
+            //! edit 
             SizedBox(height: 20),
             NotificationsWidget(
               notificationText: 'وصلت الحافلة 1 لمحطة قصر بن غشير',

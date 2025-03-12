@@ -33,19 +33,23 @@ class TripsScreen extends StatelessWidget {
             TripSelectionWidget(),
 
             
-            //! تعديل ويدجت الرحلات
-            Padding(padding: EdgeInsets.all(16),
-             child: ActiveTripsWidget()
-             ),
-            Padding(padding: EdgeInsets.all(16),
-             child: ActiveTripsWidget()
-             ),
-            Padding(padding: EdgeInsets.all(16),
-             child: ActiveTripsWidget()
-             ),
-            Padding(padding: EdgeInsets.all(16),
-             child: ActiveTripsWidget()
-             ),
+              //! تعديل ويدجت الرحلات
+            Padding(
+              padding: EdgeInsets.all(16),
+              child: ActiveTripsWidget(tripName:'1001#'),
+            ),
+            Padding(
+              padding: EdgeInsets.all(16),
+              child: ActiveTripsWidget(tripName:'1002#'),
+            ),
+            Padding(
+              padding: EdgeInsets.all(16),
+              child: ActiveTripsWidget(tripName:'1003#'),
+            ),
+            Padding(
+              padding: EdgeInsets.all(16),
+              child: ActiveTripsWidget(tripName:'1004#'),
+            ),
           ],
         ),
       ),

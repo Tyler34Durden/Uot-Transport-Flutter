@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:uot_transport/auth_feature/view/widgets/app_text.dart';
-import 'package:uot_transport/auth_feature/view/widgets/back_header.dart';
+import 'package:uot_transport/core/core_widgets/back_header.dart';
 import 'package:uot_transport/core/app_colors.dart';
 import 'package:uot_transport/home_feature/view/widgets/active_trips_widget.dart';
 import 'package:uot_transport/station_feature/view/widgets/google_map_widget.dart';
@@ -42,11 +42,11 @@ const SizedBox(height: 20),
                 ),
               ),
               const SizedBox(height: 10),
+            const ActiveTripsWidget(tripName:'1001#'),
 
-              const ActiveTripsWidget(),
               const SizedBox(height: 10),
 
-              const ActiveTripsWidget(),
+            const ActiveTripsWidget(tripName:'1002#'),
               const SizedBox(height: 10),
 
               const SizedBox(height: 10),
@@ -60,7 +60,7 @@ const SizedBox(height: 20),
               ),
               const SizedBox(height: 10),
 
-              const ActiveTripsWidget(),
+            const ActiveTripsWidget(tripName:'1003#'),
             ],
           ),
         ),

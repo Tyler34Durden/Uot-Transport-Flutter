@@ -5,14 +5,23 @@ import 'package:uot_transport/auth_feature/view/widgets/app_text.dart';
 import 'package:uot_transport/core/app_colors.dart';
 import 'package:uot_transport/auth_feature/view/widgets/app_dropdown.dart';
 import 'package:uot_transport/core/main_screen.dart';
+import 'package:uot_transport/trips_feature/view/screens/trip_details_screen.dart';
 
 class ActiveTripsWidget extends StatelessWidget {
-  const ActiveTripsWidget({super.key});
+  final String tripName;
+
+  const ActiveTripsWidget({super.key, required this.tripName});
 
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.rtl,
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => TripDetailsScreen(tripName: tripName),
+          ),
+        );
+      },
       child: Container(
         decoration: BoxDecoration(
           border: Border.all(color: Colors.grey),
