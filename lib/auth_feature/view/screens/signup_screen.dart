@@ -5,8 +5,37 @@ import 'package:uot_transport/auth_feature/view/widgets/app_input.dart';
 import 'package:uot_transport/auth_feature/view/widgets/app_text.dart';
 import 'package:uot_transport/core/core_widgets/back_header.dart';
 import 'package:uot_transport/core/app_colors.dart';
-class SignupScreen extends StatelessWidget {
+import 'package:uot_transport/auth_feature/view_model/cubit/student_cubit.dart';
+import 'package:uot_transport/auth_feature/model/repository/student_repository.dart';
+
+class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
+
+  @override
+  _SignupScreenState createState() => _SignupScreenState();
+}
+
+class _SignupScreenState extends State<SignupScreen> {
+  final fullNameController = TextEditingController();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
+
+
+  @override
+  void initState() {
+    super.initState();
+
+  }
+
+  @override
+  void dispose() {
+    fullNameController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +69,7 @@ class SignupScreen extends StatelessWidget {
               SizedBox(height: screenHeight * 0.02),
               const AppText(
                 textAlign: TextAlign.center,
-                lbl:'أنشئ حساباً جديداً واستمتع بتجربة نقل جامعي مريحة ومميزة.',
+                lbl: 'أنشئ حساباً جديداً واستمتع بتجربة نقل جامعي مريحة ومميزة.',
                 style: TextStyle(
                   color: AppColors.textColor,
                   fontSize: 20,
@@ -56,10 +85,11 @@ class SignupScreen extends StatelessWidget {
                 textAlign: TextAlign.right,
               ),
               SizedBox(height: screenHeight * 0.02),
-              const AppInput(
+              AppInput(
+                controller: fullNameController,
                 hintText: 'الاسم الثلاثي ',
                 textAlign: TextAlign.right,
-                maxLength: 10,
+                maxLength: 30,
               ),
               SizedBox(height: screenHeight * 0.02),
               const AppText(
@@ -71,12 +101,12 @@ class SignupScreen extends StatelessWidget {
                 textAlign: TextAlign.right,
               ),
               SizedBox(height: screenHeight * 0.02),
-              const AppInput(
+              AppInput(
+                controller: emailController,
                 hintText: 'البريد الإلكتروني ',
                 textAlign: TextAlign.right,
                 maxLength: 40,
               ),
-
               SizedBox(height: screenHeight * 0.02),
               const AppText(
                 lbl: 'ادخل كلمة مرورك  ',
@@ -87,12 +117,12 @@ class SignupScreen extends StatelessWidget {
                 textAlign: TextAlign.right,
               ),
               SizedBox(height: screenHeight * 0.02),
-              const AppInput(
+              AppInput(
+                controller: passwordController,
                 hintText: 'كلمة المرور  ',
                 textAlign: TextAlign.right,
                 maxLength: 25,
               ),
-
               SizedBox(height: screenHeight * 0.02),
               const AppText(
                 lbl: 'تأكيد كلمة المرور',
@@ -103,7 +133,8 @@ class SignupScreen extends StatelessWidget {
                 textAlign: TextAlign.right,
               ),
               SizedBox(height: screenHeight * 0.02),
-              const AppInput(
+              AppInput(
+                controller: confirmPasswordController,
                 hintText: 'كلمة المرور ',
                 textAlign: TextAlign.right,
                 maxLength: 25,
@@ -114,13 +145,31 @@ class SignupScreen extends StatelessWidget {
                 width: screenWidth * 0.4,
                 height: screenHeight * 0.07,
                 onPressed: () {
-                    Navigator.push(
+                  final studentData = {
+                    "fullName": fullNameController.text,
+                    "uotNumber": "",
+                    "userZone": "",
+                    "qrData": "",
+                    "email": emailController.text,
+                    "password": passwordController.text,
+                    "password_confirmation": confirmPasswordController.text,
+                    "fcmToken": "temp_token",
+                    "gender": ""
+                  };
+                  Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const ConfirmStudyStatusScreen ()),
+                    MaterialPageRoute(
+                      builder: (context) => ConfirmStudyStatusScreen(
+                        studentData: studentData,
+                        fullNameController: fullNameController,
+                        emailController: emailController,
+                        passwordController: passwordController,
+                        confirmPasswordController: confirmPasswordController,
+                      ),
+                    ),
                   );
                 },
               ),
-
             ],
           ),
         ),

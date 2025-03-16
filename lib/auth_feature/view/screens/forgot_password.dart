@@ -64,12 +64,12 @@ class ForgotPassword extends StatelessWidget {
               AppButton(
                 lbl: ' إعادة تعيين كلمة المرور',
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const VerifyScreen(),
-                    ),
-                  );
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(
+                  //     builder: (context) => const VerifyScreen(),
+                  //   ),
+                  // );
                 },
               ),
             ],
