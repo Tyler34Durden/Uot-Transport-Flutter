@@ -131,7 +131,8 @@ class _ConfirmStudyStatusScreenState extends State<ConfirmStudyStatusScreen> {
                     'كلية الهندسة',
                     'Zone A',
                     'كلية العلوم',
-                    'كلية الآداب'
+                    'كلية الآداب',
+
                   ],
                   hintText: 'الكلية',
                   onChanged: (String? newValue) {
@@ -151,7 +152,7 @@ class _ConfirmStudyStatusScreenState extends State<ConfirmStudyStatusScreen> {
                 ),
                 SizedBox(height: screenHeight * 0.02),
                 AppDropdown(
-                  items: const ['انثى', 'male'],
+                  items: const ['female', 'male'],
                   hintText: 'الجنس',
                   onChanged: (String? newValue) {
                     setState(() {
@@ -205,7 +206,7 @@ class _ConfirmStudyStatusScreenState extends State<ConfirmStudyStatusScreen> {
                         _selectedGender == null ||
                         _qrCodeResult == null) {
                       // Show an error message if any field is empty.
-                      print('Please fill in all fields.');
+                      print('**********************Please fill in all fields.');
                       return;
                     }
 

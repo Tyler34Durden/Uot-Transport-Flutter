@@ -27,4 +27,17 @@
           emit(StudentFailure(e.toString()));
         }
       }
+
+  Future<void> login(Map<String, dynamic> loginData) async {
+    emit(StudentLoading());
+    try {
+      await _studentRepository.login(loginData);
+      emit(StudentSuccess());
+    } catch (e) {
+      emit(StudentFailure(e.toString()));
+    }
+  }
+
+
+
     }
