@@ -1,14 +1,12 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:uot_transport/auth_feature/view/screens/forgot_password.dart';
-import 'package:uot_transport/auth_feature/view/screens/home_screen.dart';
-import 'package:uot_transport/auth_feature/view/screens/login_screen.dart';
 import 'package:uot_transport/auth_feature/view/screens/onboarding_screen.dart';
-import 'package:uot_transport/core/main_screen.dart';
 import 'package:uot_transport/auth_feature/view_model/cubit/student_cubit.dart';
 import 'package:uot_transport/auth_feature/model/repository/student_repository.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   final studentRepository = StudentRepository();
   runApp(
     BlocProvider(
