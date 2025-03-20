@@ -3,39 +3,10 @@ import 'package:uot_transport/auth_feature/view/screens/confirm_study_status_scr
 import 'package:uot_transport/auth_feature/view/widgets/app_button.dart';
 import 'package:uot_transport/auth_feature/view/widgets/app_input.dart';
 import 'package:uot_transport/auth_feature/view/widgets/app_text.dart';
-import 'package:uot_transport/core/core_widgets/back_header.dart';
+import 'package:uot_transport/auth_feature/view/widgets/header.dart';
 import 'package:uot_transport/core/app_colors.dart';
-import 'package:uot_transport/auth_feature/view_model/cubit/student_cubit.dart';
-import 'package:uot_transport/auth_feature/model/repository/student_repository.dart';
-
-class SignupScreen extends StatefulWidget {
+class SignupScreen extends StatelessWidget {
   const SignupScreen({super.key});
-
-  @override
-  _SignupScreenState createState() => _SignupScreenState();
-}
-
-class _SignupScreenState extends State<SignupScreen> {
-  final fullNameController = TextEditingController();
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
-  final confirmPasswordController = TextEditingController();
-
-
-  @override
-  void initState() {
-    super.initState();
-
-  }
-
-  @override
-  void dispose() {
-    fullNameController.dispose();
-    emailController.dispose();
-    passwordController.dispose();
-    confirmPasswordController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +40,7 @@ class _SignupScreenState extends State<SignupScreen> {
               SizedBox(height: screenHeight * 0.02),
               const AppText(
                 textAlign: TextAlign.center,
-                lbl: 'أنشئ حساباً جديداً واستمتع بتجربة نقل جامعي مريحة ومميزة.',
+                lbl:'أنشئ حساباً جديداً واستمتع بتجربة نقل جامعي مريحة ومميزة.',
                 style: TextStyle(
                   color: AppColors.textColor,
                   fontSize: 20,
@@ -85,11 +56,10 @@ class _SignupScreenState extends State<SignupScreen> {
                 textAlign: TextAlign.right,
               ),
               SizedBox(height: screenHeight * 0.02),
-              AppInput(
-                controller: fullNameController,
+              const AppInput(
                 hintText: 'الاسم الثلاثي ',
                 textAlign: TextAlign.right,
-                maxLength: 30,
+                maxLength: 10,
               ),
               SizedBox(height: screenHeight * 0.02),
               const AppText(
@@ -101,12 +71,12 @@ class _SignupScreenState extends State<SignupScreen> {
                 textAlign: TextAlign.right,
               ),
               SizedBox(height: screenHeight * 0.02),
-              AppInput(
-                controller: emailController,
+              const AppInput(
                 hintText: 'البريد الإلكتروني ',
                 textAlign: TextAlign.right,
                 maxLength: 40,
               ),
+
               SizedBox(height: screenHeight * 0.02),
               const AppText(
                 lbl: 'ادخل كلمة مرورك  ',
@@ -117,12 +87,12 @@ class _SignupScreenState extends State<SignupScreen> {
                 textAlign: TextAlign.right,
               ),
               SizedBox(height: screenHeight * 0.02),
-              AppInput(
-                controller: passwordController,
+              const AppInput(
                 hintText: 'كلمة المرور  ',
                 textAlign: TextAlign.right,
                 maxLength: 25,
               ),
+
               SizedBox(height: screenHeight * 0.02),
               const AppText(
                 lbl: 'تأكيد كلمة المرور',
@@ -133,43 +103,32 @@ class _SignupScreenState extends State<SignupScreen> {
                 textAlign: TextAlign.right,
               ),
               SizedBox(height: screenHeight * 0.02),
-              AppInput(
-                controller: confirmPasswordController,
+              const AppInput(
                 hintText: 'كلمة المرور ',
                 textAlign: TextAlign.right,
                 maxLength: 25,
               ),
+
+
+
+
+
+
+
+
               SizedBox(height: screenHeight * 0.06),
               AppButton(
                 lbl: 'التالي ',
                 width: screenWidth * 0.4,
                 height: screenHeight * 0.07,
                 onPressed: () {
-                  final studentData = {
-                    "fullName": fullNameController.text,
-                    "uotNumber": "",
-                    "userZone": "",
-                    "qrData": "",
-                    "email": emailController.text,
-                    "password": passwordController.text,
-                    "password_confirmation": confirmPasswordController.text,
-                    "fcmToken": "temp_token",
-                    "gender": ""
-                  };
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => ConfirmStudyStatusScreen(
-                        studentData: studentData,
-                        fullNameController: fullNameController,
-                        emailController: emailController,
-                        passwordController: passwordController,
-                        confirmPasswordController: confirmPasswordController,
-                      ),
-                    ),
+                    MaterialPageRoute(builder: (context) => const ConfirmStudyStatusScreen ()),
                   );
                 },
               ),
+
             ],
           ),
         ),

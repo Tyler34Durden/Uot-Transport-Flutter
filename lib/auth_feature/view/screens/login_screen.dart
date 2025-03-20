@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:uot_transport/auth_feature/view/screens/forgot_password.dart';
 import 'package:uot_transport/auth_feature/view/screens/signup_screen.dart';
 import 'package:uot_transport/auth_feature/view/widgets/app_button.dart';
 import 'package:uot_transport/auth_feature/view/widgets/app_input.dart';
@@ -83,18 +82,15 @@ class LoginScreen extends StatelessWidget {
                 ),
                 textAlign: TextAlign.right,
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const ForgotPassword(),
-                    ),
-                  );
+                  // Handle the tap event
+                  print('Text tapped!');
                 },
               ),
               SizedBox(height: screenHeight * 0.06),
               AppButton(
                 lbl: 'تسجيل الدخول',
-         
+                width: screenWidth * 0.4,
+                height: screenHeight * 0.07,
                 onPressed: () {
                   Navigator.pushReplacement(
                     context,
@@ -102,7 +98,7 @@ class LoginScreen extends StatelessWidget {
                   );
                 },
               ),
-        SizedBox(height: screenHeight/6,),
+              SizedBox(height: screenHeight/6,),
               AppText(
                 lbl: 'ليس لديك حساب؟ انشىء حساب',
                 style: const TextStyle(
@@ -111,11 +107,11 @@ class LoginScreen extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
                 textAlign: TextAlign.center,
-               onTap: () {
-                 Navigator.push(
-                   context,
-                   MaterialPageRoute(builder: (context) => const SignupScreen ()),
-                 );
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const SignupScreen ()),
+                  );
                 },
               ),
               SizedBox(height: screenHeight * 0.02),

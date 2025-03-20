@@ -50,46 +50,44 @@ class AppInput extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
       decoration: decoration?.copyWith(
-            hintText: hintText,
-            fillColor: fillColor ?? Colors.white,
-            hintStyle:
-                hintStyle ?? TextStyle(color: Colors.grey[400], fontSize: 15),
-            enabledBorder: enabledBorder ??
-                OutlineInputBorder(
-                  borderSide: const BorderSide(
-                      color: AppColors.primaryColor, width: .5),
-                  borderRadius: BorderRadius.circular(br ?? 15),
-                ),
-            focusedBorder: focusedBorder ??
-                OutlineInputBorder(
-                  borderSide: const BorderSide(
-                      color: AppColors.secondaryColor, width: 1),
-                  borderRadius: BorderRadius.circular(br ?? 15),
-                ),
-            border: border ??
-                OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(br ?? 15),
-                ),
-            prefixIcon: prefixIcon,
-            suffixIcon: suffixIcon,
-          ) ??
+        hintText: hintText,
+        fillColor: fillColor ?? Colors.white,
+        hintStyle:
+        hintStyle ?? TextStyle(color: Colors.grey[400], fontSize: 15),
+        enabledBorder: enabledBorder ??
+            OutlineInputBorder(
+              borderSide:
+              const BorderSide(color: AppColors.primaryColor, width: .5),
+              borderRadius: BorderRadius.circular(br ?? 15),
+            ),
+        focusedBorder: focusedBorder ??
+            OutlineInputBorder(
+              borderSide: const BorderSide(color: AppColors.secondaryColor, width: 1),
+              borderRadius: BorderRadius.circular(br ?? 15),
+            ),
+        border: border ??
+            OutlineInputBorder(
+              borderRadius: BorderRadius.circular(br ?? 15),
+            ),
+        prefixIcon: prefixIcon,
+        suffixIcon: suffixIcon,
+      ) ??
           InputDecoration(
-            contentPadding:
-                const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+            contentPadding: const EdgeInsets.symmetric(
+                vertical: 10, horizontal: 20),
             hintText: hintText,
             fillColor: fillColor ?? Colors.white,
             hintStyle:
-                hintStyle ?? TextStyle(color: Colors.grey[400], fontSize: 15),
+            hintStyle ?? TextStyle(color: Colors.grey[400], fontSize: 15),
             enabledBorder: enabledBorder ??
-                OutlineInputBorder(
-                  borderSide: const BorderSide(
-                      color: AppColors.primaryColor, width: .5),
-                  borderRadius: BorderRadius.circular(br ?? 15),
-                ),
-            focusedBorder: focusedBorder ??
                 OutlineInputBorder(
                   borderSide:
-                      const BorderSide(color: AppColors.primaryColor, width: 1),
+                  const BorderSide(color: AppColors.primaryColor, width: .5),
+                  borderRadius: BorderRadius.circular(br ?? 15),
+                ),
+            focusedBorder: focusedBorder ??
+                OutlineInputBorder(
+                  borderSide: const BorderSide(color: AppColors.primaryColor, width: 1),
                   borderRadius: BorderRadius.circular(br ?? 15),
                 ),
             border: border ??
@@ -110,9 +108,7 @@ class AppInput extends StatelessWidget {
       keyboardType: keyboardType,
       maxLength: maxLength,
       maxLengthEnforcement: MaxLengthEnforcement.enforced,
-      buildCounter: (BuildContext context,
-              {int? currentLength, bool? isFocused, int? maxLength}) =>
-          null,
+      buildCounter: (BuildContext context, {int? currentLength, bool? isFocused, int? maxLength}) => null,
     );
   }
 }
