@@ -31,7 +31,9 @@
   Future<void> login(Map<String, dynamic> loginData) async {
     emit(StudentLoading());
     try {
+      print("before repo data in login");
       await _studentRepository.login(loginData);
+      print("after repo data in login");
       emit(StudentSuccess());
     } catch (e) {
       emit(StudentFailure(e.toString()));
