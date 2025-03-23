@@ -18,8 +18,8 @@ dependencies:
   smooth_page_indicator: ^1.2.1
   mobile_scanner: ^6.0.6
   google_maps_flutter: ^2.10.1
-  logger: ^1.0.0
-  shared_preferences: ^2.0.6
+  logger: ^2.5.0
+  shared_preferences: ^2.5.2
   
 dev_dependencies:
   flutter_test:

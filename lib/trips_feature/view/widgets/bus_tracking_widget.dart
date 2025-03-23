@@ -38,11 +38,11 @@ class BusTrackingWidget extends StatelessWidget {
                         children: [
                           SvgPicture.asset(
                             index <= currentStationIndex
-                                ? AppIcons.filled_pin // صورة الموقع في حالة تتبع الحافلة
-                                : AppIcons.outline_pin, // صورة الموقع في حالة عدم تتبع الحافلة
+                                ? AppIcons.solid_ProfileNavPath // صورة الموقع في حالة تتبع الحافلة
+                                : AppIcons.outline_ProfileNavPath, // صورة الموقع في حالة عدم تتبع الحافلة
                           ),
                           if (index == currentStationIndex)
-                            SvgPicture.asset(AppIcons.bustracking), // صورة الحافلة
+                            SvgPicture.asset(AppIcons.outline_TripsNavPath), // صورة الحافلة
                         ],
                       ),
                       if (index != stations.length - 1)

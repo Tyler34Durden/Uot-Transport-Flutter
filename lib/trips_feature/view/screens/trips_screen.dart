@@ -15,12 +15,12 @@ import 'package:flutter/material.dart';
               backgroundColor: AppColors.backgroundColor,
               body: ListView(
                 padding: const EdgeInsets.all(16),
-                children: [
+                children: const [
                   Padding(
-                    padding: const EdgeInsets.only(top: 28, right: 28),
+                    padding: EdgeInsets.only(top: 28, right: 28),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: const [
+                      children: [
                         AppText(
                           lbl: 'الرحلات',
                           style: TextStyle(
@@ -31,20 +31,20 @@ import 'package:flutter/material.dart';
                       ],
                     ),
                   ),
-                  const TripSelectionWidget(),
-                  const Padding(
+                  TripSelectionWidget(),
+                  Padding(
                     padding: EdgeInsets.all(16),
                     child: ActiveTripsWidget(tripName: '1001#'),
                   ),
-                  const Padding(
+                  Padding(
                     padding: EdgeInsets.all(16),
                     child: ActiveTripsWidget(tripName: '1002#'),
                   ),
-                  const Padding(
+                  Padding(
                     padding: EdgeInsets.all(16),
                     child: ActiveTripsWidget(tripName: '1003#'),
                   ),
-                  const Padding(
+                  Padding(
                     padding: EdgeInsets.all(16),
                     child: ActiveTripsWidget(tripName: '1004#'),
                   ),
