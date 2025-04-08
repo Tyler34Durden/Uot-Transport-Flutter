@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uot_transport/core/app_colors.dart';
 import 'package:uot_transport/core/core_widgets/uot_appbar.dart';
 import 'package:uot_transport/home_feature/view/widgets/active_trips_widget.dart';
@@ -6,6 +7,8 @@ import 'package:uot_transport/home_feature/view/widgets/city_filter.dart';
 import 'package:uot_transport/home_feature/view/widgets/city_filter_item.dart';
 import 'package:uot_transport/home_feature/view/widgets/home_slider.dart';
 import 'package:uot_transport/home_feature/view/widgets/my_trips_widget.dart';
+import 'package:uot_transport/trips_feature/view_model/cubit/trips_cubit.dart';
+import 'package:uot_transport/trips_feature/view_model/cubit/trips_state.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -71,8 +74,35 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
-              const ActiveTripsWidget(tripName: '1001#'),
-            ],
+              BlocBuilder<TripsCubit, TripsState>(
+                builder: (context, state) {
+                  if (state is TripsLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (state is TripsLoaded) {
+                    return Expanded(
+                      child: ListView.builder(
+                        itemCount: state.trips.length,
+                        itemBuilder: (context, index) {
+                          final trip = state.trips[index];
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 16.0), // Add space between cards
+                            child: ActiveTripsWidget(
+                              busId: trip['busId'].toString(),
+                              tripId: trip['tripId'].toString(),
+                              tripState: trip['tripState'],
+                              firstTripRoute: trip['firstTripRoute'] ?? {},
+                              lastTripRoute: trip['lastTripRoute'] ?? {},
+                            ),
+                          );
+                        },
+                      ),
+                    );
+                  } else if (state is TripsError) {
+                    return Center(child: Text('Error: ${state.error}'));
+                  }
+                  return const Center(child: Text('No trips available'));
+                },
+              ),            ],
           ),
         ),
       ),

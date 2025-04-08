@@ -7,8 +7,8 @@ import 'package:flutter/material.dart';
     import 'package:uot_transport/core/core_widgets/back_header.dart';
     import 'package:uot_transport/auth_feature/view/widgets/success_notification.dart';
     import 'package:uot_transport/core/app_colors.dart';
-    import 'package:uot_transport/auth_feature/view_model/cubit/student_cubit.dart';
-    import 'package:uot_transport/auth_feature/view_model/cubit/student_state.dart';
+    import 'package:uot_transport/auth_feature/view_model/cubit/student_auth_cubit.dart';
+    import 'package:uot_transport/auth_feature/view_model/cubit/student_auth_state.dart';
 
     class NewPassword extends StatelessWidget {
       const NewPassword({super.key, required this.email, required this.otp});
@@ -32,11 +32,11 @@ import 'package:flutter/material.dart';
           child: Scaffold(
             backgroundColor: AppColors.backgroundColor,
             appBar: const BackHeader(),
-            body: BlocListener<StudentCubit, StudentState>(
+            body: BlocListener<StudentAuthCubit, StudentAuthState>(
               listener: (context, state) {
-                if (state is StudentLoading) {
+                if (state is StudentAuthLoading) {
                   // Optionally show a loading indicator.
-                } else if (state is StudentSuccess) {
+                } else if (state is StudentAuthSuccess) {
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
@@ -46,7 +46,7 @@ import 'package:flutter/material.dart';
                       ),
                     ),
                   );
-                } else if (state is StudentFailure) {
+                } else if (state is StudentAuthFailure) {
                   print('Error: ${state.error}');
                 }
               },
@@ -117,7 +117,7 @@ import 'package:flutter/material.dart';
                             "password": passwordController.text,
                             "password_confirmation": confirmPasswordController.text,
                           };
-                          context.read<StudentCubit>().resetPassword(passwordData);
+                          context.read<StudentAuthCubit>().resetPassword(passwordData);
                         },
                       ),
                     ],

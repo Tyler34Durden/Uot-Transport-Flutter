@@ -8,9 +8,9 @@ import 'package:flutter/material.dart';
                   import 'package:uot_transport/trips_feature/view/widgets/trip_header_options.dart';
 
                   class TripDetailsScreen extends StatelessWidget {
-                    final String tripName;
+                    final String tripId;
 
-                    const TripDetailsScreen({super.key, required this.tripName});
+                    const TripDetailsScreen({super.key, required this.tripId});
 
                     @override
                     Widget build(BuildContext context) {
@@ -26,7 +26,7 @@ import 'package:flutter/material.dart';
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
                                   AppText(
-                                    lbl: ' الرحلة: $tripName',
+                                    lbl: ' الرحلة: #$tripId',
                                     style: const TextStyle(
                                       fontSize: 24,
                                       fontWeight: FontWeight.bold,

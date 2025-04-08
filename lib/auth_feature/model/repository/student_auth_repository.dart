@@ -3,7 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uot_transport/core/api_service.dart';
 import 'package:logger/logger.dart';
 
-class StudentRepository {
+class StudentAuthRepository {
   final ApiService _apiService = ApiService();
   final logger = Logger();
 

@@ -2,15 +2,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uot_transport/auth_feature/view/screens/onboarding_screen.dart';
-import 'package:uot_transport/auth_feature/view_model/cubit/student_cubit.dart';
-import 'package:uot_transport/auth_feature/model/repository/student_repository.dart';
+import 'package:uot_transport/auth_feature/view_model/cubit/student_auth_cubit.dart';
+import 'package:uot_transport/auth_feature/model/repository/student_auth_repository.dart';
+import 'package:uot_transport/home_feature/model/repository/home_repository.dart';
+import 'package:uot_transport/trips_feature/view_model/cubit/trips_cubit.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final studentRepository = StudentRepository();
+  final studentRepository = StudentAuthRepository();
+  final tripsRepository = TripsRepository();
   runApp(
-    BlocProvider(
-      create: (context) => StudentCubit(studentRepository),
+    MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => StudentAuthCubit(studentRepository),
+        ),
+        BlocProvider(
+          create: (context) => TripsCubit(tripsRepository)..fetchTodayTrips(),
+        ),
+      ],
       child: const MyApp(),
     ),
   );

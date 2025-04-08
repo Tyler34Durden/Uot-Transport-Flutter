@@ -9,8 +9,8 @@ import 'package:uot_transport/auth_feature/view/widgets/app_input.dart';
 import 'package:uot_transport/auth_feature/view/widgets/app_text.dart';
 import 'package:uot_transport/core/core_widgets/back_header.dart';
 import 'package:uot_transport/core/app_colors.dart';
-import 'package:uot_transport/auth_feature/view_model/cubit/student_cubit.dart';
-import 'package:uot_transport/auth_feature/view_model/cubit/student_state.dart';
+import 'package:uot_transport/auth_feature/view_model/cubit/student_auth_cubit.dart';
+import 'package:uot_transport/auth_feature/view_model/cubit/student_auth_state.dart';
 
 class ConfirmStudyStatusScreen extends StatefulWidget {
   final Map<String, dynamic> studentData;
@@ -55,11 +55,11 @@ class _ConfirmStudyStatusScreenState extends State<ConfirmStudyStatusScreen> {
       appBar: BackHeader(
         onBackbtn: () => Navigator.pop(context),
       ),
-      body: BlocListener<StudentCubit, StudentState>(
+      body: BlocListener<StudentAuthCubit, StudentAuthState>(
         listener: (context, state) {
-          if (state is StudentLoading) {
+          if (state is StudentAuthLoading) {
             // Optionally show a loading indicator.
-          } else if (state is StudentSuccess) {
+          } else if (state is StudentAuthSuccess) {
             Future.delayed(Duration.zero, () {
               print("before nav");
               Navigator.pushReplacement(
@@ -71,7 +71,7 @@ class _ConfirmStudyStatusScreenState extends State<ConfirmStudyStatusScreen> {
                 ),
               );
             });
-          } else if (state is StudentFailure) {
+          } else if (state is StudentAuthFailure) {
             print('Error: ${state.error}');
           }
         },
@@ -221,7 +221,7 @@ class _ConfirmStudyStatusScreenState extends State<ConfirmStudyStatusScreen> {
 
                     // Print the student data.
                     print('Student Data: $updatedStudentData');
-                    context.read<StudentCubit>().registerStudent(updatedStudentData);
+                    context.read<StudentAuthCubit>().registerStudent(updatedStudentData);
                   },
                 ),
                 SizedBox(height: screenHeight * 0.06),

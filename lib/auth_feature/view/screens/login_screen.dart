@@ -8,8 +8,8 @@ import 'package:flutter/material.dart';
       import 'package:uot_transport/core/core_widgets/back_header.dart';
       import 'package:uot_transport/core/app_colors.dart';
       import 'package:uot_transport/core/main_screen.dart';
-      import 'package:uot_transport/auth_feature/view_model/cubit/student_cubit.dart';
-      import 'package:uot_transport/auth_feature/view_model/cubit/student_state.dart';
+      import 'package:uot_transport/auth_feature/view_model/cubit/student_auth_cubit.dart';
+      import 'package:uot_transport/auth_feature/view_model/cubit/student_auth_state.dart';
       import 'package:logger/logger.dart';
 
       class LoginScreen extends StatelessWidget {
@@ -33,11 +33,11 @@ import 'package:flutter/material.dart';
             child: Scaffold(
               backgroundColor: AppColors.backgroundColor,
               appBar: BackHeader(),
-              body: BlocListener<StudentCubit, StudentState>(
+              body: BlocListener<StudentAuthCubit, StudentAuthState>(
                 listener: (context, state) {
-                  if (state is StudentLoading) {
+                  if (state is StudentAuthLoading) {
                     logger.i('Loading...');
-                  } else if (state is StudentSuccess) {
+                  } else if (state is StudentAuthSuccess) {
                     logger.i('Login successful');
                     emailController.clear();
                     passwordController.clear();
@@ -45,7 +45,7 @@ import 'package:flutter/material.dart';
                       context,
                       MaterialPageRoute(builder: (context) => const MainScreen()),
                     );
-                  } else if (state is StudentFailure) {
+                  } else if (state is StudentAuthFailure) {
                     logger.e('Login failed: ${state.error}');
                   }
                 },
@@ -137,7 +137,7 @@ import 'package:flutter/material.dart';
                                 "password": passwordController.text,
                               };
                               logger.i('Attempting to login with data: $loginData');
-                              context.read<StudentCubit>().login(loginData);
+                              context.read<StudentAuthCubit>().login(loginData);
                             },
                           ),
                           SizedBox(height: screenHeight / 6),
