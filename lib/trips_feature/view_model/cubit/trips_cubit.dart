@@ -3,7 +3,7 @@ import 'package:uot_transport/home_feature/model/repository/home_repository.dart
   import 'trips_state.dart';
 
   class TripsCubit extends Cubit<TripsState> {
-    final TripsRepository _repository;
+    final HomeRepository _repository;
 
     TripsCubit(this._repository) : super(TripsInitial());
 

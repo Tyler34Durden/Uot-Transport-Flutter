@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:uot_transport/core/api_service.dart';
 import 'package:logger/logger.dart';
 
-class TripsRepository {
+class HomeRepository {
   final ApiService _apiService = ApiService();
   final logger = Logger();
 
@@ -20,17 +20,23 @@ class TripsRepository {
     }
   }
 
-  // Future<Response> fetchTripDetails(int tripId) async {
-  //   try {
-  //     final response = await _apiService.getRequest('trips/$tripId');
-  //     logger.i('Trip details fetched successfully for tripId: $tripId');
-  //     return response;
-  //   } on DioError catch (e) {
-  //     logger.e('DioError: ${e.message}');
-  //     if (e.response != null) {
-  //       logger.e('DioError Response: ${e.response?.data}');
-  //     }
-  //     rethrow;
-  //   }
-  // }
+  Future<List<Map<String, dynamic>>> fetchAdvertisings() async {
+    try {
+      final response = await _apiService.getRequest('advertisings');
+      logger.i('Advertisings fetched successfully');
+      if (response.data != null && response.data['data'] != null) {
+        return (response.data['data'] as List)
+            .map((ad) => ad as Map<String, dynamic>)
+            .toList();
+      } else {
+        throw Exception('Invalid response structure: Missing "data" key');
+      }
+    } on DioError catch (e) {
+      logger.e('DioError: ${e.message}');
+      if (e.response != null) {
+        logger.e('DioError Response: ${e.response?.data}');
+      }
+      rethrow;
+    }
+  }
 }
