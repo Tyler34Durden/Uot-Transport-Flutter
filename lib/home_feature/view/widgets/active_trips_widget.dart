@@ -3,7 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:uot_transport/auth_feature/view/widgets/app_button.dart';
 import 'package:uot_transport/auth_feature/view/widgets/app_text.dart';
 import 'package:uot_transport/core/app_colors.dart';
-import 'package:uot_transport/auth_feature/view/widgets/app_dropdown.dart';
+import 'package:uot_transport/core/core_widgets/app_dropdown.dart';
 import 'package:uot_transport/core/main_screen.dart';
 import 'package:uot_transport/trips_feature/view/screens/trip_details_screen.dart';
 

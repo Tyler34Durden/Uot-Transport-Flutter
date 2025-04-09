@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:uot_transport/auth_feature/view/widgets/app_text.dart';
 import 'package:uot_transport/core/app_colors.dart';
+import 'package:uot_transport/core/core_widgets/back_header.dart';
 import 'package:uot_transport/core/core_widgets/notifications_widget.dart';
 import 'package:uot_transport/core/core_widgets/uot_appbar.dart';
 
@@ -12,7 +13,7 @@ class Notifications extends StatelessWidget {
     return const Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        appBar: UotAppbar(),
+        appBar: BackHeader(),
         backgroundColor: AppColors.backgroundColor,
         body: Column(
           children: [

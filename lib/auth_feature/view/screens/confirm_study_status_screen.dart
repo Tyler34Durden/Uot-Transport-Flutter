@@ -4,7 +4,7 @@ import 'package:uot_transport/auth_feature/view/screens/qr_scan_screen.dart';
 import 'package:uot_transport/auth_feature/view/screens/login_screen.dart';
 import 'package:uot_transport/auth_feature/view/screens/verify_screen.dart';
 import 'package:uot_transport/auth_feature/view/widgets/app_button.dart';
-import 'package:uot_transport/auth_feature/view/widgets/app_dropdown.dart';
+import 'package:uot_transport/core/core_widgets/app_dropdown.dart';
 import 'package:uot_transport/auth_feature/view/widgets/app_input.dart';
 import 'package:uot_transport/auth_feature/view/widgets/app_text.dart';
 import 'package:uot_transport/core/core_widgets/back_header.dart';

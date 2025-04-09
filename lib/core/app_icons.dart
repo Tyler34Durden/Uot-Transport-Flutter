@@ -30,6 +30,9 @@ class AppIcons {
   static const String bustracking = 'assets/icons/bustracking.png';
   static const String outline_pin  = 'assets/icons/outline_pin.svg';
   static const String filled_pin  = 'assets/icons/filled_pin.svg';
+  static const String user  = 'assets/icons/user.svg';
+  static const String edit  = 'assets/icons/edit.svg';
+
 
   static Widget homeNav({double? width, double? height, Color? color}) {
     return SvgPicture.asset(outline_HomeNavPath,
