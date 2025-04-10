@@ -25,7 +25,7 @@ class StationsCubit extends Cubit<StationsState> {
             final nt = item['nearestTrip'];
             return near ? (nt != null) : (nt == null);
           }).toList();
-          _logger.i('After filtering, stations: ${stations.length} items');
+          _logger.i('After filtering, stations count: ${stations.length}');
         }
         emit(StationsSuccess(stations));
       } else {
@@ -39,21 +39,21 @@ class StationsCubit extends Cubit<StationsState> {
   }
 
   Future<void> fetchFilteredStations(bool inUot) async {
-    _logger.i('Fetching filtered stations for inUot value: $inUot');
+    _logger.i('Fetching filtered stations for inUot: $inUot');
     emit(StationsLoading());
     try {
       final response = await _stationsRepository.fetchFilteredStations(inUot);
-      _logger.i('Filtered response received: ${response.data}');
       final data = response.data;
+      _logger.i('Filtered data: $data');
       if (data is Map &&
           data.containsKey('data') &&
           data['data'] is List<dynamic>) {
         final stations = data['data'] as List<dynamic>;
-        _logger.i('Parsed filtered stations from Map: ${stations.length} items');
+        _logger.i('Parsed filtered stations count: ${stations.length}');
         emit(StationsSuccess(stations));
       } else if (data is List) {
         final stations = data as List<dynamic>;
-        _logger.i('Parsed filtered stations from List: ${stations.length} items');
+        _logger.i('Parsed filtered stations from List: ${stations.length}');
         emit(StationsSuccess(stations));
       } else {
         _logger.e('Invalid data format in filtered stations response: $data');
@@ -70,17 +70,17 @@ class StationsCubit extends Cubit<StationsState> {
     emit(StationsLoading());
     try {
       final response = await _stationsRepository.searchStations(stationName);
-      _logger.i('Search response received: ${response.data}');
       final data = response.data;
+      _logger.i('Search response received: $data');
       if (data is Map &&
           data.containsKey('data') &&
           data['data'] is List<dynamic>) {
         final stations = data['data'] as List<dynamic>;
-        _logger.i('Parsed search stations: ${stations.length} items');
+        _logger.i('Parsed search stations count: ${stations.length}');
         emit(StationsSuccess(stations));
       } else if (data is List) {
         final stations = data as List<dynamic>;
-        _logger.i('Parsed search stations from List: ${stations.length} items');
+        _logger.i('Parsed search stations from List: ${stations.length}');
         emit(StationsSuccess(stations));
       } else {
         _logger.e('Invalid data format in search stations response: $data');

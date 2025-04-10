@@ -4,7 +4,7 @@ import 'package:logger/logger.dart';
 
 class StationsRepository {
   final ApiService _apiService = ApiService();
-  final logger = Logger();
+  final Logger logger = Logger();
 
   Future<Response> fetchStations() async {
     try {
@@ -12,7 +12,7 @@ class StationsRepository {
       logger.i('Stations fetched successfully');
       return response;
     } on DioError catch (e) {
-      logger.e('DioError: ${e.message}');
+      logger.e('DioError in fetchStations: ${e.message}');
       if (e.response != null) {
         logger.e('DioError Response: ${e.response?.data}');
       }
@@ -27,23 +27,24 @@ class StationsRepository {
       logger.i('Filtered stations fetched successfully');
       return response;
     } on DioError catch (e) {
-      logger.e('DioError: ${e.message}');
+      logger.e('DioError in fetchFilteredStations: ${e.message}');
       if (e.response != null) {
         logger.e('DioError Response: ${e.response?.data}');
       }
       rethrow;
     }
   }
-   Future<Response> searchStations(String stationName) async {
+
+  Future<Response> searchStations(String stationName) async {
     try {
       final endpoint = 'stations/search/$stationName';
       final response = await _apiService.getRequest(endpoint);
       logger.i('Search stations fetched successfully');
       return response;
     } on DioError catch (e) {
-      logger.e('DioError during search: ${e.message}');
+      logger.e('DioError during searchStations: ${e.message}');
       if (e.response != null) {
-        logger.e('DioError Response during search: ${e.response?.data}');
+        logger.e('DioError Response during searchStations: ${e.response?.data}');
       }
       rethrow;
     }
