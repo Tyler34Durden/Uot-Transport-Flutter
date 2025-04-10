@@ -27,7 +27,7 @@ import 'package:uot_transport/trips_feature/view/screens/trip_details_screen.dar
         onTap: () {
           Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (context) => TripDetailsScreen(tripId: tripId),
+              builder: (context) => TripDetailsScreen(tripId: tripId,busId: busId, tripState: tripState, firstTripRoute: firstTripRoute, lastTripRoute: lastTripRoute),
             ),
           );
         },

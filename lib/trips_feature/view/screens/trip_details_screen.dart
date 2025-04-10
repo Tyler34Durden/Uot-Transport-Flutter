@@ -1,73 +1,90 @@
 import 'package:flutter/material.dart';
-                  import 'package:uot_transport/auth_feature/view/widgets/app_button.dart';
-                  import 'package:uot_transport/auth_feature/view/widgets/app_text.dart';
-                  import 'package:uot_transport/core/app_colors.dart';
-                  import 'package:uot_transport/core/core_widgets/back_header.dart';
-                  import 'package:uot_transport/trips_feature/view/widgets/bus_tracking_widget.dart';
-                  import 'package:uot_transport/trips_feature/view/widgets/departure_arrival_widget.dart';
-                  import 'package:uot_transport/trips_feature/view/widgets/trip_header_options.dart';
+import 'package:uot_transport/auth_feature/view/widgets/app_button.dart';
+import 'package:uot_transport/auth_feature/view/widgets/app_text.dart';
+import 'package:uot_transport/core/app_colors.dart';
+import 'package:uot_transport/core/core_widgets/back_header.dart';
+import 'package:uot_transport/trips_feature/view/widgets/bus_tracking_widget.dart';
+import 'package:uot_transport/trips_feature/view/widgets/departure_arrival_widget.dart';
+import 'package:uot_transport/trips_feature/view/widgets/trip_header_options.dart';
 
-                  class TripDetailsScreen extends StatelessWidget {
-                    final String tripId;
+class TripDetailsScreen extends StatelessWidget {
+  final String tripId;
+  final String busId;
+  final String tripState;
+  final Map<String, dynamic> firstTripRoute;
+  final Map<String, dynamic> lastTripRoute;
 
-                    const TripDetailsScreen({super.key, required this.tripId});
+  const TripDetailsScreen({
+    super.key,
+    required this.tripId,
+    required this.busId,
+    required this.tripState,
+    required this.firstTripRoute,
+    required this.lastTripRoute,
+  });
 
-                    @override
-                    Widget build(BuildContext context) {
-                      return Directionality(
-                        textDirection: TextDirection.rtl,
-                        child: Scaffold(
-                          appBar: const BackHeader(),
-                          backgroundColor: AppColors.backgroundColor,
-                          body: SingleChildScrollView(
-                            child: Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  AppText(
-                                    lbl: ' الرحلة: #$tripId',
-                                    style: const TextStyle(
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.bold,
-                                      color: AppColors.primaryColor,
-                                    ),
-                                  ),
-                                  const TripHeaderOptions(),
-                                  const DepartureArrivalWidget(),
-                                  const SizedBox(height: 20),
-                                  const AppText(
-                                    lbl: 'مسار الحافلة:',
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      color: AppColors.primaryColor,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 10),
-                                  const BusTrackingWidget(
-                                    stations: [
-                                      'محطة جنة العريف بجوار كافي لاتي',
-                                      'محطة جنة العريف بجوار كافي لاتي',
-                                      'محطة جنة العريف بجوار كافي لاتي',
-                                      'محطة جنة العريف بجوار كافي لاتي',
-                                      'محطة جنة العريف بجوار كافي لاتي'
-                                    ],
-                                    currentStationIndex: 0, // مثال على المحطة الحالية
-                                  ),
-                                  const SizedBox(height: 20),
-
-                                  AppButton(
-                                    lbl: 'حجز الرحلة',
-                                    onPressed: () {
-                                      // Handle booking here
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      );
-                    }
-                  }
+  @override
+  Widget build(BuildContext context) {
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+        appBar: const BackHeader(),
+        backgroundColor: AppColors.backgroundColor,
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                AppText(
+                  lbl: ' الرحلة: #$tripId',
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.primaryColor,
+                  ),
+                ),
+                TripHeaderOptions(
+                  tripId: tripId,
+                  busId: busId,
+                  tripState: tripState,
+                ),
+                DepartureArrivalWidget(
+                  lastTripRoute: lastTripRoute,
+                  firstTripRoute: firstTripRoute,
+                ),
+                const SizedBox(height: 20),
+                const AppText(
+                  lbl: 'مسار الحافلة:',
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: AppColors.primaryColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                const BusTrackingWidget(
+                  stations: [
+                    'محطة جنة العريف بجوار كافي لاتي',
+                    'محطة جنة العريف بجوار كافي لاتي',
+                    'محطة جنة العريف بجوار كافي لاتي',
+                    'محطة جنة العريف بجوار كافي لاتي',
+                    'محطة جنة العريف بجوار كافي لاتي'
+                  ],
+                  currentStationIndex: 0, // مثال على المحطة الحالية
+                ),
+                const SizedBox(height: 20),
+                AppButton(
+                  lbl: 'حجز الرحلة',
+                  onPressed: () {
+                    // Handle booking here
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

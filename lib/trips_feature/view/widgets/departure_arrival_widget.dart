@@ -3,7 +3,14 @@ import 'package:uot_transport/auth_feature/view/widgets/app_text.dart';
 import 'package:uot_transport/core/app_colors.dart';
 
 class DepartureArrivalWidget extends StatelessWidget {
-  const DepartureArrivalWidget({super.key});
+  final Map<String, dynamic> firstTripRoute;
+  final Map<String, dynamic> lastTripRoute;
+
+  const DepartureArrivalWidget({
+    super.key,
+    required this.firstTripRoute,
+    required this.lastTripRoute,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -11,52 +18,56 @@ class DepartureArrivalWidget extends StatelessWidget {
       children: [
         Expanded(
           child: Container(
-            margin: const EdgeInsets.all(10),
+            margin: const EdgeInsets.all(2),
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
               color: AppColors.backgroundColor,
               borderRadius: BorderRadius.circular(10),
               border: Border.all(color: AppColors.primaryColor),
             ),
-            child: const Row(
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(width: 10),
-                AppText(
-                  lbl: 'المغادرة  9:00',
-                  style: TextStyle(
-                    color: AppColors.primaryColor,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+                const SizedBox(width: 10),
+                Flexible(
+                  child: AppText(
+                    lbl: 'المغادرة: ${firstTripRoute['expectedTime'] ?? 'غير متوفر'}',
+                    style: const TextStyle(
+                      color: AppColors.primaryColor,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
-                 Icon(Icons.departure_board, color: Colors.green),
+                const Icon(Icons.departure_board, color: Colors.green),
               ],
             ),
           ),
         ),
         Expanded(
           child: Container(
-            margin: const EdgeInsets.all(10),
+            margin: const EdgeInsets.all(2),
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
               color: AppColors.backgroundColor,
               borderRadius: BorderRadius.circular(10),
               border: Border.all(color: AppColors.primaryColor),
             ),
-            child: const Row(
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(width: 10),
-                AppText(
-                  lbl: 'الوصول 9:00',
-                  style: TextStyle(
-                    color: AppColors.primaryColor,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+                const SizedBox(width: 10),
+                Flexible(
+                  child: AppText(
+                    lbl: 'الوصول: ${lastTripRoute['expectedTime'] ?? 'غير متوفر'}',
+                    style: const TextStyle(
+                      color: AppColors.primaryColor,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
-                Icon(Icons.location_on_outlined, color: Colors.green),
+                const Icon(Icons.location_on_outlined, color: Colors.green),
               ],
             ),
           ),
