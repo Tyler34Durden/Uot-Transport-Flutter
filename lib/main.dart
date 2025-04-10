@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uot_transport/auth_feature/view/screens/onboarding_screen.dart';
@@ -7,12 +5,16 @@ import 'package:uot_transport/auth_feature/view_model/cubit/student_auth_cubit.d
 import 'package:uot_transport/auth_feature/model/repository/student_auth_repository.dart';
 import 'package:uot_transport/home_feature/model/repository/home_repository.dart';
 import 'package:uot_transport/home_feature/view_model/cubit/advertising_cubit.dart';
+import 'package:uot_transport/station_feature/model/repository/stations_repository.dart';
+import 'package:uot_transport/station_feature/view_model/cubit/stations_cubit.dart';
 import 'package:uot_transport/trips_feature/view_model/cubit/trips_cubit.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final studentRepository = StudentAuthRepository();
   final homeRepository = HomeRepository();
+  final stationsRepository = StationsRepository();
+
   runApp(
     MultiBlocProvider(
       providers: [
@@ -20,10 +22,18 @@ void main() async {
           create: (context) => StudentAuthCubit(studentRepository),
         ),
         BlocProvider(
-          create: (context) => AdvertisingsCubit(HomeRepository())..fetchAdvertisings(),
+          create: (context) =>
+              AdvertisingsCubit(homeRepository)..fetchAdvertisings(),
         ),
         BlocProvider(
           create: (context) => TripsCubit(homeRepository)..fetchTodayTrips(),
+        ),
+        BlocProvider(
+          create: (context) => TripsCubit(homeRepository),
+        ),
+        BlocProvider(
+          create: (context) =>
+              StationsCubit(stationsRepository)..fetchStations(),
         ),
       ],
       child: const MyApp(),

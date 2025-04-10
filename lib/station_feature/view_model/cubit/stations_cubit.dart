@@ -65,7 +65,6 @@ class StationsCubit extends Cubit<StationsState> {
     }
   }
 
-  // دالة البحث عن المحطات بواسطة اسم المحطة
   Future<void> searchStations(String stationName) async {
     _logger.i('Searching stations with name: $stationName');
     emit(StationsLoading());
@@ -73,7 +72,6 @@ class StationsCubit extends Cubit<StationsState> {
       final response = await _stationsRepository.searchStations(stationName);
       _logger.i('Search response received: ${response.data}');
       final data = response.data;
-      // تعامل مع الشكل نفسه كما في باقي الدوال
       if (data is Map &&
           data.containsKey('data') &&
           data['data'] is List<dynamic>) {
