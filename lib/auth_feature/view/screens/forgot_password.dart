@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
                 import 'package:uot_transport/auth_feature/view/widgets/app_text.dart';
                 import 'package:uot_transport/core/core_widgets/back_header.dart';
                 import 'package:uot_transport/core/app_colors.dart';
-                import 'package:uot_transport/auth_feature/view_model/cubit/student_cubit.dart';
-                import 'package:uot_transport/auth_feature/view_model/cubit/student_state.dart';
+                import 'package:uot_transport/auth_feature/view_model/cubit/student_auth_cubit.dart';
+                import 'package:uot_transport/auth_feature/view_model/cubit/student_auth_state.dart';
 
                 class ForgotPassword extends StatelessWidget {
                   const ForgotPassword({super.key});
@@ -20,18 +20,18 @@ import 'package:flutter/material.dart';
                     return Scaffold(
                       backgroundColor: AppColors.backgroundColor,
                       appBar: const BackHeader(),
-                      body: BlocListener<StudentCubit, StudentState>(
+                      body: BlocListener<StudentAuthCubit, StudentAuthState>(
                         listener: (context, state) {
-                          if (state is StudentLoading) {
+                          if (state is StudentAuthLoading) {
                             // Optionally show a loading indicator.
-                          } else if (state is StudentSuccess) {
+                          } else if (state is StudentAuthSuccess) {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => PasswordOtp(email: emailController.text),
                               ),
                             );
-                          } else if (state is StudentFailure) {
+                          } else if (state is StudentAuthFailure) {
                             // Show error message
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(content: Text(state.error)),
@@ -86,7 +86,7 @@ import 'package:flutter/material.dart';
                                   lbl: ' إعادة تعيين كلمة المرور',
                                   onPressed: () {
                                     final email = emailController.text;
-                                    context.read<StudentCubit>().forgotPassword(email);
+                                    context.read<StudentAuthCubit>().forgotPassword(email);
                                   },
                                 ),
                               ],
