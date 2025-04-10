@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:uot_transport/core/core_widgets/app_dropdown.dart';
+import 'package:uot_transport/auth_feature/view/widgets/app_dropdown.dart';
 
 
 class TripSelectionWidget extends StatefulWidget {

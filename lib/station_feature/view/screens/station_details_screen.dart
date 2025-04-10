@@ -42,11 +42,11 @@ const SizedBox(height: 20),
                 ),
               ),
               const SizedBox(height: 10),
-            const ActiveTripsWidget(tripName:'1001#'),
+            // const ActiveTripsWidget(tripName:'1001#'),
 
               const SizedBox(height: 10),
 
-            const ActiveTripsWidget(tripName:'1002#'),
+            // const ActiveTripsWidget(tripName:'1002#'),
               const SizedBox(height: 10),
 
               const SizedBox(height: 10),
@@ -60,7 +60,7 @@ const SizedBox(height: 20),
               ),
               const SizedBox(height: 10),
 
-            const ActiveTripsWidget(tripName:'1003#'),
+            // const ActiveTripsWidget(tripName:'1003#'),
             ],
           ),
         ),
