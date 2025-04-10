@@ -17,21 +17,23 @@ class SearchBar extends StatelessWidget {
           Expanded(
             child: TextField(
               controller: _controller,
-              textAlign: TextAlign.right, // تغيير اتجاه النص
+              textAlign: TextAlign.right,
               decoration: InputDecoration(
                 hintText: 'ابحث عن محطة',
-                hintStyle: TextStyle(color: AppColors.textColor),
+                hintStyle: const TextStyle(color: AppColors.textColor),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(15),
-                  borderSide: BorderSide(color: AppColors.primaryColor),
+                  borderSide: const BorderSide(color: AppColors.primaryColor),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(15),
-                  borderSide: BorderSide(color: AppColors.primaryColor, width: 2),
+                  borderSide:
+                      const BorderSide(color: AppColors.primaryColor, width: 2),
                 ),
-                contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                contentPadding:
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                 suffixIcon: IconButton(
-                  icon: Icon(Icons.search, color: AppColors.primaryColor),
+                  icon: const Icon(Icons.search, color: AppColors.primaryColor),
                   onPressed: () {
                     if (onSearch != null) {
                       onSearch!(_controller.text);
