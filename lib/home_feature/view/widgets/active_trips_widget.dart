@@ -26,7 +26,7 @@ import 'package:flutter/material.dart';
         onTap: () {
           Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (context) => TripDetailsScreen(tripId: tripId),
+              builder: (context) => TripDetailsScreen(tripId: tripId,busId: busId, tripState: tripState, firstTripRoute: firstTripRoute, lastTripRoute: lastTripRoute),
             ),
           );
         },

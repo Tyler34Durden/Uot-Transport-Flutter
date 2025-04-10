@@ -4,8 +4,11 @@ import 'package:uot_transport/trips_feature/view/widgets/departure_arrival_widge
 import 'package:uot_transport/trips_feature/view/widgets/trip_squre_tile.dart';
 
 class TripHeaderOptions extends StatelessWidget {
+  final String tripId;
+  final String busId;
+  final String tripState;
   const TripHeaderOptions({
-    super.key,
+    super.key, required this.tripId, required this.busId, required this.tripState,
   });
 
   @override
@@ -34,7 +37,7 @@ class TripHeaderOptions extends StatelessWidget {
             onTap: () {},
           ),
           TripSqureTile(
-            label: 'الحافلة ',
+            label: 'الحافلة ${(busId)}',
             icon: Icons.bus_alert,
             iconColor: AppColors.primaryColor,
             onTap: () {},
