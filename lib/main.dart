@@ -44,11 +44,12 @@ void main() async {
                 TripsCubit(homeRepository)..fetchTodayTrips(),
           ),
           BlocProvider(
-            create: (context) => TripsCubit(homeRepository),
+            create: (context) => StationsCubit(stationsRepository)
+              ..fetchStations(),
           ),
           BlocProvider(
             create: (context) => StationsCubit(stationsRepository)
-              ..fetchStations(),
+              ..fetchCityFilters(),
           ),
         ],
         child: const MyApp(),

@@ -10,6 +10,8 @@ import 'package:uot_transport/home_feature/view_model/cubit/advertising_cubit.da
 import 'package:uot_transport/home_feature/view_model/cubit/advertising_state.dart';
 import 'package:uot_transport/trips_feature/view_model/cubit/trips_cubit.dart';
 import 'package:uot_transport/trips_feature/view_model/cubit/trips_state.dart';
+import 'package:uot_transport/station_feature/view_model/cubit/stations_cubit.dart';
+import 'package:uot_transport/station_feature/view_model/cubit/stations_state.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -30,7 +32,6 @@ class HomeScreen extends StatelessWidget {
                   if (state is AdvertisingsLoading) {
                     return const Center(child: CircularProgressIndicator());
                   } else if (state is AdvertisingsLoaded) {
-                    // Cast state.advertisings to List<Map<String, dynamic>>
                     final advertisings = state.advertisings.cast<Map<String, dynamic>>();
                     return HomeSlider(advertisings: advertisings);
                   } else if (state is AdvertisingsError) {
@@ -64,15 +65,28 @@ class HomeScreen extends StatelessWidget {
               const SizedBox(height: 25),
               SizedBox(
                 height: 40,
-                child: ListView(
-                  shrinkWrap: true,
-                  scrollDirection: Axis.horizontal,
-                  children: const [
-                    CityFilterItem(title: 'All', isSelected: true),
-                    CityFilterItem(title: 'Baghdad', isSelected: false),
-                    CityFilterItem(title: 'Erbil', isSelected: false),
-                    CityFilterItem(title: 'Sulaymaniyah', isSelected: false),
-                  ],
+                child: BlocBuilder<StationsCubit, StationsState>(
+                  builder: (context, state) {
+                    if (state is StationsLoading) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (state is StationsSuccess) {
+                      final stations = state.stations;
+                      return ListView(
+                        shrinkWrap: true,
+                        scrollDirection: Axis.horizontal,
+                        children: stations.map<Widget>((station) {
+                          final stationName = station['name'] ?? 'Unknown Station';
+                          return CityFilterItem(
+                            title: stationName,
+                            isSelected: false, // Adjust selection logic
+                          );
+                        }).toList(),
+                      );
+                    } else if (state is StationsFailure) {
+                      return Center(child: Text('Error: ${state.error}'));
+                    }
+                    return const SizedBox.shrink();
+                  },
                 ),
               ),
               const SizedBox(height: 20),
@@ -83,6 +97,7 @@ class HomeScreen extends StatelessWidget {
                       return const Center(child: CircularProgressIndicator());
                     } else if (state is TripsLoaded) {
                       return ListView.builder(
+
                         itemCount: state.trips.length,
                         itemBuilder: (context, index) {
                           final trip = state.trips[index];

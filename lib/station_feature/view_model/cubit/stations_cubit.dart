@@ -91,4 +91,28 @@ class StationsCubit extends Cubit<StationsState> {
       emit(StationsFailure(e.toString()));
     }
   }
+ Future<void> fetchCityFilters() async {
+   _logger.i('Fetching city filters');
+   emit(StationsLoading());
+   try {
+     final response = await _stationsRepository.fetchStations(); // API call
+     final data = response.data;
+     _logger.i('Response received: $data');
+     if (data is Map && data.containsKey('data') && data['data'] is List) {
+       // Extract the station details
+       final stations = (data['data'] as List)
+           .map((item) => item['station'])
+           .toList();
+       _logger.i('Parsed stations: $stations');
+       emit(StationsSuccess(stations)); // Emit the list of stations
+     } else {
+       _logger.e('Invalid data format in city filters response: $data');
+       throw Exception('Invalid data format in city filters response');
+     }
+   } catch (e) {
+     _logger.e('Error while fetching city filters: $e');
+     emit(StationsFailure(e.toString()));
+   }
+ }
+
 }
