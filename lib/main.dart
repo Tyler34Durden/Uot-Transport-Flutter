@@ -8,13 +8,15 @@ import 'package:uot_transport/home_feature/view_model/cubit/advertising_cubit.da
 import 'package:uot_transport/station_feature/model/repository/stations_repository.dart';
 import 'package:uot_transport/station_feature/view_model/cubit/stations_cubit.dart';
 import 'package:uot_transport/trips_feature/view_model/cubit/trips_cubit.dart';
+import 'package:uot_transport/profile_feature/model/repository/profile_repository.dart';
+import 'package:uot_transport/profile_feature/view_model/cubit/profile_cubit.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // إنشاء نسخ من المستودعات
   final studentRepository = StudentAuthRepository();
   final homeRepository = HomeRepository();
   final stationsRepository = StationsRepository();
+  final profileRepository = ProfileRepository();
 
   runApp(
     MultiRepositoryProvider(
@@ -28,12 +30,14 @@ void main() async {
         RepositoryProvider<StationsRepository>(
           create: (context) => stationsRepository,
         ),
+        RepositoryProvider<ProfileRepository>(
+          create: (context) => profileRepository,
+        ),
       ],
       child: MultiBlocProvider(
         providers: [
           BlocProvider(
-            create: (context) =>
-                StudentAuthCubit(studentRepository),
+            create: (context) => StudentAuthCubit(studentRepository),
           ),
           BlocProvider(
             create: (context) =>
@@ -51,6 +55,9 @@ void main() async {
             create: (context) => StationsCubit(stationsRepository)
               ..fetchCityFilters(),
           ),
+          BlocProvider(
+            create: (context) => ProfileCubit(profileRepository),
+          ),
         ],
         child: const MyApp(),
       ),
@@ -60,7 +67,7 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
+  
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
