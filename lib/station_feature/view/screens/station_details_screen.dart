@@ -26,7 +26,10 @@ class StationDetailsScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const GoogleMapWidget(),
+              // تمرير قيمة الموقع إلى الـ GoogleMapWidget
+              GoogleMapWidget(
+                location: station['location']?.toString() ?? '',
+              ),
               const SizedBox(height: 20),
               AppText(
                 lbl: station['name']?.toString() ?? 'No Title',

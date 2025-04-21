@@ -53,7 +53,9 @@ class StationList extends StatelessWidget {
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(10),
-                    child: const GoogleMapWidget(),
+                    child: GoogleMapWidget(
+                      location: station['location'] ?? '',
+                    ),
                   ),
                 ),
                 title: Text(
@@ -85,7 +87,9 @@ class StationList extends StatelessWidget {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => StationDetailsScreen(station: station)),
+                    MaterialPageRoute(
+                      builder: (context) => StationDetailsScreen(station: station),
+                    ),
                   );
                 },
               ),

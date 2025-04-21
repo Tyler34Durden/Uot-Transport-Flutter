@@ -16,7 +16,6 @@ void main() async {
   final studentRepository = StudentAuthRepository();
   final homeRepository = HomeRepository();
   final stationsRepository = StationsRepository();
-  final profileRepository = ProfileRepository();
 
   runApp(
     MultiRepositoryProvider(
@@ -30,9 +29,7 @@ void main() async {
         RepositoryProvider<StationsRepository>(
           create: (context) => stationsRepository,
         ),
-        RepositoryProvider<ProfileRepository>(
-          create: (context) => profileRepository,
-        ),
+     
       ],
       child: MultiBlocProvider(
         providers: [
@@ -54,9 +51,7 @@ void main() async {
             create: (context) => StationsCubit(stationsRepository)
               ..fetchStations(),
           ),
-          BlocProvider(
-            create: (context) => ProfileCubit(profileRepository),
-          ),
+          
         ],
         child: const MyApp(),
       ),

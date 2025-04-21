@@ -1,4 +1,3 @@
-// filepath: lib/station_feature/view_model/cubit/station_trips_cubit.dart
 import 'package:bloc/bloc.dart';
 import 'package:logger/logger.dart';
 import 'package:uot_transport/station_feature/model/repository/station_trips_repository.dart';

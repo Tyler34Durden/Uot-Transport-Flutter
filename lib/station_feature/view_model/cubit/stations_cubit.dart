@@ -9,11 +9,12 @@ class StationsCubit extends Cubit<StationsState> {
 
   StationsCubit(this._stationsRepository) : super(StationsInitial());
 
-  Future<void> fetchStations({bool? near}) async {
-    _logger.i('Fetching all stations with near filter: $near');
+  // دالة جلب المحطات باستخدام المعاملات inUOT و search مع خيار للفلترة بواسطة near
+  Future<void> fetchStations({String? inUOT, String? search, bool? near}) async {
+    _logger.i('Fetching stations with parameters: inUOT=$inUOT, search=$search, near filter: $near');
     emit(StationsLoading());
     try {
-      final response = await _stationsRepository.fetchStations();
+      final response = await _stationsRepository.fetchStations(inUOT: inUOT, search: search);
       _logger.i('Response received: ${response.data}');
       if (response.data is Map &&
           response.data.containsKey('data') &&
@@ -38,52 +39,21 @@ class StationsCubit extends Cubit<StationsState> {
     }
   }
 
-  Future<void> fetchFilteredStations(bool inUot) async {
-    _logger.i('Fetching filtered stations for inUot: $inUot');
-    emit(StationsLoading());
-    try {
-      final response = await _stationsRepository.fetchFilteredStations(inUot);
-      final data = response.data;
-      _logger.i('Filtered data: $data');
-      if (data is Map &&
-          data.containsKey('data') &&
-          data['data'] is List<dynamic>) {
-        final stations = data['data'] as List<dynamic>;
-        _logger.i('Parsed filtered stations count: ${stations.length}');
-        emit(StationsSuccess(stations));
-      } else if (data is List) {
-        final stations = data as List<dynamic>;
-        _logger.i('Parsed filtered stations from List: ${stations.length}');
-        emit(StationsSuccess(stations));
-      } else {
-        _logger.e('Invalid data format in filtered stations response: $data');
-        throw Exception('Invalid data format in filtered stations response');
-      }
-    } catch (e) {
-      _logger.e('Error while fetching filtered stations: $e');
-      emit(StationsFailure(e.toString()));
-    }
-  }
-
+  // دالة البحث عن المحطات باستخدام قيمة البحث
   Future<void> searchStations(String stationName) async {
     _logger.i('Searching stations with name: $stationName');
     emit(StationsLoading());
     try {
-      final response = await _stationsRepository.searchStations(stationName);
-      final data = response.data;
-      _logger.i('Search response received: $data');
-      if (data is Map &&
-          data.containsKey('data') &&
-          data['data'] is List<dynamic>) {
-        final stations = data['data'] as List<dynamic>;
+      final response = await _stationsRepository.fetchStations(search: stationName);
+      _logger.i('Search response received: ${response.data}');
+      if (response.data is Map &&
+          response.data.containsKey('data') &&
+          response.data['data'] is List<dynamic>) {
+        final stations = response.data['data'] as List<dynamic>;
         _logger.i('Parsed search stations count: ${stations.length}');
         emit(StationsSuccess(stations));
-      } else if (data is List) {
-        final stations = data as List<dynamic>;
-        _logger.i('Parsed search stations from List: ${stations.length}');
-        emit(StationsSuccess(stations));
       } else {
-        _logger.e('Invalid data format in search stations response: $data');
+        _logger.e('Invalid data format in search stations response: ${response.data}');
         throw Exception('Invalid data format in search stations response');
       }
     } catch (e) {
