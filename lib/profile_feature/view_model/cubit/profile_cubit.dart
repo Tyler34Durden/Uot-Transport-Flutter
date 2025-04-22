@@ -17,12 +17,11 @@ class ProfileCubit extends Cubit<ProfileState> {
       emit(ProfileFailure(e.toString()));
     }
   }
-
-  // تعديل بيانات الملف الشخصي
-  Future<void> updateUserProfile(String token, int userId, Map<String, dynamic> updatedData) async {
+ // دالة تحديث رقم الهاتف باستخدام API الجديد
+  Future<void> updateUserPhone(String token, Map<String, dynamic> updatedData) async {
     emit(ProfileLoading());
     try {
-      final profileData = await _profileRepository.updateUserProfile(token, userId, updatedData);
+      final profileData = await _profileRepository.updateUserPhone(token, updatedData);
       emit(ProfileSuccess(profileData));
     } catch (e) {
       emit(ProfileFailure(e.toString()));

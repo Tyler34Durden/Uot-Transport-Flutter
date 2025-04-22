@@ -32,6 +32,8 @@ class AppIcons {
   static const String filled_pin  = 'assets/icons/filled_pin.svg';
   static const String user  = 'assets/icons/user.svg';
   static const String edit  = 'assets/icons/edit.svg';
+  static const String background  = 'assets/images/background.svg';
+  static const String transport_logo  = 'assets/images/transport_logo.svg';
 
 
   static Widget homeNav({double? width, double? height, Color? color}) {

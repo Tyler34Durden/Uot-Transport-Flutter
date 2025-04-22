@@ -17,14 +17,15 @@ class ProfileRepository {
     }
   }
 
-  // تحديث بيانات الملف الشخصي للمستخدم
-  Future<Map<String, dynamic>> updateUserProfile(String token, int userId, Map<String, dynamic> updatedData) async {
+// دالة جديدة لتحديث رقم الهاتف (وباقي البيانات) باستخدام API الجديد عبر PUT
+  Future<Map<String, dynamic>> updateUserPhone(String token, Map<String, dynamic> updatedData) async {
     try {
-      final response = await _apiService.postRequest('student/profile/update/$userId', updatedData, token: token);
+      final response = await _apiService.putRequest('user', updatedData, token: token);
       return response.data;
     } on DioError catch (e) {
-      logger.e('Error updating user profile: ${e.message}');
-      throw Exception('Error updating user profile');
+      logger.e('Error updating user phone: ${e.message}');
+      throw Exception('Error updating user phone');
     }
   }
+
 }
