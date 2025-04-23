@@ -27,5 +27,15 @@ class ProfileRepository {
       throw Exception('Error updating user phone');
     }
   }
-
+ // دالة تغيير كلمة المرور
+  Future<Map<String, dynamic>> changePassword(String token, Map<String, dynamic> passwordData) async {
+    try {
+      final response = await _apiService.putRequest('user', passwordData, token: token);
+      logger.i('Password change response: ${response.data}');
+      return response.data;
+    } on DioError catch (e) {
+      logger.e('Error changing password: ${e.message}');
+      throw Exception('Error changing password');
+    }
+  }
 }

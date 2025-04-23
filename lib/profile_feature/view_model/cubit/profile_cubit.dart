@@ -27,4 +27,14 @@ class ProfileCubit extends Cubit<ProfileState> {
       emit(ProfileFailure(e.toString()));
     }
   }
+   // دالة تغيير كلمة المرور
+  Future<void> changePassword(String token, Map<String, dynamic> passwordData) async {
+    emit(ProfileLoading());
+    try {
+      final responseData = await _profileRepository.changePassword(token, passwordData);
+      emit(ProfileSuccess(responseData));
+    } catch (e) {
+      emit(ProfileFailure(e.toString()));
+    }
+  }
 }
