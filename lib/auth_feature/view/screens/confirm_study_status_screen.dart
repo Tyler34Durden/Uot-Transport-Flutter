@@ -58,7 +58,7 @@ class _ConfirmStudyStatusScreenState extends State<ConfirmStudyStatusScreen> {
         listener: (context, state) {
           if (state is StudentAuthLoading) {
             // Optionally show a loading indicator.
-          } else if (state is StudentAuthSuccess) {
+          } else if (state is RegisterStudentSuccess) {
             Future.delayed(Duration.zero, () {
               print("before nav");
               Navigator.pushReplacement(

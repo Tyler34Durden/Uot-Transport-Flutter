@@ -35,46 +35,46 @@ class StudentAuthRepository {
     }
   }
 
-  // Future<Response> login(Map<String, dynamic> loginData) async {
-  //   try {
-  //     final response = await _apiService.postRequest('student/login', loginData);
-  //     // Assuming the token is in the response data
-  //     final token = response.data['token'];
-  //     // Save the token using shared_preferences
-  //     final prefs = await SharedPreferences.getInstance();
-  //     await prefs.setString('auth_token', token);
-  //     logger.i('Token saved: $token');
-  //     return response;
-  //   } on DioError catch (e) {
-  //     logger.e('DioError: ${e.message}');
-  //     if (e.response != null) {
-  //       logger.e('DioError Response: ${e.response?.data}');
-  //     }
-  //     rethrow;
-  //   }
-  // }
-
-    Future<Response> login(Map<String, dynamic> loginData) async {
-      try {
-        final response = await _apiService.postRequest('student/login', loginData);
-        // Assuming response.data['token'] و response.data['user']['id'] يحملان قيم الدخول
-        final token = response.data['token'];
-        final userId = response.data['user']['id'];
-  
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('auth_token', token);
-        await prefs.setInt('user_id', userId); // تخزين معرف المستخدم أيضًا
-        logger.i('Token saved: $token and userId: $userId');
-  
-        return response;
-      } on DioError catch (e) {
-        logger.e('DioError: ${e.message}');
-        if (e.response != null) {
-          logger.e('DioError Response: ${e.response?.data}');
-        }
-        rethrow;
+  Future<Response> login(Map<String, dynamic> loginData) async {
+    try {
+      final response = await _apiService.postRequest('student/login', loginData);
+      // Assuming the token is in the response data
+      final token = response.data['token'];
+      // Save the token using shared_preferences
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('auth_token', token);
+      logger.i('Token saved: $token');
+      return response;
+    } on DioError catch (e) {
+      logger.e('DioError: ${e.message}');
+      if (e.response != null) {
+        logger.e('DioError Response: ${e.response?.data}');
       }
+      rethrow;
     }
+  }
+
+    // Future<Response> login(Map<String, dynamic> loginData) async {
+    //   try {
+    //     final response = await _apiService.postRequest('student/login', loginData);
+    //     // Assuming response.data['token'] و response.data['user']['id'] يحملان قيم الدخول
+    //     final token = response.data['token'];
+    //     final userId = response.data['user']['id'];
+    //
+    //     final prefs = await SharedPreferences.getInstance();
+    //     await prefs.setString('auth_token', token);
+    //     await prefs.setInt('user_id', userId); // تخزين معرف المستخدم أيضًا
+    //     logger.i('Token saved: $token and userId: $userId');
+    //
+    //     return response;
+    //   } on DioError catch (e) {
+    //     logger.e('DioError: ${e.message}');
+    //     if (e.response != null) {
+    //       logger.e('DioError Response: ${e.response?.data}');
+    //     }
+    //     rethrow;
+    //   }
+    // }
 
   Future<Response> forgotPassword(String email) async {
     try {

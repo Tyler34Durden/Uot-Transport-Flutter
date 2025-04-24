@@ -1,100 +1,77 @@
+// File: lib/trips_feature/view/screens/trips_screen.dart
 import 'package:flutter/material.dart';
-    import 'package:uot_transport/auth_feature/view/widgets/app_text.dart';
-    import 'package:uot_transport/core/app_colors.dart';
-    import 'package:uot_transport/home_feature/view/widgets/active_trips_widget.dart';
-    import 'package:uot_transport/trips_feature/view/widgets/trip_selection_widget.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:uot_transport/auth_feature/view/widgets/app_text.dart';
+import 'package:uot_transport/core/app_colors.dart';
+import 'package:uot_transport/home_feature/view/widgets/active_trips_widget.dart';
+import 'package:uot_transport/trips_feature/view/widgets/trip_selection_widget.dart';
+import 'package:uot_transport/trips_feature/view_model/cubit/trips_cubit.dart';
+import 'package:uot_transport/trips_feature/view_model/cubit/trips_state.dart';
 
-    class TripsScreen extends StatelessWidget {
-      const TripsScreen({super.key});
+class TripsScreen extends StatelessWidget {
+  const TripsScreen({super.key});
 
-      @override
-      Widget build(BuildContext context) {
-        return Directionality(
-          textDirection: TextDirection.rtl,
-          child: Scaffold(
-            backgroundColor: AppColors.backgroundColor,
-            body: ListView(
-              padding: const EdgeInsets.all(16),
-              children: const [
-                Padding(
-                  padding: EdgeInsets.only(top: 28, right: 28),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      AppText(
-                        lbl: 'الرحلات',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
+  @override
+  Widget build(BuildContext context) {
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+        backgroundColor: AppColors.backgroundColor,
+        body: ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            const Padding(
+              padding: EdgeInsets.only(top: 28, right: 28),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  AppText(
+                    lbl: 'الرحلات',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                TripSelectionWidget(),
-                Padding(
-                  padding: EdgeInsets.all(16),
-                  child: ActiveTripsWidget(
-                    tripId: '1001#',
-                    tripState: 'Active',
-                    firstTripRoute: {
-                      'stationName': 'Station A',
-                      'expectedTime': '12:00 PM',
-                    },
-                    lastTripRoute: {
-                      'stationName': 'Station Z',
-                      'expectedTime': '1:00 PM',
-                    }, busId: '1001',
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.all(16),
-                  child: ActiveTripsWidget(
-                    tripId: '1002#',
-                    tripState: 'Inactive',
-                    firstTripRoute: {
-                      'stationName': 'Station B',
-                      'expectedTime': '1:30 PM',
-                    },
-                    lastTripRoute: {
-                      'stationName': 'Station Y',
-                      'expectedTime': '2:30 PM',
-                    }, busId: '',
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.all(16),
-                  child: ActiveTripsWidget(
-                    tripId: '1003#',
-                    tripState: 'Active',
-                    firstTripRoute: {
-                      'stationName': 'Station C',
-                      'expectedTime': '3:00 PM',
-                    },
-                    lastTripRoute: {
-                      'stationName': 'Station X',
-                      'expectedTime': '4:00 PM',
-                    }, busId: '',
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.all(16),
-                  child: ActiveTripsWidget(
-                    tripId: '1004#',
-                    tripState: 'Inactive',
-                    firstTripRoute: {
-                      'stationName': 'Station D',
-                      'expectedTime': '5:00 PM',
-                    },
-                    lastTripRoute: {
-                      'stationName': 'Station W',
-                      'expectedTime': '6:00 PM',
-                    }, busId: '',
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        );
-      }
-    }
+            // The filter widget updates the TripsCubit state to fetch trips.
+            const TripSelectionWidget(),
+            const SizedBox(height: 20),
+            // Show trips based on the filtered selection.
+            BlocBuilder<TripsCubit, TripsState>(
+              builder: (context, state) {
+                if (state is TripsLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (state is TripsLoaded) {
+                  final trips = state.trips;
+                  if (trips.isEmpty) {
+                    return const Center(child: Text('No trips available'));
+                  }
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: trips.length,
+                    itemBuilder: (context, index) {
+                      final trip = trips[index];
+                      return ActiveTripsWidget(
+                        tripId: trip['tripId']?.toString() ?? '',
+                        tripState: trip['tripState'] ?? '',
+                        firstTripRoute: trip['firstTripRoute'] ?? {},
+                        lastTripRoute: trip['lastTripRoute'] ?? {},
+                        busId: trip['busId']?.toString() ?? '',
+                      );
+                    },
+                  );
+                } else if (state is TripsError) {
+                  return Center(child: Text('Error: ${state.error}'));
+                }
+                return const SizedBox.shrink();
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

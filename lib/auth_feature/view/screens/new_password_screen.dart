@@ -36,7 +36,7 @@ import 'package:flutter/material.dart';
               listener: (context, state) {
                 if (state is StudentAuthLoading) {
                   // Optionally show a loading indicator.
-                } else if (state is StudentAuthSuccess) {
+                } else if (state is ResetPasswordSuccess) {
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(

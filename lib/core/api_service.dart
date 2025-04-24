@@ -71,9 +71,10 @@ class ApiService {
 
   Dio get dio => _dio;
 
-  Future<Response> getRequest(String endpoint) async {
+  Future<Response> getRequest(String endpoint, { Map<String,dynamic>? queryParams}) async {
     try {
-      final response = await _dio.get(endpoint);
+
+      final response = await _dio.get(endpoint,queryParameters: queryParams);
       print('Status Code: ${response.statusCode}');
       print('Response Data: ${response.data}');
       return response;

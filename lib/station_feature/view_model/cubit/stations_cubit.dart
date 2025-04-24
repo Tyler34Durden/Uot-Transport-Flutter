@@ -51,6 +51,7 @@ class StationsCubit extends Cubit<StationsState> {
         final stations = data['data'] as List<dynamic>;
         _logger.i('Parsed filtered stations count: ${stations.length}');
         emit(StationsSuccess(stations));
+        print('Stations: $stations');
       } else if (data is List) {
         final stations = data as List<dynamic>;
         _logger.i('Parsed filtered stations from List: ${stations.length}');
