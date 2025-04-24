@@ -8,7 +8,7 @@ class StationTripsRepository {
 
   Future<Response> fetchStationTrips(int stationId) async {
     try {
-      final endpoint = 'trips/$stationId/station';
+      final endpoint = 'station/$stationId/trips';
       final response = await _apiService.getRequest(endpoint);
       logger.i('Station trips fetched successfully for stationId: $stationId');
       return response;

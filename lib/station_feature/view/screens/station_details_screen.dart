@@ -21,81 +21,82 @@ class StationDetailsScreen extends StatelessWidget {
       child: Scaffold(
         backgroundColor: AppColors.backgroundColor,
         appBar: const BackHeader(),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // تمرير قيمة الموقع إلى الـ GoogleMapWidget
-              GoogleMapWidget(
-                location: station['location']?.toString() ?? '',
-              ),
-              const SizedBox(height: 20),
-              AppText(
-                lbl: station['name']?.toString() ?? 'No Title',
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.primaryColor,
+        body: SingleChildScrollView( // تم إضافة الـ SingleChildScrollView هنا
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // تمرير قيمة الموقع إلى الـ GoogleMapWidget
+                GoogleMapWidget(
+                  location: station['location']?.toString() ?? '',
                 ),
-              ),
-              const SizedBox(height: 10),
-              const AppText(
-                lbl: 'الرحلات :',
-                style: TextStyle(
-                  fontSize: 20,
-                  color: AppColors.primaryColor,
-                  fontWeight: FontWeight.bold,
+                const SizedBox(height: 20),
+                AppText(
+                  lbl: station['name']?.toString() ?? 'No Title',
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.primaryColor,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 10),
-              // يمكن وضع ActiveTripsWidget هنا لعرض رحلات مختصرة إن وُجدت.
-              const SizedBox(height: 10),
-              const AppText(
-                lbl: 'الرحلات القادمة:',
-                style: TextStyle(
-                  fontSize: 20,
-                  color: AppColors.primaryColor,
-                  fontWeight: FontWeight.bold,
+                const SizedBox(height: 10),
+                const AppText(
+                  lbl: 'الرحلات :',
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: AppColors.primaryColor,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 10),
-              BlocProvider(
-                create: (context) => StationTripsCubit(StationTripsRepository())
-                  ..fetchStationTrips(stationId),
-                child: BlocBuilder<StationTripsCubit, StationTripsState>(
-                  builder: (context, state) {
-                    if (state is StationTripsLoading) {
-                      return const Center(child: CircularProgressIndicator());
-                    } else if (state is StationTripsFailure) {
-                      return Center(child: Text('Error: ${state.error}'));
-                    } else if (state is StationTripsSuccess) {
-                      final trips = state.trips;
-                      return ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: trips.length,
-                        itemBuilder: (context, index) {
-                          final trip = trips[index];
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 16.0),
-                            child: ActiveTripsWidget(
-                              busId: trip['busId']?.toString() ?? '',
-                              tripId: trip['tripId']?.toString() ?? '',
-                              tripState:
-                                  trip['tripState']?.toString() ?? 'unknown',
-                              firstTripRoute: trip['firstTripRoute'] ?? {},
-                              lastTripRoute: trip['lastTripRoute'] ?? {},
-                            ),
-                          );
-                        },
-                      );
-                    }
-                    return const SizedBox.shrink();
-                  },
+                const SizedBox(height: 10),
+                // يمكنك إضافة ActiveTripsWidget هنا إذا لزم الأمر
+                const SizedBox(height: 10),
+                const AppText(
+                  lbl: 'الرحلات القادمة:',
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: AppColors.primaryColor,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-            ],
+                const SizedBox(height: 10),
+                BlocProvider(
+                  create: (context) => StationTripsCubit(StationTripsRepository())
+                    ..fetchStationTrips(stationId),
+                  child: BlocBuilder<StationTripsCubit, StationTripsState>(
+                    builder: (context, state) {
+                      if (state is StationTripsLoading) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (state is StationTripsFailure) {
+                        return Center(child: Text('Error: ${state.error}'));
+                      } else if (state is StationTripsSuccess) {
+                        final trips = state.trips;
+                        return ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: trips.length,
+                          itemBuilder: (context, index) {
+                            final trip = trips[index];
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 16.0),
+                              child: ActiveTripsWidget(
+                                busId: trip['busId']?.toString() ?? '',
+                                tripId: trip['tripId']?.toString() ?? '',
+                                tripState: trip['tripState']?.toString() ?? 'unknown',
+                                firstTripRoute: trip['firstTripRoute'] ?? {},
+                                lastTripRoute: trip['lastTripRoute'] ?? {},
+                              ),
+                            );
+                          },
+                        );
+                      }
+                      return const SizedBox.shrink();
+                    },
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
