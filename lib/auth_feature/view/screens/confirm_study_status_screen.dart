@@ -110,6 +110,7 @@ class _ConfirmStudyStatusScreenState extends State<ConfirmStudyStatusScreen> {
                 ),
                 SizedBox(height: screenHeight * 0.02),
                 AppInput(
+                  suffixIcon: const Icon(Icons.numbers_outlined),
                   controller: _registrationNumberController,
                   hintText: 'رقم القيد',
                   textAlign: TextAlign.right,

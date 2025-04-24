@@ -6,6 +6,7 @@ import 'package:uot_transport/auth_feature/view/widgets/app_text.dart';
 import 'package:uot_transport/core/core_widgets/back_header.dart';
 import 'package:uot_transport/core/app_colors.dart';
 import 'package:uot_transport/core/api_service.dart';
+import 'package:uot_transport/core/response_dialog.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
   const ChangePasswordScreen({super.key});
@@ -32,9 +33,10 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   Future<void> _changePassword() async {
     if (_newPasswordController.text.trim() !=
         _confirmPasswordController.text.trim()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('كلمة المرور الجديدة غير متطابقة مع التأكيد')),
+      showResponseDialog(
+        context,
+        success: false,
+        message: 'كلمة المرور الجديدة غير متطابقة مع التأكيد',
       );
       return;
     }
@@ -49,17 +51,20 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       final response =
           await ApiService().putRequest('user', passwordData, token: _token);
       if (response.data != null && response.data['message'] != null) {
-        // عرض رسالة نجاح من الخادم
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(response.data['message'])),
+        showResponseDialog(
+          context,
+          success: true,
+          message: response.data['message'],
         );
-          Navigator.pop(context);
+        // Navigator.pop(context);
       } else {
         throw Exception('بيانات الاستجابة غير صالحة');
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('فشل تغيير كلمة المرور: ${e.toString()}')),
+      showResponseDialog(
+        context,
+        success: false,
+        message: 'فشل تغيير كلمة المرور: ${e.toString()}',
       );
     }
   }
@@ -86,7 +91,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               SizedBox(height: screenHeight * 0.04),
               const Center(
                 child: AppText(
-                  lbl: 'إعادة تعيين كلمة المرور',
+                  lbl: 'تغيير كلمة المرور',
                   style: TextStyle(
                     color: AppColors.primaryColor,
                     fontSize: 28,
@@ -114,6 +119,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               ),
               const SizedBox(height: 10),
               AppInput(
+                suffixIcon: const Icon(Icons.lock_open_rounded),
                 controller: _currentPasswordController,
                 hintText: 'أدخل كلمة المرور القديمة',
                 textAlign: TextAlign.right,
@@ -130,6 +136,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               ),
               const SizedBox(height: 10),
               AppInput(
+                suffixIcon: const Icon(Icons.lock_rounded),
                 controller: _newPasswordController,
                 hintText: 'أدخل كلمة المرور الجديدة',
                 textAlign: TextAlign.right,
@@ -146,6 +153,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               ),
               const SizedBox(height: 10),
               AppInput(
+                suffixIcon: const Icon(Icons.lock_rounded),
                 controller: _confirmPasswordController,
                 hintText: 'أعد إدخال كلمة المرور الجديدة',
                 textAlign: TextAlign.right,
@@ -153,7 +161,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               ),
               SizedBox(height: screenHeight * 0.04),
               AppButton(
-                lbl: 'إعادة تعيين كلمة المرور',
+                lbl: 'تغيير كلمة المرور',
                 onPressed: _changePassword,
               ),
             ],

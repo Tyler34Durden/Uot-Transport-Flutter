@@ -216,17 +216,17 @@
 //   }
 // }
 
-
-
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uot_transport/auth_feature/view/screens/login_screen.dart';
 import 'package:uot_transport/auth_feature/view/widgets/app_button.dart';
 import 'package:uot_transport/auth_feature/view/widgets/app_input.dart';
 import 'package:uot_transport/auth_feature/view/widgets/app_text.dart';
 import 'package:uot_transport/core/app_colors.dart';
 import 'package:uot_transport/core/api_service.dart';
+import 'package:uot_transport/core/response_dialog.dart';
 import 'package:uot_transport/profile_feature/view/screens/change_password_scren.dart';
 import 'package:uot_transport/profile_feature/view/widgets/profile_image.dart';
 
@@ -280,11 +280,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
       "email": _user['email'] ?? "",
       "userZone": _user['userZone'] ?? "كلية تقنية المعلومات",
       "role": _user['role'] ?? "student",
-      "phone": _phoneController.text.trim()
+      "phone": _phoneController.text.trim(),
     };
 
     try {
-      final response = await ApiService().putRequest('user', updatedData, token: _token);
+      final response =
+          await ApiService().putRequest('user', updatedData, token: _token);
       if (response.data != null && response.data['user'] != null) {
         setState(() {
           _user = response.data['user'];
@@ -293,16 +294,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('user_profile', jsonEncode(_user));
         _logger.i('User profile updated via API: $_user');
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('تم حفظ التغييرات بنجاح!')),
+        showResponseDialog(
+          context,
+          success: true,
+          message: 'تم حفظ التغييرات بنجاح!',
         );
       } else {
         throw Exception('Response data is invalid');
       }
     } catch (e) {
       _logger.e('Failed to update user phone: ${e.toString()}');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('فشل حفظ التغييرات: ${e.toString()}')),
+      showResponseDialog(
+        context,
+        success: false,
+        message: 'فشل حفظ التغييرات: ${e.toString()}',
       );
     }
   }
@@ -402,6 +407,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     const SizedBox(height: 10),
                     AppInput(
+                      prefixIcon: const Icon(Icons.phone_rounded),
                       controller: _phoneController,
                       style: const TextStyle(fontSize: 16),
                     ),
@@ -422,7 +428,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => const ChangePasswordScreen(),
+                                  builder: (context) =>
+                                      const ChangePasswordScreen(),
                                 ),
                               );
                             },
@@ -435,8 +442,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             color: AppColors.secondaryColor,
                             textColor: AppColors.primaryColor,
                             onPressed: () {
-                              _logger.i('Logout button pressed');
-                              // تنفيذ منطق تسجيل الخروج
+                              Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                    builder: (context) => const LoginScreen()),
+                              );
                             },
                           ),
                         ),

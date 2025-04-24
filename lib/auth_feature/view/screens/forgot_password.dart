@@ -77,6 +77,7 @@ import 'package:flutter/material.dart';
                                 ),
                                 SizedBox(height: screenHeight * 0.02),
                                 AppInput(
+                                  suffixIcon: const Icon(Icons.email_rounded),
                                   controller: emailController,
                                   hintText: 'البريد الالكتروني',
                                   textAlign: TextAlign.right,
