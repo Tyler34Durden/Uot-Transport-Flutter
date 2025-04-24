@@ -1,37 +1,3 @@
-// import 'package:firebase_messaging/firebase_messaging.dart';
-
-// class NotificationService {
-//   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
-
-//   Future<void> init() async {
-//     // طلب إذن الإشعارات (ضروري لبعض الأنظمة)
-//     NotificationSettings settings = await _firebaseMessaging.requestPermission();
-//     print('User granted permission: ${settings.authorizationStatus}');
-
-//     // استرجاع التوكن واختباره
-//     String? token = await _firebaseMessaging.getToken();
-//     print('Firebase Messaging Token: $token');
-
-//     // استقبال الرسائل عند وجود الرسائل في الواجهة النشطة
-//     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-//       print('Received a message in foreground: ${message.notification?.body}');
-//     });
-
-//     // استقبال الأحداث عند النقر على إشعار في حالة فتح التطبيق
-//     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-//       print('Notification clicked!');
-//     });
-
-//     // تسجيل معالج الرسائل في الخلفية
-//     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-//   }
-// }
-
-// // هذه الدالة يجب أن تكون دالة من المستوى الأعلى لمعالجة الرسائل في الخلفية
-// Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-//   print('Handling a background message: ${message.messageId}');
-// }
-
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
