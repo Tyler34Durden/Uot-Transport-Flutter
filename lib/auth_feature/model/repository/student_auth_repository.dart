@@ -13,7 +13,7 @@ class StudentAuthRepository {
   Future<Response> registerStudent(Map<String, dynamic> studentData) async {
     try {
       final response =
-          await _apiService.postRequest('student/register', studentData);
+      await _apiService.postRequest('student/register', studentData);
       logger.i('Student registered successfully');
       return response;
     } on DioError catch (e) {
@@ -28,7 +28,7 @@ class StudentAuthRepository {
   Future<Response> verifyOtp(Map<String, dynamic> otpData) async {
     try {
       final response =
-          await _apiService.postRequest('student/register/verifyOtp', otpData);
+      await _apiService.postRequest('student/register/verifyOtp', otpData);
       logger.i('OTP verified successfully');
       return response;
     } on DioError catch (e) {
@@ -43,7 +43,7 @@ class StudentAuthRepository {
   Future<Response> login(Map<String, dynamic> loginData) async {
     try {
       final response =
-          await _apiService.postRequest('student/login', loginData);
+      await _apiService.postRequest('student/login', loginData);
       final token = response.data['token'];
       final user = response.data['user'];
       final prefs = await SharedPreferences.getInstance();
@@ -76,7 +76,7 @@ class StudentAuthRepository {
   //     final prefs = await SharedPreferences.getInstance();
   //     await prefs.setString('auth_token', token);
   //     await prefs.setString(
-  //         'user_profile', jsonEncode(user)); 
+  //         'user_profile', jsonEncode(user));
   //     logger.i(
   //         'Token saved: $token, user data saved: $user, and FCM Token: $fcmToken');
   //     return response;
@@ -92,7 +92,7 @@ class StudentAuthRepository {
   Future<Response> forgotPassword(String email) async {
     try {
       final response =
-          await _apiService.postRequest('forgotPassword', {'email': email});
+      await _apiService.postRequest('forgotPassword', {'email': email});
       logger.i('Forgot password request sent successfully');
       return response;
     } on DioError catch (e) {
@@ -107,7 +107,7 @@ class StudentAuthRepository {
   Future<Response> validateOtp(Map<String, dynamic> otpData) async {
     try {
       final response =
-          await _apiService.postRequest('forgotPassword/validateOtp', otpData);
+      await _apiService.postRequest('forgotPassword/validateOtp', otpData);
       logger.i('OTP validated successfully');
       return response;
     } on DioError catch (e) {
@@ -122,7 +122,7 @@ class StudentAuthRepository {
   Future<Response> resetPassword(Map<String, dynamic> passwordData) async {
     try {
       final response =
-          await _apiService.postRequest('resetPassword', passwordData);
+      await _apiService.postRequest('resetPassword', passwordData);
       logger.i('Password reset successfully');
       return response;
     } on DioError catch (e) {

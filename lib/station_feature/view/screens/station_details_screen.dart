@@ -83,7 +83,7 @@ class StationDetailsScreen extends StatelessWidget {
                               busId: trip['busId']?.toString() ?? '',
                               tripId: trip['tripId']?.toString() ?? '',
                               tripState:
-                                  trip['tripState']?.toString() ?? 'unknown',
+                              trip['tripState']?.toString() ?? 'unknown',
                               firstTripRoute: trip['firstTripRoute'] ?? {},
                               lastTripRoute: trip['lastTripRoute'] ?? {},
                             ),

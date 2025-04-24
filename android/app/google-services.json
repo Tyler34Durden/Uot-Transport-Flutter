@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "940757879830",
+    "project_id": "uot-transport",
+    "storage_bucket": "uot-transport.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:940757879830:android:801d66ba63a5251b7cf937",
+        "android_client_info": {
+          "package_name": "com.example.uot_transport"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB8ff2ZhUzHyzvKrB2HSAktNiZf2Y6dbWg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
