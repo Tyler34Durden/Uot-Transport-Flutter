@@ -84,6 +84,7 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Almarai',
       ),
       home: const SplashScreen(),
+      //dd
     );
   }
 }
