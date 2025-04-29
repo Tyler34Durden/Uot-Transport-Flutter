@@ -11,6 +11,7 @@ import 'package:bloc/bloc.dart';
 
       Future<void> fetchStationTrips(int stationId) async {
         _logger.i('Fetching station trips for stationId: $stationId');
+        //some shitty stupid comment
         emit(StationTripsLoading());
         try {
           final response = await _repository.fetchStationTrips(stationId);
