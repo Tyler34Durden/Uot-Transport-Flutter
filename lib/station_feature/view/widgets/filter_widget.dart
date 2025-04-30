@@ -20,13 +20,6 @@ class FilterWidget extends StatelessWidget {
       },
       itemBuilder: (BuildContext context) => [
         const PopupMenuItem(
-          value: 'الكل',
-          child: Text(
-            'الكل',
-            textAlign: TextAlign.right,
-          ),
-        ),
-        const PopupMenuItem(
           value: 'داخل الجامعة',
           child: Text(
             'داخل الجامعة',

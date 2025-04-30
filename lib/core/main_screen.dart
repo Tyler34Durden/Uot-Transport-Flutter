@@ -198,7 +198,7 @@ class _MainScreenState extends State<MainScreen> {
           const StationScreen(),
           const TripsScreen(),
           // تمرير التوكن ومعرف المستخدم باستخدام المتغيرات الديناميكية
-          ProfileScreen(),
+          ProfileScreen(token: _token ?? '', userId: _userId ?? 0),
           const HomeScreen(),
         ],
       ),

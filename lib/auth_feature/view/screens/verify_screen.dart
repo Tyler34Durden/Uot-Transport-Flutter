@@ -27,7 +27,7 @@ class VerifyScreen extends StatelessWidget {
         listener: (context, state) {
           if (state is StudentAuthLoading) {
             // Optionally show a loading indicator.
-          } else if (state is StudentAuthSuccess) {
+          } else if (state is VerifyOtpSuccess) {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(

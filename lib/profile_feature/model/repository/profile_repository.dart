@@ -6,36 +6,41 @@ class ProfileRepository {
   final ApiService _apiService = ApiService();
   final Logger logger = Logger();
 
-  // استرجاع بيانات الملف الشخصي للمستخدم
-  Future<Map<String, dynamic>> fetchUserProfile(String token, int userId) async {
+  Future<Response> fetchUserProfile(String token, int id) async {
     try {
-      final response = await _apiService.getRequest('student/profile/$userId', token: token);
-      return response.data;
+      _apiService.dio.options.headers["Authorization"] = "Bearer $token";
+      final response = await _apiService.getRequest('/user/$id');
+      logger.i('User profile fetched successfully: ${response.data}');
+      return response;
     } on DioError catch (e) {
-      logger.e('Error fetching user profile: ${e.message}');
-      throw Exception('Error fetching user profile');
+      logger.e('DioError in fetchUserProfile: ${e.message}');
+      if (e.response != null) {
+        logger.e('DioError Response: ${e.response?.data}');
+      }
+      rethrow;
     }
   }
 
-// دالة جديدة لتحديث رقم الهاتف (وباقي البيانات) باستخدام API الجديد عبر PUT
-  Future<Map<String, dynamic>> updateUserPhone(String token, Map<String, dynamic> updatedData) async {
+ Future<Response> updateUserProfile(
+    String token,
+    int userId,
+    Map<String, dynamic> payload,
+  ) async {
     try {
-      final response = await _apiService.putRequest('user', updatedData, token: token);
-      return response.data;
+      _apiService.dio.options.headers["Authorization"] = "Bearer $token";
+      final response = await _apiService.putRequest('/user/$userId', payload);
+      logger.i('User profile updated successfully: ${response.data}');
+      return response;
     } on DioError catch (e) {
-      logger.e('Error updating user phone: ${e.message}');
-      throw Exception('Error updating user phone');
+      logger.e('DioError in updateUserProfile: ${e.message}');
+      if (e.response != null) {
+        logger.e('DioError Response: ${e.response?.data}');
+      }
+      rethrow;
     }
   }
- // دالة تغيير كلمة المرور
-  Future<Map<String, dynamic>> changePassword(String token, Map<String, dynamic> passwordData) async {
-    try {
-      final response = await _apiService.putRequest('user', passwordData, token: token);
-      logger.i('Password change response: ${response.data}');
-      return response.data;
-    } on DioError catch (e) {
-      logger.e('Error changing password: ${e.message}');
-      throw Exception('Error changing password');
-    }
-  }
+
+
+
+
 }

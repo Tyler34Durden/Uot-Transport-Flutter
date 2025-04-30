@@ -58,7 +58,7 @@ class _ConfirmStudyStatusScreenState extends State<ConfirmStudyStatusScreen> {
         listener: (context, state) {
           if (state is StudentAuthLoading) {
             // Optionally show a loading indicator.
-          } else if (state is StudentAuthSuccess) {
+          } else if (state is RegisterStudentSuccess) {
             Future.delayed(Duration.zero, () {
               print("before nav");
               Navigator.pushReplacement(
@@ -110,7 +110,6 @@ class _ConfirmStudyStatusScreenState extends State<ConfirmStudyStatusScreen> {
                 ),
                 SizedBox(height: screenHeight * 0.02),
                 AppInput(
-                  suffixIcon: const Icon(Icons.numbers_outlined),
                   controller: _registrationNumberController,
                   hintText: 'رقم القيد',
                   textAlign: TextAlign.right,

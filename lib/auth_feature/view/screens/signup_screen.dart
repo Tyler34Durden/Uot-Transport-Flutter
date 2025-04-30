@@ -9,13 +9,10 @@ import 'package:uot_transport/core/app_colors.dart';
 class SignupScreen extends StatelessWidget {
   const SignupScreen({super.key});
 
-  static final TextEditingController fullNameController =
-      TextEditingController();
+  static final TextEditingController fullNameController = TextEditingController();
   static final TextEditingController emailController = TextEditingController();
-  static final TextEditingController passwordController =
-      TextEditingController();
-  static final TextEditingController confirmPasswordController =
-      TextEditingController();
+  static final TextEditingController passwordController = TextEditingController();
+  static final TextEditingController confirmPasswordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -61,8 +58,7 @@ class SignupScreen extends StatelessWidget {
                   SizedBox(height: screenHeight * 0.02),
                   const AppText(
                     textAlign: TextAlign.center,
-                    lbl:
-                        'أنشئ حساباً جديداً واستمتع بتجربة نقل جامعي مريحة ومميزة.',
+                    lbl: 'أنشئ حساباً جديداً واستمتع بتجربة نقل جامعي مريحة ومميزة.',
                     style: TextStyle(
                       color: AppColors.textColor,
                       fontSize: 20,
@@ -79,7 +75,6 @@ class SignupScreen extends StatelessWidget {
                   ),
                   SizedBox(height: screenHeight * 0.02),
                   AppInput(
-                    suffixIcon: const Icon(Icons.person_rounded),
                     controller: fullNameController,
                     hintText: 'الاسم الثلاثي ',
                     textAlign: TextAlign.right,
@@ -96,7 +91,6 @@ class SignupScreen extends StatelessWidget {
                   ),
                   SizedBox(height: screenHeight * 0.02),
                   AppInput(
-                    suffixIcon: const Icon(Icons.email_rounded),
                     controller: emailController,
                     hintText: 'البريد الإلكتروني ',
                     textAlign: TextAlign.right,
@@ -113,8 +107,6 @@ class SignupScreen extends StatelessWidget {
                   ),
                   SizedBox(height: screenHeight * 0.02),
                   AppInput(
-                    suffixIcon: const Icon(Icons.lock_open_rounded),
-                    obscureText: true,
                     controller: passwordController,
                     hintText: 'كلمة المرور  ',
                     textAlign: TextAlign.right,
@@ -131,10 +123,8 @@ class SignupScreen extends StatelessWidget {
                   ),
                   SizedBox(height: screenHeight * 0.02),
                   AppInput(
-                    suffixIcon: const Icon(Icons.lock_rounded),
-                    obscureText: true,
                     controller: confirmPasswordController,
-                    hintText: 'كلمة المرور (تأكيد)',
+                    hintText: 'كلمة المرور ',
                     textAlign: TextAlign.right,
                     maxLength: 25,
                   ),
@@ -162,8 +152,7 @@ class SignupScreen extends StatelessWidget {
                         return;
                       }
                       if (password != confirmPassword) {
-                        showError(context,
-                            'كلمة المرور وتأكيد كلمة المرور غير متطابقتين');
+                        showError(context, 'كلمة المرور وتأكيد كلمة المرور غير متطابقتين');
                         return;
                       }
 
@@ -181,8 +170,7 @@ class SignupScreen extends StatelessWidget {
                             fullNameController: fullNameController,
                             emailController: emailController,
                             passwordController: passwordController,
-                            confirmPasswordController:
-                                confirmPasswordController,
+                            confirmPasswordController: confirmPasswordController,
                           ),
                         ),
                       );

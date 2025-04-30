@@ -6,29 +6,46 @@ class StationsRepository {
   final ApiService _apiService = ApiService();
   final Logger logger = Logger();
 
-  // دالة API موحدة تبني الـ URL بناءً على قيمة inUOT و search
-  Future<Response> fetchStations({String? inUOT, String? search}) async {
+  Future<Response> fetchStations() async {
     try {
-      String endpoint = 'stations';
-      Map<String, dynamic> queryParameters = {};
-
-      if (inUOT != null && inUOT.isNotEmpty) {
-        queryParameters['inUOT'] = inUOT;
-      }
-      if (search != null && search.isNotEmpty) {
-        queryParameters['search'] = search;
-      }
-
-      if (queryParameters.isNotEmpty) {
-        final queryString = Uri(queryParameters: queryParameters).query;
-        endpoint = '$endpoint?$queryString';
-      }
-      logger.i('Constructed endpoint: $endpoint');
-      final response = await _apiService.getRequest(endpoint);
+      final response = await _apiService.getRequest('stations');
       logger.i('Stations fetched successfully');
       return response;
     } on DioError catch (e) {
       logger.e('DioError in fetchStations: ${e.message}');
+      if (e.response != null) {
+        logger.e('DioError Response: ${e.response?.data}');
+      }
+      rethrow;
+    }
+  }
+
+  Future<Response> fetchFilteredStations(bool inUot) async {
+    try {
+      final endpoint = 'stations/inUot/$inUot/mobile';
+      final response = await _apiService.getRequest(endpoint);
+      logger.i('Filtered stations fetched successfully');
+      return response;
+    } on DioError catch (e) {
+      logger.e('DioError in fetchFilteredStations: ${e.message}');
+      if (e.response != null) {
+        logger.e('DioError Response: ${e.response?.data}');
+      }
+      rethrow;
+    }
+  }
+
+  Future<Response> searchStations(String stationName) async {
+    try {
+      final endpoint = 'stations/search/$stationName';
+      final response = await _apiService.getRequest(endpoint);
+      logger.i('Search stations fetched successfully');
+      return response;
+    } on DioError catch (e) {
+      logger.e('DioError during searchStations: ${e.message}');
+      if (e.response != null) {
+        logger.e('DioError Response during searchStations: ${e.response?.data}');
+      }
       rethrow;
     }
   }

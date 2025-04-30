@@ -16,7 +16,7 @@ class StationScreen extends StatefulWidget {
 }
 
 class _StationScreenState extends State<StationScreen> {
-  String selectedFilter = 'الكل'; // القيمة الافتراضية
+  String selectedFilter = 'كل المحطات'; // القيمة الافتراضية
 
   @override
   Widget build(BuildContext context) {
@@ -44,15 +44,13 @@ class _StationScreenState extends State<StationScreen> {
                               if (value == 'داخل الجامعة') {
                                 context
                                     .read<StationsCubit>()
-                                    .fetchStations(inUOT: '0');
+                                    .fetchStations(near: true);
                               } else if (value == 'خارج الجامعة') {
                                 context
                                     .read<StationsCubit>()
-                                    .fetchStations(inUOT: '1');
-                              } else if (value == 'الكل') {
-                                context
-                                    .read<StationsCubit>()
-                                    .fetchStations(inUOT: 'all');
+                                    .fetchStations(near: false);
+                              } else {
+                                context.read<StationsCubit>().fetchStations();
                               }
                             });
                           },
@@ -69,6 +67,7 @@ class _StationScreenState extends State<StationScreen> {
                   ),
                   SearchBar(
                     onSearch: (query) {
+                      // استدعاء دالة البحث عبر Cubit
                       context.read<StationsCubit>().searchStations(query);
                     },
                   ),

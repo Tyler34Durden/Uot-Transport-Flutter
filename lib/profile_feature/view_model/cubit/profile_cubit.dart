@@ -1,40 +1,53 @@
 import 'package:bloc/bloc.dart';
-import 'package:uot_transport/profile_feature/model/repository/profile_repository.dart';
+import 'package:logger/logger.dart';
 import 'profile_state.dart';
+import 'package:uot_transport/profile_feature/model/repository/profile_repository.dart';
 
 class ProfileCubit extends Cubit<ProfileState> {
   final ProfileRepository _profileRepository;
+  final Logger _logger = Logger();
 
   ProfileCubit(this._profileRepository) : super(ProfileInitial());
 
-  // جلب بيانات الملف الشخصي
   Future<void> fetchUserProfile(String token, int userId) async {
     emit(ProfileLoading());
     try {
-      final profileData = await _profileRepository.fetchUserProfile(token, userId);
-      emit(ProfileSuccess(profileData));
+      final response = await _profileRepository.fetchUserProfile(token, userId);
+      final data = response.data;
+      if (data is Map && data['message'] == 'success' && data['data'] != null) {
+        emit(ProfileSuccess(data['data']));
+      } else {
+        throw Exception('Invalid profile response');
+      }
     } catch (e) {
+      _logger.e('Error while fetching profile: $e');
       emit(ProfileFailure(e.toString()));
     }
   }
- // دالة تحديث رقم الهاتف باستخدام API الجديد
-  Future<void> updateUserPhone(String token, Map<String, dynamic> updatedData) async {
-    emit(ProfileLoading());
+
+ Future<void> updateUserProfile(
+    String token,
+    int userId,
+    Map<String, dynamic> payload,
+  ) async {
+    emit(ProfileLoading()); // يمكن استخدام حالة خاصة بالتحديث إن أردت
     try {
-      final profileData = await _profileRepository.updateUserPhone(token, updatedData);
-      emit(ProfileSuccess(profileData));
+      final response = await _profileRepository.updateUserProfile(token, userId, payload);
+      final data = response.data;
+      if (data is Map && data['message'] == 'success') {
+        // في حال نجح التحديث، يمكننا إعادة جلب الملف الشخصي مثلاً
+        fetchUserProfile(token, userId);
+      } else {
+        throw Exception('Update profile failed');
+      }
     } catch (e) {
+      _logger.e('Error while updating profile: $e');
       emit(ProfileFailure(e.toString()));
     }
   }
-   // دالة تغيير كلمة المرور
-  Future<void> changePassword(String token, Map<String, dynamic> passwordData) async {
-    emit(ProfileLoading());
-    try {
-      final responseData = await _profileRepository.changePassword(token, passwordData);
-      emit(ProfileSuccess(responseData));
-    } catch (e) {
-      emit(ProfileFailure(e.toString()));
-    }
-  }
+
+
+
+
+
 }

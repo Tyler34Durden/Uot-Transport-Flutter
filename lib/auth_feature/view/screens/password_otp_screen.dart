@@ -16,7 +16,6 @@ class PasswordOtp extends StatelessWidget {
 
   static final TextEditingController otpController = TextEditingController();
 
-
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
@@ -26,9 +25,7 @@ class PasswordOtp extends StatelessWidget {
       appBar: BackHeader(),
       body: BlocListener<StudentAuthCubit, StudentAuthState>(
         listener: (context, state) {
-          if (state is StudentAuthLoading) {
-            // Optionally show a loading indicator.
-          } else if (state is StudentAuthSuccess) {
+          if (state is ValidateOtpSuccess) {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
@@ -39,7 +36,9 @@ class PasswordOtp extends StatelessWidget {
               ),
             );
           } else if (state is StudentAuthFailure) {
-            print('Error: ${state.error}');
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Error: ${state.error}')),
+            );
           }
         },
         child: SingleChildScrollView(
@@ -93,19 +92,6 @@ class PasswordOtp extends StatelessWidget {
                       "email": email
                     };
                     context.read<StudentAuthCubit>().validateOtp(otpData);
-                  },
-                ),
-                SizedBox(height: screenHeight * 0.02),
-                AppText(
-                  lbl: 'لم تحصل على رمز بعد؟ إعادة إرسال البريد الإلكتروني',
-                  style: const TextStyle(
-                    color: AppColors.primaryColor,
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  textAlign: TextAlign.center,
-                  onTap: () {
-                    // Handle resend OTP
                   },
                 ),
               ],
