@@ -2,13 +2,17 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uot_transport/auth_feature/model/repository/student_auth_repository.dart';
+import 'package:uot_transport/auth_feature/view/screens/login_screen.dart';
+import 'package:uot_transport/auth_feature/view/screens/onboarding_screen.dart';
 import 'package:uot_transport/auth_feature/view/screens/splash_screen.dart';
 import 'package:uot_transport/auth_feature/view_model/cubit/student_auth_cubit.dart';
 import 'package:uot_transport/home_feature/model/repository/home_repository.dart';
 import 'package:uot_transport/home_feature/view_model/cubit/advertising_cubit.dart';
+import 'package:uot_transport/home_feature/view_model/cubit/home_station_cubit.dart';
 import 'package:uot_transport/notification_service.dart';
 import 'package:uot_transport/station_feature/model/repository/stations_repository.dart';
 import 'package:uot_transport/station_feature/view_model/cubit/stations_cubit.dart';
+import 'package:uot_transport/trips_feature/model/repository/trips_repository.dart';
 import 'package:uot_transport/trips_feature/view_model/cubit/trips_cubit.dart';
 import 'package:uot_transport/profile_feature/model/repository/profile_repository.dart';
 import 'package:uot_transport/profile_feature/view_model/cubit/profile_cubit.dart';
@@ -17,14 +21,15 @@ import 'package:uot_transport/profile_feature/view_model/cubit/profile_cubit.dar
 final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  // WidgetsFlutterBinding.ensureInitialized();
+  // await Firebase.initializeApp();
 
   // تهيئة خدمة الإشعارات وتمرير مفتاح ScaffoldMessenger
   final notificationService = NotificationService();
   await notificationService.init(scaffoldMessengerKey);
 
   final studentRepository = StudentAuthRepository();
+  final tripsRepository = TripsRepository();
   final homeRepository = HomeRepository();
   final stationsRepository = StationsRepository();
   final profileRepository = ProfileRepository();
@@ -54,10 +59,10 @@ Future<void> main() async {
             create: (context) => AdvertisingsCubit(homeRepository)..fetchAdvertisings(),
           ),
           BlocProvider(
-            create: (context) => TripsCubit(homeRepository)..fetchTodayTrips(),
+            create: (context) => HomeStationCubit(homeRepository)..fetchTodayTrips()..fetchStations(),
           ),
           BlocProvider(
-            create: (context) => TripsCubit(homeRepository),
+            create: (context) => TripsCubit(tripsRepository),
           ),
           BlocProvider(
             create: (context) => StationsCubit(stationsRepository)..fetchStations(),
@@ -83,7 +88,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         fontFamily: 'Almarai',
       ),
-      home: const SplashScreen(),
+      home: LoginScreen(),
       //dd
     );
   }
