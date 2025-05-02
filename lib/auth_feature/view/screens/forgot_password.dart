@@ -1,3 +1,4 @@
+//added after removed
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uot_transport/auth_feature/view/screens/password_otp_screen.dart';
@@ -17,91 +18,80 @@ class ForgotPassword extends StatelessWidget {
     final screenHeight = MediaQuery.of(context).size.height;
     final TextEditingController emailController = TextEditingController();
 
-    return WillPopScope(
-      onWillPop: () async {
-        emailController.clear();
-        // Do not clear the emailController to retain the text
-        return true;
-      },
-      child: Scaffold(
-        backgroundColor: AppColors.backgroundColor,
-        appBar: const BackHeader(),
-        body: BlocListener<StudentAuthCubit, StudentAuthState>(
-          listener: (context, state) {
-            if (state is StudentAuthLoading) {
-              // Optionally show a loading indicator.
-            } else if (state is ForgotPasswordSuccess) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => PasswordOtp(email: emailController.text),
-                ),
-              );
-            } else if (state is StudentAuthFailure) {
-              // Show error message
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.error)),
-              );
-            }
-          },
-          child: GestureDetector(
-            onTap: () {
-              FocusScope.of(context).unfocus(); // Dismiss the keyboard
-            },
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    SizedBox(height: screenHeight * 0.04),
-                    const Center(
-                      child: AppText(
-                        lbl: 'إسترجاع كلمة المرور ',
-                        style: TextStyle(
-                          color: AppColors.primaryColor,
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: screenHeight * 0.02),
-                    const AppText(
-                      textAlign: TextAlign.center,
-                      lbl:
-                          'ادخل بياناتك ليتم إرسال اليك رمز تحقق لكي تعد تعيين كلمة مرورك',
-                      style: TextStyle(
-                        color: AppColors.textColor,
-                        fontSize: 20,
-                      ),
-                    ),
-                    SizedBox(height: screenHeight * 0.06),
-                    const AppText(
-                      lbl: 'ادخل بريدك الإلكتروني',
-                      style: TextStyle(
-                        color: AppColors.textColor,
-                        fontSize: 14,
-                      ),
-                      textAlign: TextAlign.right,
-                    ),
-                    SizedBox(height: screenHeight * 0.02),
-                    AppInput(
-                      controller: emailController,
-                      hintText: 'البريد الالكتروني',
-                      textAlign: TextAlign.right,
-                    ),
-                    SizedBox(height: screenHeight * 0.04),
-                    AppButton(
-                      lbl: ' إعادة تعيين كلمة المرور',
-                      onPressed: () {
-                        final email = emailController.text;
-                        context.read<StudentAuthCubit>().forgotPassword(email);
-                      },
-                    ),
-                  ],
-                ),
+    return Scaffold(
+      backgroundColor: AppColors.backgroundColor,
+      appBar: const BackHeader(),
+      body: BlocListener<StudentAuthCubit, StudentAuthState>(
+        listener: (context, state) {
+          if (state is StudentAuthLoading) {
+            // Optionally show a loading indicator.
+          } else if (state is StudentAuthSuccess) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => PasswordOtp(email: emailController.text),
               ),
+            );
+          } else if (state is StudentAuthFailure) {
+            // Show error message
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.error)),
+            );
+          }
+        },
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                SizedBox(height: screenHeight * 0.04),
+                const Center(
+                  child: AppText(
+                    lbl: 'إسترجاع كلمة المرور ',
+                    style: TextStyle(
+                      color: AppColors.primaryColor,
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                SizedBox(height: screenHeight * 0.02),
+                const AppText(
+                  textAlign: TextAlign.center,
+                  lbl:
+                  'ادخل بياناتك ليتم إرسال اليك رمز تحقق لكي تعد تعيين كلمة مرورك',
+                  style: TextStyle(
+                    color: AppColors.textColor,
+                    fontSize: 20,
+                  ),
+                ),
+                SizedBox(height: screenHeight * 0.06),
+                const AppText(
+                  lbl: 'ادخل بريدك الإلكتروني',
+                  style: TextStyle(
+                    color: AppColors.textColor,
+                    fontSize: 14,
+                  ),
+                  textAlign: TextAlign.right,
+                ),
+                SizedBox(height: screenHeight * 0.02),
+                AppInput(
+                  suffixIcon: const Icon(Icons.email_rounded),
+                  controller: emailController,
+                  hintText: 'البريد الالكتروني',
+                  textAlign: TextAlign.right,
+                ),
+                SizedBox(height: screenHeight * 0.04),
+                AppButton(
+                  lbl: ' إعادة تعيين كلمة المرور',
+                  onPressed: () {
+                    final email = emailController.text;
+                    context.read<StudentAuthCubit>().forgotPassword(email);
+                  },
+                ),
+              ],
             ),
           ),
         ),

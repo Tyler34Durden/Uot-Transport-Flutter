@@ -37,7 +37,7 @@ import 'package:flutter/material.dart';
                 listener: (context, state) {
                   if (state is StudentAuthLoading) {
                     logger.i('Loading...');
-                  } else if (state is LoginSuccess) {
+                  } else if (state is StudentAuthSuccess) {
                     logger.i('Login successful');
                     emailController.clear();
                     passwordController.clear();
@@ -90,6 +90,7 @@ import 'package:flutter/material.dart';
                           ),
                           SizedBox(height: screenHeight * 0.02),
                           AppInput(
+                            suffixIcon: const Icon(Icons.email_rounded),
                             controller: emailController,
                             hintText: 'البريد الالكتروني',
                             textAlign: TextAlign.right,
@@ -105,6 +106,8 @@ import 'package:flutter/material.dart';
                           ),
                           SizedBox(height: screenHeight * 0.02),
                           AppInput(
+                            suffixIcon: const Icon(Icons.lock_rounded),
+                            obscureText: true,
                             controller: passwordController,
                             hintText: 'كلمة المرور ',
                             textAlign: TextAlign.right,
