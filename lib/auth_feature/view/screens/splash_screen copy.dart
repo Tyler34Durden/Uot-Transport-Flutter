@@ -1,3 +1,4 @@
+//added after emeoved
 import 'package:flutter/material.dart';
 import 'package:uot_transport/auth_feature/view/screens/onboarding_screen.dart';
 import 'package:uot_transport/core/app_colors.dart';
@@ -37,7 +38,7 @@ class _SplashScreenState extends State<SplashScreen> {
           width: 255,
           decoration: const BoxDecoration(
             image: DecorationImage(
-              image: AssetImage(AppIcons.logo),
+              image: AssetImage(AppIcons.logoPath),
               fit: BoxFit.cover,
             ),
           ),

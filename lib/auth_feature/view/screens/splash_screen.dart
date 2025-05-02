@@ -1,3 +1,4 @@
+//added after emoved
 // import 'package:flutter/material.dart';
 // import 'package:uot_transport/core/app_icons.dart';
 // import 'package:uot_transport/core/app_colors.dart';
@@ -97,7 +98,9 @@ class _SplashScreenState extends State<SplashScreen> {
           width: 255,
           decoration: const BoxDecoration(
             image: DecorationImage(
-              image: AssetImage(AppIcons.logo),
+              image: AssetImage(
+                AppIcons.logoPath,
+              ),
               fit: BoxFit.cover,
             ),
           ),

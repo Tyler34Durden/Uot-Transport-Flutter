@@ -1,3 +1,4 @@
+//added after emoved
 import 'package:flutter/material.dart';
 import 'package:uot_transport/core/app_colors.dart';
 
@@ -28,10 +29,10 @@ class SearchBar extends StatelessWidget {
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(15),
                   borderSide:
-                      const BorderSide(color: AppColors.primaryColor, width: 2),
+                  const BorderSide(color: AppColors.primaryColor, width: 2),
                 ),
                 contentPadding:
-                    const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                 suffixIcon: IconButton(
                   icon: const Icon(Icons.search, color: AppColors.primaryColor),
                   onPressed: () {

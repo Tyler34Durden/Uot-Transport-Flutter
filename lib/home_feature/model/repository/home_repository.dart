@@ -50,5 +50,28 @@ Future<List<Map<String, dynamic>>> fetchStations() async {
         logger.e('DioError Response: ${e.response?.data}');
       }
       rethrow;
+
+    }
+  }
+  Future<List<Map<String, dynamic>>> fetchMyTrips(String token) async {
+    try {
+      final response = await _apiService.getRequest(
+        'tickets/myTickets',
+        token: token, // Pass the Bearer token here
+      );
+      logger.i('My Trips fetched successfully');
+      if (response.data != null && response.data is List) {
+        return (response.data as List)
+            .map((trip) => trip as Map<String, dynamic>)
+            .toList();
+      } else {
+        throw Exception('Invalid response structure: Expected a list of trips');
+      }
+    } on DioError catch (e) {
+      logger.e('DioError in fetchMyTrips: ${e.message}');
+      if (e.response != null) {
+        logger.e('DioError Response: ${e.response?.data}');
+      }
+      rethrow;
     }
   }}

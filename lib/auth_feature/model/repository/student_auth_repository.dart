@@ -1,3 +1,4 @@
+//added after removed
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
@@ -40,35 +41,8 @@ class StudentAuthRepository {
     }
   }
 
-  Future<Response> login(Map<String, dynamic> loginData) async {
-    try {
-      final response =
-      await _apiService.postRequest('student/login', loginData);
-      final token = response.data['token'];
-      final user = response.data['user'];
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('auth_token', token);
-      await prefs.setString(
-          'user_profile', jsonEncode(user)); // تخزين بيانات المستخدم بالكامل
-      logger.i('Token saved: $token and user data saved: $user');
-      return response;
-    } on DioError catch (e) {
-      logger.e('DioError: ${e.message}');
-      if (e.response != null) {
-        logger.e('DioError Response: ${e.response?.data}');
-      }
-      rethrow;
-    }
-  }
-
   // Future<Response> login(Map<String, dynamic> loginData) async {
   //   try {
-  //     // الحصول على رمز FCM وإضافته إلى بيانات تسجيل الدخول
-  //     final fcmToken = await FirebaseMessaging.instance.getToken();
-  //     if (fcmToken != null) {
-  //       loginData['fcm_token'] = fcmToken;
-  //     }
-
   //     final response =
   //         await _apiService.postRequest('student/login', loginData);
   //     final token = response.data['token'];
@@ -76,9 +50,8 @@ class StudentAuthRepository {
   //     final prefs = await SharedPreferences.getInstance();
   //     await prefs.setString('auth_token', token);
   //     await prefs.setString(
-  //         'user_profile', jsonEncode(user));
-  //     logger.i(
-  //         'Token saved: $token, user data saved: $user, and FCM Token: $fcmToken');
+  //         'user_profile', jsonEncode(user)); // تخزين بيانات المستخدم بالكامل
+  //     logger.i('Token saved: $token and user data saved: $user');
   //     return response;
   //   } on DioError catch (e) {
   //     logger.e('DioError: ${e.message}');
@@ -88,6 +61,34 @@ class StudentAuthRepository {
   //     rethrow;
   //   }
   // }
+
+  Future<Response> login(Map<String, dynamic> loginData) async {
+    try {
+      // الحصول على رمز FCM وإضافته إلى بيانات تسجيل الدخول
+      final fcmToken = await FirebaseMessaging.instance.getToken();
+      if (fcmToken != null) {
+        loginData['fcm_token'] = fcmToken;
+      }
+
+      final response =
+      await _apiService.postRequest('student/login', loginData);
+      final token = response.data['token'];
+      final user = response.data['user'];
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('auth_token', token);
+      await prefs.setString(
+          'user_profile', jsonEncode(user));
+      logger.i(
+          'Token saved: $token, user data saved: $user, and FCM Token: $fcmToken');
+      return response;
+    } on DioError catch (e) {
+      logger.e('DioError: ${e.message}');
+      if (e.response != null) {
+        logger.e('DioError Response: ${e.response?.data}');
+      }
+      rethrow;
+    }
+  }
 
   Future<Response> forgotPassword(String email) async {
     try {
