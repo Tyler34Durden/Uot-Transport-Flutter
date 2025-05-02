@@ -7,9 +7,13 @@ import 'package:uot_transport/auth_feature/view/screens/splash_screen.dart';
 import 'package:uot_transport/auth_feature/view_model/cubit/student_auth_cubit.dart';
 import 'package:uot_transport/home_feature/model/repository/home_repository.dart';
 import 'package:uot_transport/home_feature/view_model/cubit/advertising_cubit.dart';
+import 'package:uot_transport/home_feature/view_model/cubit/home_station_cubit.dart';
 import 'package:uot_transport/notification_service.dart';
+import 'package:uot_transport/station_feature/model/repository/station_trips_repository.dart';
 import 'package:uot_transport/station_feature/model/repository/stations_repository.dart';
+import 'package:uot_transport/station_feature/view_model/cubit/station_trips_cubit.dart';
 import 'package:uot_transport/station_feature/view_model/cubit/stations_cubit.dart';
+import 'package:uot_transport/trips_feature/model/repository/trips_repository.dart';
 import 'package:uot_transport/trips_feature/view_model/cubit/trips_cubit.dart';
 import 'package:uot_transport/profile_feature/model/repository/profile_repository.dart';
 import 'package:uot_transport/profile_feature/view_model/cubit/profile_cubit.dart';
@@ -29,6 +33,8 @@ Future<void> main() async {
   final homeRepository = HomeRepository();
   final stationsRepository = StationsRepository();
   final profileRepository = ProfileRepository();
+  final stationTripsRepository = StationTripsRepository();
+  final tripsRepository = TripsRepository(); // Pass ApiService to TripsRepository
 
   runApp(
     MultiRepositoryProvider(
@@ -45,6 +51,12 @@ Future<void> main() async {
         RepositoryProvider<ProfileRepository>(
           create: (context) => profileRepository,
         ),
+        RepositoryProvider<StationTripsRepository>(
+          create: (context) => stationTripsRepository,
+        ),
+        RepositoryProvider<TripsRepository>(
+          create: (context) => tripsRepository, // Provide TripsRepository
+        ),
       ],
       child: MultiBlocProvider(
         providers: [
@@ -52,13 +64,16 @@ Future<void> main() async {
             create: (context) => StudentAuthCubit(studentRepository),
           ),
           BlocProvider(
+            create: (context) => HomeStationCubit(homeRepository)..fetchStations()..fetchTodayTrips(),
+          ),
+          BlocProvider(
             create: (context) => AdvertisingsCubit(homeRepository)..fetchAdvertisings(),
           ),
           BlocProvider(
-            create: (context) => TripsCubit(homeRepository)..fetchTodayTrips(),
+            create: (context) => StationTripsCubit(stationTripsRepository),
           ),
           BlocProvider(
-            create: (context) => TripsCubit(homeRepository),
+              create: (context) => TripsCubit(tripsRepository)..fetchTripsByStations()
           ),
           BlocProvider(
             create: (context) => StationsCubit(stationsRepository)..fetchStations(),
