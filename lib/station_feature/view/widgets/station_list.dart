@@ -1,3 +1,4 @@
+//after removed added again
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:uot_transport/core/app_colors.dart';
@@ -12,7 +13,7 @@ class StationList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final logger = Logger();
-    
+
     if (stations.isEmpty) {
       return const Center(child: Text('لا توجد محطات متاحة حالياً'));
     }
@@ -22,12 +23,12 @@ class StationList extends StatelessWidget {
         itemCount: stations.length,
         itemBuilder: (context, index) {
           logger.i('Item at index $index: ${stations[index]}');
-          
+
           if (stations[index] is! Map) {
             logger.e('Invalid station data format at index $index');
             return const Text('Invalid station data format');
           }
-          
+
           final station = stations[index]['station'];
           final nearestTrip = stations[index]['nearestTrip'];
 
