@@ -1,3 +1,4 @@
+//added after removed
 // // File: lib/core/api_service.dart
 //     // ignore_for_file: avoid_print
 
@@ -152,7 +153,7 @@ class ApiService {
         options: Options(
           headers: token != null ? {'Authorization': 'Bearer $token'} : null,
           validateStatus: (status) =>
-              status != null && status < 400, // قبول أي حالة أقل من 400
+          status != null && status < 400, // قبول أي حالة أقل من 400
           followRedirects: false, // تعطيل المتابعة التلقائية لإعادة التوجيه
         ),
       );

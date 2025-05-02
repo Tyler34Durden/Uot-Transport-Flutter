@@ -1,3 +1,4 @@
+//added after removed
 import 'package:flutter/material.dart';
 import 'package:uot_transport/auth_feature/view/widgets/app_text.dart';
 import 'package:uot_transport/core/app_colors.dart';
@@ -32,7 +33,7 @@ class Notifications extends StatelessWidget {
                 ],
               ),
             ),
-            //! edit 
+            //! edit
             SizedBox(height: 20),
             NotificationsWidget(
               notificationText: 'وصلت الحافلة 1 لمحطة قصر بن غشير',
