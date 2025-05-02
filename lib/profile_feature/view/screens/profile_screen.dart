@@ -1,3 +1,4 @@
+// aded after removed
 // import 'dart:convert';
 // import 'package:flutter/material.dart';
 // import 'package:logger/logger.dart';
@@ -285,7 +286,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     try {
       final response =
-          await ApiService().putRequest('user', updatedData, token: _token);
+      await ApiService().putRequest('user', updatedData, token: _token);
       if (response.data != null && response.data['user'] != null) {
         setState(() {
           _user = response.data['user'];
@@ -429,7 +430,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) =>
-                                      const ChangePasswordScreen(),
+                                  const ChangePasswordScreen(),
                                 ),
                               );
                             },
@@ -454,7 +455,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     const SizedBox(height: 20),
                     const AppText(
                       lbl:
-                          ' *في حالة الرغبة في تغيير أي من الإسم أو البريد الإلكتروني أو الكلية الرجاء التواصل مع إدارة النقل الطلابي',
+                      ' *في حالة الرغبة في تغيير أي من الإسم أو البريد الإلكتروني أو الكلية الرجاء التواصل مع إدارة النقل الطلابي',
                       style: TextStyle(fontSize: 16),
                     ),
                   ],

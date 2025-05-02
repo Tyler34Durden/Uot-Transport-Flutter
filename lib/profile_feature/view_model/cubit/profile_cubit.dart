@@ -1,3 +1,4 @@
+//added after removed
 import 'package:bloc/bloc.dart';
 import 'package:uot_transport/profile_feature/model/repository/profile_repository.dart';
 import 'profile_state.dart';
@@ -17,7 +18,7 @@ class ProfileCubit extends Cubit<ProfileState> {
       emit(ProfileFailure(e.toString()));
     }
   }
- // دالة تحديث رقم الهاتف باستخدام API الجديد
+  // دالة تحديث رقم الهاتف باستخدام API الجديد
   Future<void> updateUserPhone(String token, Map<String, dynamic> updatedData) async {
     emit(ProfileLoading());
     try {
@@ -27,7 +28,7 @@ class ProfileCubit extends Cubit<ProfileState> {
       emit(ProfileFailure(e.toString()));
     }
   }
-   // دالة تغيير كلمة المرور
+  // دالة تغيير كلمة المرور
   Future<void> changePassword(String token, Map<String, dynamic> passwordData) async {
     emit(ProfileLoading());
     try {
