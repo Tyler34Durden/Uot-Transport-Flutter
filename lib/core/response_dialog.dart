@@ -1,12 +1,13 @@
+//addeed after removed
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:uot_transport/core/main_screen.dart';
 
 Future<void> showResponseDialog(
-  BuildContext context, {
-  required bool success,
-  required String message,
-}) {
+    BuildContext context, {
+      required bool success,
+      required String message,
+    }) {
   return showDialog(
     context: context,
     barrierDismissible: false,
@@ -16,9 +17,9 @@ Future<void> showResponseDialog(
             ? SvgPicture.asset("assets/icons/check.svg")
             : Icon(Icons.error, color: Colors.red, size: 50),
         content: Container(
-          width: 800, 
+          width: 800,
           child: Column(
-            mainAxisSize: MainAxisSize.min, 
+            mainAxisSize: MainAxisSize.min,
             children: [
               Text(
                 message,
