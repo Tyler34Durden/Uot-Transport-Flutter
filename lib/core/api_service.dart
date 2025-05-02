@@ -73,12 +73,14 @@ class ApiService {
 
   Dio get dio => _dio;
 
-  Future<Response> getRequest(String endpoint, {String? token}) async {
+  Future<Response> getRequest(String endpoint, {String? token, Map<String, dynamic>? queryParams}) async {
     try {
       final response = await _dio.get(
         endpoint,
+        queryParameters: queryParams, // Add query parameters here
         options: Options(
-            headers: token != null ? {'Authorization': 'Bearer $token'} : null),
+          headers: token != null ? {'Authorization': 'Bearer $token'} : null, // Keep the Bearer token
+        ),
       );
       logger.i('Status Code: ${response.statusCode}');
       logger.i('Response Data: ${response.data}');
