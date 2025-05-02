@@ -14,15 +14,15 @@ class HomeStationCubit extends Cubit<HomeStationState> {
       : super(HomeStationState());
 
   // Fetch today's trips
-  Future<void> fetchTodayTrips({int? stationId}) async {
-    try {
-      emit(state.copyWith(isLoading: true));
-      final trips = await _homeRepository.fetchTodayTrips(stationId: stationId);
-      emit(state.copyWith(trips: trips, isLoading: false));
-    } catch (e) {
-      emit(state.copyWith(error: e.toString(), isLoading: false));
-    }
+Future<void> fetchTodayTrips({int? stationId}) async {
+  try {
+    emit(state.copyWith(isLoading: true, error: null));
+    final trips = await _homeRepository.fetchTodayTrips(stationId: stationId);
+    emit(state.copyWith(trips: trips, isLoading: false, error: null));
+  } catch (e) {
+    emit(state.copyWith(isLoading: false, error: e.toString()));
   }
+}
 
   // Fetch stations
   Future<void> fetchStations() async {
@@ -35,4 +35,22 @@ class HomeStationCubit extends Cubit<HomeStationState> {
       emit(state.copyWith(error: e.toString(), isLoading: false));
     }
   }
+
+Future<void> fetchMyTrips(String token) async {
+  try {
+    emit(state.copyWith(isFetchMyTripsLoading: true, fetchMyTripsError: null));
+    final myTrips = await _homeRepository.fetchMyTrips(token);
+    emit(state.copyWith(
+      myTrips: myTrips,
+      isFetchMyTripsLoading: false,
+      fetchMyTripsError: null,
+    ));
+  } catch (e) {
+    emit(state.copyWith(
+      isFetchMyTripsLoading: false,
+      fetchMyTripsError: e.toString(),
+    ));
+  }
+}
+
 }

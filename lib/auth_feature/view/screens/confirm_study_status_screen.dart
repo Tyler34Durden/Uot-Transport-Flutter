@@ -129,7 +129,7 @@ class _ConfirmStudyStatusScreenState extends State<ConfirmStudyStatusScreen> {
                 AppDropdown(
                   items: const [
                     'كلية الهندسة',
-                    'Zone A',
+                    'كلية تقنية المعلومات',
                     'كلية العلوم',
                     'كلية الآداب',
 
