@@ -37,7 +37,7 @@ import 'package:flutter/material.dart';
                 listener: (context, state) {
                   if (state is StudentAuthLoading) {
                     logger.i('Loading...');
-                  } else if (state is StudentAuthSuccess) {
+                  } else if (state is LoginSuccess) {
                     logger.i('Login successful');
                     emailController.clear();
                     passwordController.clear();

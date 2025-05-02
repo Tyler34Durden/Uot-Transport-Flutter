@@ -54,7 +54,9 @@ class StationList extends StatelessWidget {
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(10),
-                    child: const GoogleMapWidget(),
+                    child:   GoogleMapWidget(
+                      location: station['location'] ?? '0.0,0.0', // Pass the location here
+                    ),
                   ),
                 ),
                 title: Text(

@@ -229,9 +229,12 @@ import 'package:uot_transport/core/app_colors.dart';
 import 'package:uot_transport/core/api_service.dart';
 import 'package:uot_transport/core/response_dialog.dart';
 import 'package:uot_transport/profile_feature/view/screens/change_password_scren.dart';
+import 'package:uot_transport/profile_feature/view/widgets/profile_image.dart';
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+  final String token;
+  final int userId;
+  const ProfileScreen({super.key, required this.token, required this.userId});
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();

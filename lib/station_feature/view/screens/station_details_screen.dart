@@ -1,4 +1,3 @@
-//added after emoved
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uot_transport/auth_feature/view/widgets/app_text.dart';
@@ -27,7 +26,9 @@ class StationDetailsScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const GoogleMapWidget(),
+              GoogleMapWidget(
+                location: station['location'] ?? '0.0,0.0', // Pass the location here
+              ),
               const SizedBox(height: 20),
               AppText(
                 lbl: station['name']?.toString() ?? 'No Title',
@@ -47,7 +48,6 @@ class StationDetailsScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 10),
-              // يمكن وضع ActiveTripsWidget هنا لعرض رحلات مختصرة إن وُجدت.
               const SizedBox(height: 10),
               const AppText(
                 lbl: 'الرحلات القادمة:',
