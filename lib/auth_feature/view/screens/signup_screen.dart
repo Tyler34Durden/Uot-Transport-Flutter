@@ -1,3 +1,4 @@
+//after removed
 import 'package:flutter/material.dart';
 import 'package:uot_transport/auth_feature/view/screens/confirm_study_status_screen.dart';
 import 'package:uot_transport/auth_feature/view/widgets/app_button.dart';
@@ -10,12 +11,12 @@ class SignupScreen extends StatelessWidget {
   const SignupScreen({super.key});
 
   static final TextEditingController fullNameController =
-      TextEditingController();
+  TextEditingController();
   static final TextEditingController emailController = TextEditingController();
   static final TextEditingController passwordController =
-      TextEditingController();
+  TextEditingController();
   static final TextEditingController confirmPasswordController =
-      TextEditingController();
+  TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +63,7 @@ class SignupScreen extends StatelessWidget {
                   const AppText(
                     textAlign: TextAlign.center,
                     lbl:
-                        'أنشئ حساباً جديداً واستمتع بتجربة نقل جامعي مريحة ومميزة.',
+                    'أنشئ حساباً جديداً واستمتع بتجربة نقل جامعي مريحة ومميزة.',
                     style: TextStyle(
                       color: AppColors.textColor,
                       fontSize: 20,
@@ -182,7 +183,7 @@ class SignupScreen extends StatelessWidget {
                             emailController: emailController,
                             passwordController: passwordController,
                             confirmPasswordController:
-                                confirmPasswordController,
+                            confirmPasswordController,
                           ),
                         ),
                       );

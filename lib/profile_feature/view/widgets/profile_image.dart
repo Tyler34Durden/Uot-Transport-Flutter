@@ -1,3 +1,4 @@
+//added after removed
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:uot_transport/core/app_colors.dart';
@@ -25,10 +26,10 @@ class ProfileImageWidget extends StatelessWidget {
               backgroundColor: AppColors.primaryColor,
               child: imageUrl.isEmpty
                   ? SvgPicture.asset(
-                      AppIcons.user,
-                      width: 60,
-                      height: 60,
-                    )
+                AppIcons.user,
+                width: 60,
+                height: 60,
+              )
                   : null,
             ),
           ),
