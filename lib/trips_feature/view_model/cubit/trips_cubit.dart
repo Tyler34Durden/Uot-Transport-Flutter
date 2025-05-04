@@ -9,20 +9,6 @@ class TripsCubit extends Cubit<TripsState> {
 
   TripsCubit(this._tripsRepository) : super(TripsInitial());
 
- // Future<void> fetchTrips() async {
-  //   _logger.i('Fetching all trips');
-  //   emit(TripsLoading());
-  //   try {
-  //     final response = await _tripsRepository.fetchTrips();
-  //     emit(TripsLoaded(response));
-  //   } catch (e) {
-  //     _logger.e('Error while fetching trips: $e');
-  //     emit(TripsError(e.toString()));
-  //   }
-  // }
-
-
-
   Future<void> fetchTripsByStations({
     String? startStationId,
     String? endStationId,
@@ -37,6 +23,19 @@ class TripsCubit extends Cubit<TripsState> {
     } catch (e) {
       _logger.e('Error while fetching trips: $e');
       emit(TripsError(e.toString()));
+    }
+  }
+
+  Future<void> fetchTripRoutes(String tripID) async {
+    emit(TripRoutesLoading());
+    try {
+      print("entered the try method in the fetch trips by route");
+      final tripRoutes = await _tripsRepository.fetchTripRoutes(tripID);
+      print("before the emit in the fetch trips by route");
+      emit(TripRoutesLoaded(tripRoutes));
+    } catch (e) {
+      _logger.e('Error while fetching trip routes: $e');
+      emit(TripRoutesError(e.toString()));
     }
   }
 }

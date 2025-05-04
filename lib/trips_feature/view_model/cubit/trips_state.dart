@@ -1,5 +1,4 @@
-
- class TripsState{
+class TripsState {
   @override
   List<Object?> get props => [];
 }
@@ -21,6 +20,27 @@ class TripsError extends TripsState {
   final String error;
 
   TripsError(this.error);
+
+  @override
+  List<Object?> get props => [error];
+}
+
+// States for Trip Routes
+class TripRoutesLoading extends TripsState {}
+
+class TripRoutesLoaded extends TripsState {
+  final List<Map<String, dynamic>> tripRoutes;
+
+  TripRoutesLoaded(this.tripRoutes);
+
+  @override
+  List<Object?> get props => [tripRoutes];
+}
+
+class TripRoutesError extends TripsState {
+  final String error;
+
+  TripRoutesError(this.error);
 
   @override
   List<Object?> get props => [error];

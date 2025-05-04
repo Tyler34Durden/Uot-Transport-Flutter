@@ -73,7 +73,7 @@ Future<void> main() async {
             create: (context) => StationTripsCubit(stationTripsRepository),
           ),
           BlocProvider(
-              create: (context) => TripsCubit(tripsRepository)..fetchTripsByStations()
+              create: (context) => TripsCubit(tripsRepository),
           ),
           BlocProvider(
             create: (context) => StationsCubit(stationsRepository)..fetchStations(),
