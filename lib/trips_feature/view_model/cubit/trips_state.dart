@@ -45,3 +45,23 @@ class TripRoutesError extends TripsState {
   @override
   List<Object?> get props => [error];
 }
+
+class TripsTicketLoading extends TripsState {}
+
+class TripsTicketSuccess extends TripsState {
+  final String message;
+
+  TripsTicketSuccess(this.message);
+
+  @override
+  List<Object?> get props => [message];
+}
+
+class TripsTicketError extends TripsState {
+  final String error;
+
+  TripsTicketError(this.error);
+
+  @override
+  List<Object?> get props => [error];
+}

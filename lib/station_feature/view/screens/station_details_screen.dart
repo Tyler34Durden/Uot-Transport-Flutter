@@ -13,32 +13,40 @@ class StationDetailsScreen extends StatelessWidget {
   final Map<String, dynamic> station;
   const StationDetailsScreen({super.key, required this.station});
 
-  @override
-  Widget build(BuildContext context) {
-    final int stationId = station['id'];
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
-        backgroundColor: AppColors.backgroundColor,
-        appBar: const BackHeader(),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
+@override
+Widget build(BuildContext context) {
+  final int stationId = station['id'];
+  final Size screenSize = MediaQuery.of(context).size;
+  final double screenWidth = screenSize.width;
+  final double screenHeight = screenSize.height;
+
+  return Directionality(
+    textDirection: TextDirection.rtl,
+    child: Scaffold(
+      backgroundColor: AppColors.backgroundColor,
+      appBar: const BackHeader(),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.all(screenWidth * 0.04), // Dynamic padding
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              GoogleMapWidget(
-                location: station['location'] ?? '0.0,0.0', // Pass the location here
+              SizedBox(
+                height: screenHeight * 0.3, // Dynamic height for the map
+                child: GoogleMapWidget(
+                  location: station['location'] ?? '0.0,0.0',
+                ),
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: screenHeight * 0.02), // Dynamic spacing
               AppText(
                 lbl: station['name']?.toString() ?? 'No Title',
-                style: const TextStyle(
-                  fontSize: 24,
+                style: TextStyle(
+                  fontSize: screenWidth * 0.06, // Dynamic font size
                   fontWeight: FontWeight.bold,
                   color: AppColors.primaryColor,
                 ),
               ),
-              const SizedBox(height: 10),
+              SizedBox(height: screenHeight * 0.01),
               const AppText(
                 lbl: 'الرحلات :',
                 style: TextStyle(
@@ -47,8 +55,7 @@ class StationDetailsScreen extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 10),
-              const SizedBox(height: 10),
+              SizedBox(height: screenHeight * 0.01),
               const AppText(
                 lbl: 'الرحلات القادمة:',
                 style: TextStyle(
@@ -57,7 +64,7 @@ class StationDetailsScreen extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 10),
+              SizedBox(height: screenHeight * 0.01),
               BlocProvider(
                 create: (context) => StationTripsCubit(StationTripsRepository())
                   ..fetchStationTrips(stationId),
@@ -76,7 +83,7 @@ class StationDetailsScreen extends StatelessWidget {
                         itemBuilder: (context, index) {
                           final trip = trips[index];
                           return Padding(
-                            padding: const EdgeInsets.only(bottom: 16.0),
+                            padding: EdgeInsets.only(bottom: screenHeight * 0.02),
                             child: ActiveTripsWidget(
                               busId: trip['busId']?.toString() ?? '',
                               tripId: trip['tripId']?.toString() ?? '',
@@ -97,6 +104,7 @@ class StationDetailsScreen extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }

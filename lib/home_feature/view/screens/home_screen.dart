@@ -9,6 +9,7 @@ import 'package:uot_transport/home_feature/view/widgets/station_filters.dart';
 import 'package:uot_transport/home_feature/view_model/cubit/advertising_cubit.dart';
 import 'package:uot_transport/home_feature/view_model/cubit/advertising_state.dart';
 import 'package:uot_transport/home_feature/view_model/cubit/home_station_cubit.dart';
+import 'package:uot_transport/trips_feature/view_model/cubit/trips_cubit.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -53,20 +54,20 @@ class _HomeScreenState extends State<HomeScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Advertisings Section
-                BlocBuilder<AdvertisingsCubit, AdvertisingsState>(
-                  builder: (context, state) {
-                    if (state is AdvertisingsLoading) {
-                      return const Center(child: CircularProgressIndicator());
-                    } else if (state is AdvertisingsLoaded) {
-                      final advertisings =
-                      state.advertisings.cast<Map<String, dynamic>>();
-                      return HomeSlider(advertisings: advertisings);
-                    } else if (state is AdvertisingsError) {
-                      return Center(child: Text('Error: ${state.message}'));
-                    }
-                    return const SizedBox.shrink();
-                  },
-                ),
+                // BlocBuilder<AdvertisingsCubit, AdvertisingsState>(
+                //   builder: (context, state) {
+                //     if (state is AdvertisingsLoading) {
+                //       return const Center(child: CircularProgressIndicator());
+                //     } else if (state is AdvertisingsLoaded) {
+                //       final advertisings =
+                //       state.advertisings.cast<Map<String, dynamic>>();
+                //       return HomeSlider(advertisings: advertisings);
+                //     } else if (state is AdvertisingsError) {
+                //       return Center(child: Text('Error: ${state.message}'));
+                //     }
+                //     return const SizedBox.shrink();
+                //   },
+                // ),
                 const SizedBox(height: 20),
 
                 // My Trips Section

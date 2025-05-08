@@ -38,4 +38,25 @@ class TripsCubit extends Cubit<TripsState> {
       emit(TripRoutesError(e.toString()));
     }
   }
+Future<void> createTicket({
+    required int tripID,
+    required int fromTripRoute,
+    required int toTripRoute,
+    required String token,
+  }) async {
+    emit(TripsTicketLoading());
+    try {
+      await _tripsRepository.createTicket(
+        tripID: tripID,
+        fromTripRoute: fromTripRoute,
+        toTripRoute: toTripRoute,
+        token: token,
+      );
+      emit(TripsTicketSuccess('Ticket created successfully'));
+    } catch (e) {
+      _logger.e('Error while creating ticket: $e');
+      emit(TripsTicketError(e.toString()));
+    }
+  }
+
 }
