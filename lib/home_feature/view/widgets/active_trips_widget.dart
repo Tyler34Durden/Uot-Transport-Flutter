@@ -281,7 +281,6 @@ void _showStationDialog(BuildContext context, TripsCubit tripsCubit, String trip
     },
   );
 }
-
 void _showBookingDialog(BuildContext context, TripsCubit tripsCubit, String tripId, String fromStation, String toStation, int fromStationId, int toStationId, String token) {
   showDialog(
     context: context,

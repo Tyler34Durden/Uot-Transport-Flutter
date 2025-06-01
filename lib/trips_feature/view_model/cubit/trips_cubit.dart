@@ -26,6 +26,17 @@ class TripsCubit extends Cubit<TripsState> {
     }
   }
 
+  Future<void> fetchTripRoutesFromApi(String tripID) async {
+    emit(TripRoutesLoading());
+    try {
+      final tripRoutes = await _tripsRepository.fetchTripRoutesFromApi(tripID);
+      emit(TripRoutesLoaded(tripRoutes));
+    } catch (e) {
+      _logger.e('Error while fetching trip routes from API: $e');
+      emit(TripRoutesError(e.toString()));
+    }
+  }
+
   Future<void> fetchTripRoutes(String tripID) async {
     emit(TripRoutesLoading());
     try {
