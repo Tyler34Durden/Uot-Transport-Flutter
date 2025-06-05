@@ -10,24 +10,26 @@
           Future<List<Map<String, dynamic>>> fetchTripsByStations({
             String? startStationId,
             String? endStationId,
+            int page = 1,
+            int pageSize = 5,
           }) async {
             try {
               final String id1 = startStationId ?? "null";
               final String id2 = endStationId ?? "null";
-              final String url = "tripRoutes/filter/$id1/$id2";
+              final String url = "tripRoutes/filter/$id1/$id2?page=$page&pageSize=$pageSize";
               final response = await _apiService.getRequest(url);
               logger.i('Trips fetched successfully: ${response.data}');
               dynamic responseData = response.data;
               if (responseData is List) {
                 return responseData.cast<Map<String, dynamic>>();
               } else if (responseData is Map && responseData['data'] is List) {
-                return (responseData['data'] as List).cast<
-                    Map<String, dynamic>>();
+                return (responseData['data'] as List).cast<Map<String, dynamic>>();
               } else {
                 throw Exception('Invalid data format in trips response');
               }
             } on DioError catch (e) {
-              logger.e('Error fetching trips: ${e.message}');
+              final backendMessage = e.response?.data?['message']?.toString();
+              logger.e('Error fetching trips: ${backendMessage ?? e.message}');
               rethrow;
             }
           }
@@ -53,20 +55,19 @@
             }
           }
 
-          Future<List<Map<String, dynamic>>> fetchTripRoutesFromApi(String tripID) async {
+          Future<Map<String, dynamic>> fetchTripDetailsScreen(String tripID) async {
             try {
-              final String url = "tripRoutes/trip/$tripID";
+              final String url = "trip/$tripID/mobile";
               final response = await _apiService.getRequest(url);
-              logger.i(
-                  'Trip routes (API) fetched successfully: ${response.data}');
+              logger.i('Trip details (API) fetched successfully: ${response.data}');
               dynamic responseData = response.data;
-              if (responseData is List) {
-                return responseData.cast<Map<String, dynamic>>();
+              if (responseData is Map<String, dynamic>) {
+                return responseData;
               } else {
-                throw Exception('Invalid data format in trip routes response');
+                throw Exception('Invalid data format in trip details response');
               }
             } on DioError catch (e) {
-              logger.e('Error fetching trip routes from API: ${e.message}');
+              logger.e('Error fetching trip details from API: ${e.message}');
               if (e.response != null) {
                 logger.e('DioError Response: ${e.response?.data}');
               }

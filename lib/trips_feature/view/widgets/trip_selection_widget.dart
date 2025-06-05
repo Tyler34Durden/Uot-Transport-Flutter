@@ -24,6 +24,10 @@
                     super.initState();
                     WidgetsBinding.instance.addPostFrameCallback((_) {
                       context.read<StationsCubit>().fetchStations();
+                      context.read<TripsCubit>().fetchTripsByStations(
+                        startStationId: null,
+                        endStationId: null,
+                      );
                     });
                   }
 

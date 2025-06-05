@@ -46,7 +46,23 @@ import 'package:flutter/material.dart';
                       MaterialPageRoute(builder: (context) => const MainScreen()),
                     );
                   } else if (state is StudentAuthFailure) {
-                    logger.e('Login failed: ${state.error}');
+                    String errorMessage = 'حدث خطأ ما';
+                    final error = state.error as String;
+                    // Extract the Error Data: { ... } part
+                    final match = RegExp(r'Error Data:\s*(\{[^}]+\})').firstMatch(error);
+                    if (match != null) {
+                      // Extract just the message field if you want only the message
+                      final data = match.group(1)!;
+                      final messageMatch = RegExp(r'message:\s*([^,}]+)').firstMatch(data);
+                      if (messageMatch != null) {
+                        errorMessage = messageMatch.group(1)!;
+                      } else {
+                        errorMessage = data; // fallback to full error data
+                      }
+                    }
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(errorMessage)),
+                    );
                   }
                 },
                 child: GestureDetector(

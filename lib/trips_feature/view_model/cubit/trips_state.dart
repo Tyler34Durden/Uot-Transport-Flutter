@@ -65,3 +65,23 @@ class TripsTicketError extends TripsState {
   @override
   List<Object?> get props => [error];
 }
+
+class TripDetailsLoading extends TripsState {}
+
+class TripDetailsLoaded extends TripsState {
+  final Map <String, dynamic> tripDetails;
+
+  TripDetailsLoaded(this.tripDetails);
+
+  @override
+  List<Object?> get props => [tripDetails];
+}
+
+class TripDetailsError extends TripsState {
+  final String error;
+
+  TripDetailsError(this.error);
+
+  @override
+  List<Object?> get props => [error];
+}

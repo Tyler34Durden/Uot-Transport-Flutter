@@ -7,33 +7,52 @@ class TripsCubit extends Cubit<TripsState> {
   final TripsRepository _tripsRepository;
   final Logger _logger = Logger();
 
+  int _currentPage = 1;
+  final int _pageSize = 5;
+  bool _hasMore = true;
+  List<dynamic> _trips = [];
+
   TripsCubit(this._tripsRepository) : super(TripsInitial());
 
   Future<void> fetchTripsByStations({
     String? startStationId,
     String? endStationId,
+    bool loadMore = false,
   }) async {
+    if (!loadMore) {
+      _currentPage = 1;
+      _trips.clear();
+      _hasMore = true;
+    }
+    if (!_hasMore) return;
+
     emit(TripsLoading());
     try {
       final trips = await _tripsRepository.fetchTripsByStations(
         startStationId: startStationId,
         endStationId: endStationId,
+        page: _currentPage,
+        pageSize: _pageSize,
       );
-      emit(TripsLoaded(trips));
+      final newTrips = trips as List<dynamic>;
+      if (newTrips.length < _pageSize) _hasMore = false;
+      _trips.addAll(newTrips);
+      emit(TripsLoaded(_trips));
+      _currentPage++;
     } catch (e) {
       _logger.e('Error while fetching trips: $e');
-      emit(TripsError(e.toString()));
+      emit(TripsError(e is Exception ? e.toString().replaceFirst('Exception: ', '') : e.toString()));
     }
   }
 
-  Future<void> fetchTripRoutesFromApi(String tripID) async {
-    emit(TripRoutesLoading());
+  Future<void> fetchTripDetailsScreen(String tripID) async {
+    emit(TripDetailsLoading());
     try {
-      final tripRoutes = await _tripsRepository.fetchTripRoutesFromApi(tripID);
-      emit(TripRoutesLoaded(tripRoutes));
+      final tripDetails = await _tripsRepository.fetchTripDetailsScreen(tripID);
+      emit(TripDetailsLoaded(tripDetails));
     } catch (e) {
-      _logger.e('Error while fetching trip routes from API: $e');
-      emit(TripRoutesError(e.toString()));
+      _logger.e('Error while fetching trip details from API: $e');
+      emit(TripDetailsError(e.toString()));
     }
   }
 

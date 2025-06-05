@@ -10,6 +10,7 @@ import 'package:uot_transport/home_feature/view_model/cubit/advertising_cubit.da
 import 'package:uot_transport/home_feature/view_model/cubit/advertising_state.dart';
 import 'package:uot_transport/home_feature/view_model/cubit/home_station_cubit.dart';
 import 'package:uot_transport/trips_feature/view_model/cubit/trips_cubit.dart';
+import 'package:uot_transport/trips_feature/view_model/cubit/trips_state.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -21,28 +22,56 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int? selectedStationId;
   String? token;
+  final ScrollController _tripsScrollController = ScrollController();
+  bool _isLoadingMore = false;
 
   @override
   void initState() {
     super.initState();
     _initializeToken();
+    _tripsScrollController.addListener(_onTripsScroll);
+  }
+
+  @override
+  void dispose() {
+    _tripsScrollController.dispose();
+    super.dispose();
   }
 
   Future<void> _initializeToken() async {
     final prefs = await SharedPreferences.getInstance();
-    token = prefs.getString('auth_token'); // Retrieve the token
+    token = prefs.getString('auth_token');
     if (token != null) {
       context.read<HomeStationCubit>().fetchStations();
-      context.read<HomeStationCubit>().fetchTodayTrips();
-      context.read<HomeStationCubit>().fetchMyTrips(token!); // Use the token
+      context.read<HomeStationCubit>().fetchMyTrips(token!);
+      // Initial fetch for today's trips (first page)
+      context.read<TripsCubit>().fetchTripsByStations(loadMore: false);
     } else {
-      // Handle the case where the token is null (e.g., redirect to login)
       debugPrint('Token not found. Redirecting to login...');
+    }
+  }
+
+  void _onTripsScroll() {
+    final cubit = context.read<TripsCubit>();
+    if (_tripsScrollController.position.pixels >=
+        _tripsScrollController.position.maxScrollExtent - 200 &&
+        !_isLoadingMore &&
+        cubit.state is TripsLoaded) {
+      setState(() => _isLoadingMore = true);
+      cubit
+          .fetchTripsByStations(
+            startStationId: selectedStationId?.toString(),
+            loadMore: true,
+          )
+          .whenComplete(() {
+        if (mounted) setState(() => _isLoadingMore = false);
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final stations = context.watch<HomeStationCubit>().state.stations;
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
@@ -53,23 +82,6 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Advertisings Section
-                // BlocBuilder<AdvertisingsCubit, AdvertisingsState>(
-                //   builder: (context, state) {
-                //     if (state is AdvertisingsLoading) {
-                //       return const Center(child: CircularProgressIndicator());
-                //     } else if (state is AdvertisingsLoaded) {
-                //       final advertisings =
-                //       state.advertisings.cast<Map<String, dynamic>>();
-                //       return HomeSlider(advertisings: advertisings);
-                //     } else if (state is AdvertisingsError) {
-                //       return Center(child: Text('Error: ${state.message}'));
-                //     }
-                //     return const SizedBox.shrink();
-                //   },
-                // ),
-                const SizedBox(height: 20),
-
                 // My Trips Section
                 const Text(
                   "رحلاتي:",
@@ -85,7 +97,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     if (state.isFetchMyTripsLoading) {
                       return const Center(child: CircularProgressIndicator());
                     } else if (state.fetchMyTripsError != null) {
-                      return Center(child: Text('Error: ${state.fetchMyTripsError}'));
+                      return Center(child: Text
+                        ('لم تقم بحجز رحلات بعد'));
                     } else if (state.myTrips.isNotEmpty) {
                       return ListView.builder(
                         physics: const NeverScrollableScrollPhysics(),
@@ -105,7 +118,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(height: 20),
 
-                // Today's Trips Section
+                // Today's Trips Section with Pagination
                 const Text(
                   "رحلات اليوم:",
                   style: TextStyle(
@@ -115,49 +128,61 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 const SizedBox(height: 25),
-                BlocBuilder<HomeStationCubit, HomeStationState>(
+                BlocBuilder<TripsCubit, TripsState>(
                   builder: (context, state) {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         StationFilters(
                           selectedStationId: selectedStationId,
-                          stations: state.stations,
+                          stations: stations,
                           onStationSelected: (stationId) {
                             setState(() {
                               selectedStationId = stationId;
                             });
-                            context
-                                .read<HomeStationCubit>()
-                                .fetchTodayTrips(stationId: stationId);
+                            // Reset pagination and fetch new trips for the selected station
+                            context.read<TripsCubit>().fetchTripsByStations(
+                              startStationId: stationId?.toString(),
+                              loadMore: false,
+                            );
                           },
                         ),
                         const SizedBox(height: 20),
-                        if (state.isLoading)
+                        if (state is TripsLoading && !_isLoadingMore)
                           const Center(child: CircularProgressIndicator())
-                        else if (state.error != null)
-                          Center(child: Text('Error: ${state.error}'))
-                        else if (state.trips.isNotEmpty)
-                            ListView.builder(
-                              physics: const NeverScrollableScrollPhysics(),
-                              shrinkWrap: true,
-                              itemCount: state.trips.length,
-                              itemBuilder: (context, index) {
-                                final trip = state.trips[index];
-                                return Padding(
-                                  padding: const EdgeInsets.only(bottom: 16.0),
-                                  child: ActiveTripsWidget(
-                                    busId: trip['busId'].toString(),
-                                    tripId: trip['tripId'].toString(),
-                                    tripState: trip['tripState'],
-                                    firstTripRoute: trip['firstTripRoute'] ?? {},
-                                    lastTripRoute: trip['lastTripRoute'] ?? {},
-                                  ),
-                                );
-                              },
-                            )
-                          else
-                            const Center(child: Text('No trips available.')),
+                        else if (state is TripsError)
+                          Center(child: Text('لا توجد رحلات متجهة إلى تلك المحطة.'))
+                        else if (state is TripsLoaded && state.trips.isNotEmpty)
+                          Column(
+                            children: [
+                              ListView.builder(
+                                controller: _tripsScrollController,
+                                physics: const NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                itemCount: state.trips.length,
+                                itemBuilder: (context, index) {
+                                  final trip = state.trips[index];
+                                  return Padding(
+                                    padding: const EdgeInsets.only(bottom: 16.0),
+                                    child: ActiveTripsWidget(
+                                      busId: trip['busId'].toString(),
+                                      tripId: trip['tripId'].toString(),
+                                      tripState: trip['tripState'],
+                                      firstTripRoute: trip['firstTripRoute'] ?? {},
+                                      lastTripRoute: trip['lastTripRoute'] ?? {},
+                                    ),
+                                  );
+                                },
+                              ),
+                              if (_isLoadingMore)
+                                const Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 16),
+                                  child: Center(child: CircularProgressIndicator()),
+                                ),
+                            ],
+                          )
+                        else
+                          const Center(child: Text('No trips available.')),
                       ],
                     );
                   },

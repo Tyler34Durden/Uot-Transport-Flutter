@@ -31,7 +31,7 @@ class DepartureArrivalWidget extends StatelessWidget {
                 const SizedBox(width: 10),
                 Flexible(
                   child: AppText(
-                    lbl: 'المغادرة: ${firstTripRoute['expectedTime'] ?? 'غير متوفر'}',
+                    lbl: 'المغادرة: ${firstTripRoute['time'] ?? 'غير متوفر'}',
                     style: const TextStyle(
                       color: AppColors.primaryColor,
                       fontSize: 16,
@@ -59,7 +59,7 @@ class DepartureArrivalWidget extends StatelessWidget {
                 const SizedBox(width: 10),
                 Flexible(
                   child: AppText(
-                    lbl: 'الوصول: ${lastTripRoute['expectedTime'] ?? 'غير متوفر'}',
+                    lbl: 'الوصول: ${lastTripRoute['time'] ?? 'غير متوفر'}',
                     style: const TextStyle(
                       color: AppColors.primaryColor,
                       fontSize: 16,

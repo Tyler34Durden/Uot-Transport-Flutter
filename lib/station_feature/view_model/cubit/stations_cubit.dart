@@ -8,29 +8,40 @@ class StationsCubit extends Cubit<StationsState> {
   final StationsRepository _stationsRepository;
   final Logger _logger = Logger();
 
+  int _currentPage = 1;
+  final int _pageSize = 4;
+  bool _hasMore = true;
+  List<dynamic> _stations = [];
+
   StationsCubit(this._stationsRepository) : super(StationsInitial());
 
-  Future<void> fetchStations({bool? near}) async {
-    _logger.i('Fetching all stations with near filter: $near');
+  bool get hasMore => _hasMore;
+
+  Future<void> fetchStations({bool? near, bool loadMore = false}) async {
+    if (!loadMore) {
+      _currentPage = 1;
+      _stations.clear();
+      _hasMore = true;
+    }
+    if (!_hasMore) return;
+
+    _logger.i('Fetching stations page $_currentPage with near filter: $near');
     emit(StationsLoading());
     try {
-      final response = await _stationsRepository.fetchStations();
-      _logger.i('Response received: ${response.data}');
-      if (response.data is Map &&
-          response.data.containsKey('data') &&
-          response.data['data'] is List<dynamic>) {
+      final response = await _stationsRepository.fetchStations(page: _currentPage, pageSize: _pageSize);
+      if (response.data is Map && response.data.containsKey('data')) {
         var stations = response.data['data'] as List<dynamic>;
-        _logger.i('Parsed stations: ${stations.length} items');
         if (near != null) {
           stations = stations.where((item) {
             final nt = item['nearestTrip'];
             return near ? (nt != null) : (nt == null);
           }).toList();
-          _logger.i('After filtering, stations count: ${stations.length}');
         }
-        emit(StationsSuccess(stations));
+        if (stations.length < _pageSize) _hasMore = false;
+        _stations.addAll(stations);
+        emit(StationsSuccess(List.from(_stations)));
+        _currentPage++;
       } else {
-        _logger.e('Invalid data format in stations response: ${response.data}');
         throw Exception('Invalid data format in stations response');
       }
     } catch (e) {
@@ -38,7 +49,6 @@ class StationsCubit extends Cubit<StationsState> {
       emit(StationsFailure(e.toString()));
     }
   }
-
   Future<void> fetchFilteredStations(bool inUot) async {
     _logger.i('Fetching filtered stations for inUot: $inUot');
     emit(StationsLoading());

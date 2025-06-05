@@ -44,7 +44,7 @@ import 'package:flutter/material.dart';
 
         WidgetsBinding.instance.addPostFrameCallback((_) {
           final tripsCubit = context.read<TripsCubit>();
-          tripsCubit.fetchTripRoutesFromApi(widget.tripId);
+          tripsCubit.fetchTripDetailsScreen(widget.tripId);
         });
       }
 
@@ -59,95 +59,123 @@ import 'package:flutter/material.dart';
       Widget build(BuildContext context) {
         final tripsCubit = context.read<TripsCubit>();
 
+        // Construct tripData map
+        // final Map<String, dynamic> tripData = {
+        //   'tripId': widget.tripId,
+        //   'bus': {
+        //     'id': widget.busId,
+        //     // You can add 'numberOfSeats' if available
+        //   },
+        //   'tripState': widget.tripState,
+        //   // Add 'booking', 'tripRoutes', etc. if available
+        // };
+
         return Directionality(
           textDirection: TextDirection.rtl,
           child: Scaffold(
             appBar: const BackHeader(),
             backgroundColor: AppColors.backgroundColor,
-            body: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    AppText(
-                      lbl: ' الرحلة: #${widget.tripId}',
-                      style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.primaryColor,
-                      ),
-                    ),
-                    TripHeaderOptions(
-                      tripId: widget.tripId,
-                      busId: widget.busId,
-                      tripState: widget.tripState,
-                    ),
-                    DepartureArrivalWidget(
-                      lastTripRoute: widget.lastTripRoute,
-                      firstTripRoute: widget.firstTripRoute,
-                    ),
-                    const SizedBox(height: 20),
-                    const AppText(
-                      lbl: 'مسار الحافلة:',
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: AppColors.primaryColor,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    BlocBuilder<TripsCubit, TripsState>(
-                      builder: (context, state) {
-                        if (state is TripRoutesLoading) {
-                          return const Center(child: CircularProgressIndicator());
-                        } else if (state is TripRoutesLoaded) {
-                          final stations = state.tripRoutes
-                              .map<String>((route) => route['stationName'] ?? 'Unknown')
-                              .toList();
-                          final currentStationIndex = state.tripRoutes.indexWhere(
-                                (route) => route['state'] == 'Reached',
-                          );
-                          return BusTrackingWidget(
-                            stations: state.tripRoutes,
-                          );
-                        } else if (state is TripRoutesError) {
-                          return Center(child: Text('Error: ${state.error}'));
-                        }
-                        return const SizedBox.shrink();
-                      },
-                    ),
-                    const SizedBox(height: 20),
-                    AppButton(
-                      lbl: 'حجز الرحلة',
-                      onPressed: token == null
-                          ? null
-                          : () {
-                              tripsCubit.fetchTripRoutesFromApi(widget.tripId);
+            body: BlocBuilder<TripsCubit, TripsState>(
+              builder: (context, state) {
+                if (state is TripDetailsLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (state is TripDetailsLoaded) {
+                  final tripData = state.tripDetails;
+                  final tripId = tripData['tripId'].toString();
+                  final bus = tripData['bus'] ?? {};
+                  final tripState = tripData['tripState'] ?? '';
+                  final tripRoutes = tripData['tripRoutes'] as List<dynamic>? ?? [];
+                  final firstTripRoute = tripRoutes.isNotEmpty ? tripRoutes.first : {};
+                  final lastTripRoute = tripRoutes.isNotEmpty ? tripRoutes.last : {};
+
+                  return SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          AppText(
+                            lbl: ' الرحلة: #$tripId',
+                            style: const TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.primaryColor,
+                            ),
+                          ),
+                          TripHeaderOptions(tripData: tripData),
+                          DepartureArrivalWidget(
+                            lastTripRoute: lastTripRoute,
+                            firstTripRoute: firstTripRoute,
+                          ),
+                          const SizedBox(height: 20),
+                          const AppText(
+                            lbl: 'مسار الحافلة:',
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: AppColors.primaryColor,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          BusTrackingWidget(stations: tripRoutes.cast<Map<String, dynamic>>()),
+                          const SizedBox(height: 20),
+                          AppButton(
+                            lbl: 'حجز الرحلة',
+                            onPressed: token == null
+                                ? null
+                                : () {
                               _showStationDialog(
                                 context,
                                 tripsCubit,
-                                widget.tripId,
+                                tripId,
                                 token!,
+                                tripRoutes.cast<Map<String, dynamic>>(),
                               );
                             },
+                          ),
+                        ],
+                      ),
                     ),
-                  ],
-                ),
-              ),
+                  );
+                } else if (state is TripDetailsError) {
+                  return Center(child: Text('Error: ${state.error}'));
+                }
+                return const SizedBox.shrink();
+              },
             ),
           ),
-        );
-      }
+        );      }
 
       void _showStationDialog(BuildContext context, TripsCubit tripsCubit,
-          String tripId, String token) {
+          String tripId, String token,  List<Map<String, dynamic>> tripRoutes,
+          ) {
         showDialog(
           context: context,
           barrierDismissible: false,
           builder: (BuildContext context) {
             final screenWidth = MediaQuery.of(context).size.width;
             final screenHeight = MediaQuery.of(context).size.height;
+
+
+            if (tripRoutes.isEmpty) {
+              return const AlertDialog(
+                content: Center(child: Text('No routes available.')),
+              );
+            }
+
+            final stationNames = tripRoutes
+                .map<String>((route) => route['stationName'] ?? 'Unknown')
+                .toList();
+            final stationIds = tripRoutes
+                .map<String>((route) => route['id'].toString())
+                .toList();
+            final orderNumbers = tripRoutes
+                .map<int>((route) => route['OrderNumber'] as int)
+                .toList();
+
+            String? selectedFromStation;
+            String? selectedToStation;
+
 
             return Directionality(
               textDirection: TextDirection.rtl,
@@ -159,99 +187,68 @@ import 'package:flutter/material.dart';
                 content: SizedBox(
                   width: screenWidth * 0.8,
                   height: screenHeight * 0.25,
-                  child: BlocBuilder<TripsCubit, TripsState>(
-                    bloc: tripsCubit,
-                    builder: (context, state) {
-                      if (state is TripRoutesLoading) {
-                        return const Center(child: CircularProgressIndicator());
-                      } else if (state is TripRoutesError) {
-                        return Center(child: Text('Error: ${state.error}'));
-                      } else if (state is TripRoutesLoaded) {
-                        final tripRoutes = state.tripRoutes;
+                  child: StatefulBuilder(
+                    builder: (context, setState) {
+                      return Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          AppDropdown(
+                            items: stationNames.sublist(0, stationNames.length - 1),
+                            hintText: 'اختر محطة البداية',
+                            value: selectedFromStation,
+                            onChanged: (value) {
+                              setState(() {
+                                selectedFromStation = value;
+                                selectedToStation = null;
+                              });
+                            },
+                          ),
+                          SizedBox(height: screenHeight * 0.02),
+                          AppDropdown(
+                            items: selectedFromStation != null
+                                ? stationNames.where((station) {
+                              final fromIndex = stationNames.indexOf(selectedFromStation!);
+                              final toIndex = stationNames.indexOf(station);
+                              return orderNumbers[toIndex] > orderNumbers[fromIndex];
+                            }).toList()
+                                : [],
+                            hintText: 'اختر محطة النهاية',
+                            value: selectedToStation,
+                            onChanged: (value) {
+                              setState(() {
+                                selectedToStation = value;
+                              });
+                            },
+                          ),
+                          SizedBox(height: screenHeight * 0.04),
+                          ElevatedButton(
+                            onPressed: () {
+                              if (selectedFromStation != null && selectedToStation != null) {
+                                final fromStationId = stationIds[stationNames.indexOf(selectedFromStation!)];
+                                final toStationId = stationIds[stationNames.indexOf(selectedToStation!)];
 
-                        if (tripRoutes.isEmpty) {
-                          return const Center(child: Text('No routes available.'));
-                        }
-
-                        final stationNames = tripRoutes
-                            .map<String>((route) => route['stationName'] ?? 'Unknown')
-                            .toList();
-                        final stationIds = tripRoutes
-                            .map<String>((route) => route['id'].toString())
-                            .toList();
-                        final orderNumbers = tripRoutes
-                            .map<int>((route) => route['OrderNumber'] as int)
-                            .toList();
-
-                        String? selectedFromStation;
-                        String? selectedToStation;
-
-                        return StatefulBuilder(
-                          builder: (context, setState) {
-                            return Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                AppDropdown(
-                                  items: stationNames.sublist(0, stationNames.length - 1),
-                                  hintText: 'اختر محطة البداية',
-                                  value: selectedFromStation,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      selectedFromStation = value;
-                                      selectedToStation = null;
-                                    });
-                                  },
-                                ),
-                                SizedBox(height: screenHeight * 0.02),
-                                AppDropdown(
-                                  items: selectedFromStation != null
-                                      ? stationNames.where((station) {
-                                          final fromIndex = stationNames.indexOf(selectedFromStation!);
-                                          final toIndex = stationNames.indexOf(station);
-                                          return orderNumbers[toIndex] > orderNumbers[fromIndex];
-                                        }).toList()
-                                      : [],
-                                  hintText: 'اختر محطة النهاية',
-                                  value: selectedToStation,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      selectedToStation = value;
-                                    });
-                                  },
-                                ),
-                                SizedBox(height: screenHeight * 0.04),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    if (selectedFromStation != null && selectedToStation != null) {
-                                      final fromStationId = stationIds[stationNames.indexOf(selectedFromStation!)];
-                                      final toStationId = stationIds[stationNames.indexOf(selectedToStation!)];
-
-                                      _showBookingDialog(
-                                        context,
-                                        tripsCubit,
-                                        tripId,
-                                        selectedFromStation!,
-                                        selectedToStation!,
-                                        int.parse(fromStationId),
-                                        int.parse(toStationId),
-                                        token,
-                                      );
-                                    } else {
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(
-                                          content: Text('يرجى اختيار محطة البداية والنهاية'),
-                                        ),
-                                      );
-                                    }
-                                  },
-                                  child: const Text('إرسال'),
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      }
-                      return const Center(child: Text('No data available.'));
+                                _showBookingDialog(
+                                  context,
+                                  tripsCubit,
+                                  tripId,
+                                  selectedFromStation!,
+                                  selectedToStation!,
+                                  int.parse(fromStationId),
+                                  int.parse(toStationId),
+                                  token,
+                                );
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('يرجى اختيار محطة البداية والنهاية'),
+                                  ),
+                                );
+                              }
+                            },
+                            child: const Text('إرسال'),
+                          ),
+                        ],
+                      );
                     },
                   ),
                 ),

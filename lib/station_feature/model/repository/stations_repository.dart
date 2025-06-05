@@ -1,4 +1,3 @@
-//added after emoved
 import 'package:dio/dio.dart';
 import 'package:uot_transport/core/api_service.dart';
 import 'package:logger/logger.dart';
@@ -7,9 +6,10 @@ class StationsRepository {
   final ApiService _apiService = ApiService();
   final Logger logger = Logger();
 
-  Future<Response> fetchStations() async {
+  Future<Response> fetchStations({int page = 1, int pageSize = 20}) async {
     try {
-      final response = await _apiService.getRequest('stations');
+      final endpoint = 'stations?page=$page&pageSize=$pageSize';
+      final response = await _apiService.getRequest(endpoint);
       logger.i('Stations fetched successfully');
       return response;
     } on DioError catch (e) {
@@ -21,9 +21,9 @@ class StationsRepository {
     }
   }
 
-  Future<Response> fetchFilteredStations(bool inUot) async {
+  Future<Response> fetchFilteredStations(bool inUot, {int page = 1, int pageSize = 20}) async {
     try {
-      final endpoint = 'stations/inUot/$inUot/mobile';
+      final endpoint = 'stations?inUOT=$inUot&page=$page&pageSize=$pageSize';
       final response = await _apiService.getRequest(endpoint);
       logger.i('Filtered stations fetched successfully');
       return response;
@@ -36,9 +36,12 @@ class StationsRepository {
     }
   }
 
-  Future<Response> searchStations(String stationName) async {
+  Future<Response> searchStations(String stationName, {bool? inUot, int page = 1, int pageSize = 20}) async {
     try {
-      final endpoint = 'stations/search/$stationName';
+      String endpoint = 'stations?search=$stationName&page=$page&pageSize=$pageSize';
+      if (inUot != null) {
+        endpoint += '&inUOT=${inUot ? 1 : 0}';
+      }
       final response = await _apiService.getRequest(endpoint);
       logger.i('Search stations fetched successfully');
       return response;

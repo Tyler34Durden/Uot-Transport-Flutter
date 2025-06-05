@@ -114,6 +114,7 @@
 // }
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -122,7 +123,9 @@ import 'package:uot_transport/core/app_icons.dart';
 import 'package:uot_transport/core/core_widgets/uot_appbar.dart';
 import 'package:uot_transport/home_feature/view/screens/home_screen.dart';
 import 'package:uot_transport/profile_feature/view/screens/profile_screen.dart';
+import 'package:uot_transport/station_feature/model/repository/stations_repository.dart';
 import 'package:uot_transport/station_feature/view/screens/station_screen.dart';
+import 'package:uot_transport/station_feature/view_model/cubit/stations_cubit.dart';
 import 'package:uot_transport/trips_feature/view/screens/trips_screen.dart';
 
 class MainScreen extends StatefulWidget {
@@ -196,9 +199,11 @@ class _MainScreenState extends State<MainScreen> {
         },
         // إزالة const ليتم تمرير المتغيرات للديناميكية
         children: [
-          const StationScreen(),
+          BlocProvider(
+            create: (_) => StationsCubit(StationsRepository())..fetchStations(),
+            child: const StationScreen(),
+          ),
           const TripsScreen(),
-          // تمرير التوكن ومعرف المستخدم باستخدام المتغيرات الديناميكية
           ProfileScreen(token: _token ?? '', userId: _userId ?? 0),
           const HomeScreen(),
         ],
