@@ -46,7 +46,7 @@ import 'package:flutter/material.dart';
                       MaterialPageRoute(builder: (context) => const MainScreen()),
                     );
                   } else if (state is StudentAuthFailure) {
-                    String errorMessage = 'حدث خطأ ما';
+                    String errorMessage = 'هناك خطأ ما في البريد الإلكتروني أو كلمة المرور.';
                     final error = state.error as String;
                     // Extract the Error Data: { ... } part
                     final match = RegExp(r'Error Data:\s*(\{[^}]+\})').firstMatch(error);
