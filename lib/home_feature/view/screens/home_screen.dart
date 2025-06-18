@@ -40,12 +40,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _initializeToken() async {
     final prefs = await SharedPreferences.getInstance();
-    token = prefs.getString('auth_token');
+    setState(() {
+      token = prefs.getString('auth_token');
+    });
     if (token != null) {
-      context.read<HomeStationCubit>().fetchStations();
+      context.read<HomeStationCubit>().fetchStations(token!);
       context.read<HomeStationCubit>().fetchMyTrips(token!);
-      // Initial fetch for today's trips (first page)
-      context.read<TripsCubit>().fetchTripsByStations(loadMore: false);
+      context.read<TripsCubit>().fetchTripsByStations(loadMore: false, token: token!);
     } else {
       debugPrint('Token not found. Redirecting to login...');
     }
@@ -60,9 +61,10 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() => _isLoadingMore = true);
       cubit
           .fetchTripsByStations(
-            startStationId: selectedStationId?.toString(),
-            loadMore: true,
-          )
+        startStationId: selectedStationId?.toString(),
+        loadMore: true,
+        token: token!,
+      )
           .whenComplete(() {
         if (mounted) setState(() => _isLoadingMore = false);
       });
@@ -76,118 +78,126 @@ class _HomeScreenState extends State<HomeScreen> {
       textDirection: TextDirection.rtl,
       child: Scaffold(
         backgroundColor: AppColors.backgroundColor,
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // My Trips Section
-                const Text(
-                  "رحلاتي:",
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.primaryColor,
+        body: RefreshIndicator(
+          onRefresh: () async {
+            if (token != null) {
+              await context.read<HomeStationCubit>().fetchStations(token!);
+              await context.read<HomeStationCubit>().fetchMyTrips(token!);
+              await context.read<TripsCubit>().fetchTripsByStations(loadMore: false, token: token!);
+            }
+          },
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // My Trips Section
+                  const Text(
+                    "رحلاتي:",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.primaryColor,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 25),
-                BlocBuilder<HomeStationCubit, HomeStationState>(
-                  builder: (context, state) {
-                    if (state.isFetchMyTripsLoading) {
-                      return const Center(child: CircularProgressIndicator());
-                    } else if (state.fetchMyTripsError != null) {
-                      return Center(child: Text
-                        ('لم تقم بحجز رحلات بعد'));
-                    } else if (state.myTrips.isNotEmpty) {
-                      return ListView.builder(
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: state.myTrips.length,
-                        itemBuilder: (context, index) {
-                          final trip = state.myTrips[index];
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 10.0),
-                            child: MyTripsWidget(trip: trip),
-                          );
-                        },
-                      );
-                    }
-                    return const Center(child: Text('No trips available.'));
-                  },
-                ),
-                const SizedBox(height: 20),
-
-                // Today's Trips Section with Pagination
-                const Text(
-                  "رحلات اليوم:",
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.primaryColor,
-                  ),
-                ),
-                const SizedBox(height: 25),
-                BlocBuilder<TripsCubit, TripsState>(
-                  builder: (context, state) {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        StationFilters(
-                          selectedStationId: selectedStationId,
-                          stations: stations,
-                          onStationSelected: (stationId) {
-                            setState(() {
-                              selectedStationId = stationId;
-                            });
-                            // Reset pagination and fetch new trips for the selected station
-                            context.read<TripsCubit>().fetchTripsByStations(
-                              startStationId: stationId?.toString(),
-                              loadMore: false,
+                  const SizedBox(height: 25),
+                  BlocBuilder<HomeStationCubit, HomeStationState>(
+                    builder: (context, state) {
+                      if (state.isFetchMyTripsLoading) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (state.fetchMyTripsError != null) {
+                        return Center(child: Text('لم تقم بحجز رحلات بعد'));
+                      } else if (state.myTrips.isNotEmpty) {
+                        return ListView.builder(
+                          physics: const NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          itemCount: state.myTrips.length,
+                          itemBuilder: (context, index) {
+                            final trip = state.myTrips[index];
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 10.0),
+                              child: MyTripsWidget(trip: trip),
                             );
                           },
-                        ),
-                        const SizedBox(height: 20),
-                        if (state is TripsLoading && !_isLoadingMore)
-                          const Center(child: CircularProgressIndicator())
-                        else if (state is TripsError)
-                          Center(child: Text('لا توجد رحلات متجهة إلى تلك المحطة.'))
-                        else if (state is TripsLoaded && state.trips.isNotEmpty)
-                          Column(
-                            children: [
-                              ListView.builder(
-                                controller: _tripsScrollController,
-                                physics: const NeverScrollableScrollPhysics(),
-                                shrinkWrap: true,
-                                itemCount: state.trips.length,
-                                itemBuilder: (context, index) {
-                                  final trip = state.trips[index];
-                                  return Padding(
-                                    padding: const EdgeInsets.only(bottom: 16.0),
-                                    child: ActiveTripsWidget(
-                                      busId: trip['busId'].toString(),
-                                      tripId: trip['tripId'].toString(),
-                                      tripState: trip['tripState'],
-                                      firstTripRoute: trip['firstTripRoute'] ?? {},
-                                      lastTripRoute: trip['lastTripRoute'] ?? {},
+                        );
+                      }
+                      return const Center(child: Text('No trips available.'));
+                    },
+                  ),
+                  const SizedBox(height: 20),
+
+                  // Today's Trips Section with Pagination
+                  const Text(
+                    "رحلات اليوم:",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.primaryColor,
+                    ),
+                  ),
+                  const SizedBox(height: 25),
+                  BlocBuilder<TripsCubit, TripsState>(
+                    builder: (context, state) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          StationFilters(
+                            selectedStationId: selectedStationId,
+                            stations: stations,
+                            onStationSelected: (stationId) {
+                              setState(() {
+                                selectedStationId = stationId;
+                              });
+                              context.read<TripsCubit>().fetchTripsByStations(
+                                startStationId: stationId?.toString(),
+                                loadMore: false,
+                                token: token!,
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 20),
+                          if (state is TripsLoading && !_isLoadingMore)
+                            const Center(child: CircularProgressIndicator())
+                          else if (state is TripsError)
+                            Center(child: Text('لا توجد رحلات متجهة إلى تلك المحطة.'))
+                          else if (state is TripsLoaded && state.trips.isNotEmpty)
+                              Column(
+                                children: [
+                                  ListView.builder(
+                                    controller: _tripsScrollController,
+                                    physics: const NeverScrollableScrollPhysics(),
+                                    shrinkWrap: true,
+                                    itemCount: state.trips.length,
+                                    itemBuilder: (context, index) {
+                                      final trip = state.trips[index];
+                                      return Padding(
+                                        padding: const EdgeInsets.only(bottom: 16.0),
+                                        child: ActiveTripsWidget(
+                                          busId: trip['busId'].toString(),
+                                          tripId: trip['tripId'].toString(),
+                                          tripState: trip['tripState'],
+                                          firstTripRoute: trip['firstTripRoute'] ?? {},
+                                          lastTripRoute: trip['lastTripRoute'] ?? {},
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                  if (_isLoadingMore)
+                                    const Padding(
+                                      padding: EdgeInsets.symmetric(vertical: 16),
+                                      child: Center(child: CircularProgressIndicator()),
                                     ),
-                                  );
-                                },
-                              ),
-                              if (_isLoadingMore)
-                                const Padding(
-                                  padding: EdgeInsets.symmetric(vertical: 16),
-                                  child: Center(child: CircularProgressIndicator()),
-                                ),
-                            ],
-                          )
-                        else
-                          const Center(child: Text('No trips available.')),
-                      ],
-                    );
-                  },
-                ),
-              ],
+                                ],
+                              )
+                            else
+                              const Center(child: Text('No trips available.')),
+                        ],
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
         ),

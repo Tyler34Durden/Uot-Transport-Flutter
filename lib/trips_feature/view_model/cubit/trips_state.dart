@@ -85,3 +85,9 @@ class TripDetailsError extends TripsState {
   @override
   List<Object?> get props => [error];
 }
+
+// In trips_state.dart
+class TripCancelError extends TripsState {
+  final String errorMessage;
+  TripCancelError(this.errorMessage);
+}

@@ -18,6 +18,7 @@ class TripsCubit extends Cubit<TripsState> {
     String? startStationId,
     String? endStationId,
     bool loadMore = false,
+    required String token
   }) async {
     if (!loadMore) {
       _currentPage = 1;
@@ -33,6 +34,7 @@ class TripsCubit extends Cubit<TripsState> {
         endStationId: endStationId,
         page: _currentPage,
         pageSize: _pageSize,
+        token: token
       );
       final newTrips = trips as List<dynamic>;
       if (newTrips.length < _pageSize) _hasMore = false;
@@ -45,10 +47,10 @@ class TripsCubit extends Cubit<TripsState> {
     }
   }
 
-  Future<void> fetchTripDetailsScreen(String tripID) async {
+  Future<void> fetchTripDetailsScreen(String tripID,String token) async {
     emit(TripDetailsLoading());
     try {
-      final tripDetails = await _tripsRepository.fetchTripDetailsScreen(tripID);
+      final tripDetails = await _tripsRepository.fetchTripDetailsScreen(tripID, token);
       emit(TripDetailsLoaded(tripDetails));
     } catch (e) {
       _logger.e('Error while fetching trip details from API: $e');
@@ -56,11 +58,11 @@ class TripsCubit extends Cubit<TripsState> {
     }
   }
 
-  Future<void> fetchTripRoutes(String tripID) async {
+  Future<void> fetchTripRoutes(String tripID,String token) async {
     emit(TripRoutesLoading());
     try {
       print("entered the try method in the fetch trips by route");
-      final tripRoutes = await _tripsRepository.fetchTripRoutes(tripID);
+      final tripRoutes = await _tripsRepository.fetchTripRoutes(tripID,token);
       print("before the emit in the fetch trips by route");
       emit(TripRoutesLoaded(tripRoutes));
     } catch (e) {
@@ -88,5 +90,22 @@ Future<void> createTicket({
       emit(TripsTicketError(e.toString()));
     }
   }
+  Future<void> cancelTicket({
+    required int tripId,
+    required String token,
+  }) async {
+    emit(TripsTicketLoading());
+    try {
+      await _tripsRepository.cancelTicket(
+        tripId: tripId,
+        token: token,
+      );
+      emit(TripsTicketSuccess('Ticket cancelled successfully'));
+    } catch (e) {
+      _logger.e('Error while cancelling ticket: $e');
+      emit(TripCancelError(e.toString()));
+    }
+  }
+
 
 }

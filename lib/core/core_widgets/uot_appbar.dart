@@ -31,11 +31,6 @@ class UotAppbar extends StatelessWidget implements PreferredSizeWidget {
               );
             },
           ),
-          IconButton(
-            icon: SvgPicture.asset(AppIcons.outline_SearchAppPath,
-                width: 24, height: 24, color: AppColors.primaryColor),
-            onPressed: () {},
-          ),
         ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1.0),

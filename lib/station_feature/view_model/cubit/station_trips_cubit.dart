@@ -10,12 +10,12 @@ import 'package:bloc/bloc.dart';
 
       StationTripsCubit(this._repository) : super(StationTripsInitial());
 
-      Future<void> fetchStationTrips(int stationId) async {
+      Future<void> fetchStationTrips(int stationId,String token) async {
         _logger.i('Fetching station trips for stationId: $stationId');
         //some shitty stupid comment
         emit(StationTripsLoading());
         try {
-          final response = await _repository.fetchStationTrips(stationId);
+          final response = await _repository.fetchStationTrips(stationId,token);
           final data = response.data;
           if (data is List) {
             _logger.i('Parsed station trips with ${data.length} items');

@@ -21,6 +21,7 @@ class StudentAuthRepository {
       logger.e('DioError: ${e.message}');
       if (e.response != null) {
         logger.e('DioError Response: ${e.response?.data}');
+        throw e.response?.data;
       }
       rethrow;
     }
@@ -85,6 +86,8 @@ class StudentAuthRepository {
       logger.e('DioError: ${e.message}');
       if (e.response != null) {
         logger.e('DioError Response: ${e.response?.data}');
+        throw e.response?.data;
+
       }
       rethrow;
     }

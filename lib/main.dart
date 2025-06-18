@@ -67,7 +67,7 @@ Future<void> main() async {
             create: (context) => HomeStationCubit(homeRepository),
           ),
           BlocProvider(
-            create: (context) => AdvertisingsCubit(homeRepository)..fetchAdvertisings(),
+            create: (context) => AdvertisingsCubit(homeRepository),
           ),
 
           BlocProvider(

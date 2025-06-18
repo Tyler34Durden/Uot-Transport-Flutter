@@ -12,12 +12,13 @@
             String? endStationId,
             int page = 1,
             int pageSize = 5,
+            required String token,
           }) async {
             try {
               final String id1 = startStationId ?? "null";
               final String id2 = endStationId ?? "null";
               final String url = "tripRoutes/filter/$id1/$id2?page=$page&pageSize=$pageSize";
-              final response = await _apiService.getRequest(url);
+              final response = await _apiService.getRequest(url,token: token);
               logger.i('Trips fetched successfully: ${response.data}');
               dynamic responseData = response.data;
               if (responseData is List) {
@@ -35,10 +36,13 @@
           }
 
           Future<List<Map<String, dynamic>>> fetchTripRoutes(
-              String tripID) async {
+              String tripID,
+              String token,
+
+              ) async {
             try {
               final String url = "tripRoutes/trip/$tripID";
-              final response = await _apiService.getRequest(url);
+              final response = await _apiService.getRequest(url,token: token);
               logger.i('Trip routes fetched successfully: ${response.data}');
               dynamic responseData = response.data;
               if (responseData is List) {
@@ -55,10 +59,10 @@
             }
           }
 
-          Future<Map<String, dynamic>> fetchTripDetailsScreen(String tripID) async {
+          Future<Map<String, dynamic>> fetchTripDetailsScreen(String tripID,String token,) async {
             try {
               final String url = "trip/$tripID/mobile";
-              final response = await _apiService.getRequest(url);
+              final response = await _apiService.getRequest(url,token: token);
               logger.i('Trip details (API) fetched successfully: ${response.data}');
               dynamic responseData = response.data;
               if (responseData is Map<String, dynamic>) {
@@ -101,6 +105,22 @@
             }
           }
 
+          Future<void> cancelTicket({
+            required int tripId,
+            required String token,
+          }) async {
+            try {
+              final String url = "ticket/$tripId/cancel";
+              final response = await _apiService.patchRequest(url, {}, token: token);
+              logger.i('Ticket cancelled successfully: ${response.data}');
+            } on DioError catch (e) {
+              logger.e('Error cancelling ticket: ${e.message}');
+              if (e.response != null) {
+                logger.e('DioError Response: ${e.response?.data}');
+              }
+              rethrow;
+            }
+          }
 
         // Future<Response> fetchStations() async {
         //   try {

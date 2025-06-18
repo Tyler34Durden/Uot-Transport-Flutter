@@ -47,18 +47,11 @@ import 'package:flutter/material.dart';
                     );
                   } else if (state is StudentAuthFailure) {
                     String errorMessage = 'هناك خطأ ما في البريد الإلكتروني أو كلمة المرور.';
-                    final error = state.error as String;
-                    // Extract the Error Data: { ... } part
-                    final match = RegExp(r'Error Data:\s*(\{[^}]+\})').firstMatch(error);
-                    if (match != null) {
-                      // Extract just the message field if you want only the message
-                      final data = match.group(1)!;
-                      final messageMatch = RegExp(r'message:\s*([^,}]+)').firstMatch(data);
-                      if (messageMatch != null) {
-                        errorMessage = messageMatch.group(1)!;
-                      } else {
-                        errorMessage = data; // fallback to full error data
-                      }
+                    final error = state.error;
+                    if (error is Map && error[0] != null) {
+                      errorMessage = error[0].toString();
+                    } else if (error is String) {
+                      errorMessage = error;
                     }
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text(errorMessage)),

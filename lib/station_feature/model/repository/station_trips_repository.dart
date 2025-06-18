@@ -8,11 +8,12 @@ import 'package:dio/dio.dart';
         final Logger logger = Logger();
 
         // Fetch trips for a specific station
-        Future<Response> fetchStationTrips(int stationId) async {
+        Future<Response> fetchStationTrips(int stationId,String token,
+            ) async {
           try {
             final endpoint = 'station/$stationId/trips';
-            final response = await _apiService.getRequest(endpoint);
-            logger.i('Station trips fetched successfully for stationId: $stationId');
+            final response = await _apiService.getRequest(endpoint,token: token);
+            logger.i('Station trips fetched successfully for stationId: $stationId',);
             return response;
           } on DioError catch (e) {
             logger.e('DioError in fetchStationTrips: ${e.message}');

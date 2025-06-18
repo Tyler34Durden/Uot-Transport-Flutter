@@ -6,12 +6,15 @@ import 'package:dio/dio.dart';
    final ApiService _apiService = ApiService();
    final Logger logger = Logger();
 
-   Future<List<dynamic>> fetchTodayTrips({int? stationId}) async {
+   Future<List<dynamic>> fetchTodayTrips({int? stationId,
+     required String token,
+
+   }) async {
      try {
        final Map<String, dynamic> queryParams =
            stationId != null ? {'stationId': stationId} : {};
        final response =
-           await _apiService.getRequest('trips/today', queryParams: queryParams);
+           await _apiService.getRequest('trips/today', queryParams: queryParams,token: token);
        logger.i('Today\'s trips fetched successfully');
        return response.data ?? [];
      } on DioError catch (e) {
@@ -23,9 +26,11 @@ import 'package:dio/dio.dart';
      }
    }
 
-   Future<List<Map<String, dynamic>>> fetchAdvertisings() async {
+   Future<List<Map<String, dynamic>>> fetchAdvertisings(
+       String token,
+       ) async {
      try {
-       final response = await _apiService.getRequest('advertisings');
+       final response = await _apiService.getRequest('advertisings',token: token);
        logger.i('Advertisings fetched successfully');
        if (response.data != null && response.data['data'] != null) {
          return (response.data['data'] as List)
@@ -43,9 +48,9 @@ import 'package:dio/dio.dart';
      }
    }
 
-   Future<List<Map<String, dynamic>>> fetchStations() async {
+   Future<List<Map<String, dynamic>>> fetchStations(String token,) async {
      try {
-       final response = await _apiService.getRequest('stations/filter');
+       final response = await _apiService.getRequest('stations/filter',token: token);
        logger.i('Stations fetched successfully');
        if (response.data != null && response.data is List) {
          return (response.data as List)
