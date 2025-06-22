@@ -1,4 +1,3 @@
-//added after removed
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uot_transport/auth_feature/view/screens/qr_scan_screen.dart';
@@ -35,7 +34,7 @@ class ConfirmStudyStatusScreen extends StatefulWidget {
 
 class _ConfirmStudyStatusScreenState extends State<ConfirmStudyStatusScreen> {
   final TextEditingController _registrationNumberController =
-  TextEditingController();
+      TextEditingController();
   String? _selectedCollege;
   String? _selectedGender;
   String? _qrCodeResult;
@@ -61,7 +60,6 @@ class _ConfirmStudyStatusScreenState extends State<ConfirmStudyStatusScreen> {
             // Optionally show a loading indicator.
           } else if (state is RegisterStudentSuccess) {
             Future.delayed(Duration.zero, () {
-              print("before nav");
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
@@ -72,7 +70,16 @@ class _ConfirmStudyStatusScreenState extends State<ConfirmStudyStatusScreen> {
               );
             });
           } else if (state is StudentAuthFailure) {
-            print('Error: ${state.error}');
+            String errorMessage = 'حدث خطأ أثناء التسجيل.';
+            final error = state.error;
+            if (error is Map && error[0] != null) {
+              errorMessage = error[0].toString();
+            } else if (error is String) {
+              errorMessage = error;
+            }
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(errorMessage)),
+            );
           }
         },
         child: SingleChildScrollView(
@@ -132,7 +139,6 @@ class _ConfirmStudyStatusScreenState extends State<ConfirmStudyStatusScreen> {
                     'كلية تقنية المعلومات',
                     'كلية العلوم',
                     'كلية الآداب',
-
                   ],
                   hintText: 'الكلية',
                   onChanged: (String? newValue) {
@@ -178,7 +184,6 @@ class _ConfirmStudyStatusScreenState extends State<ConfirmStudyStatusScreen> {
                       setState(() {
                         _qrCodeResult = result;
                       });
-                      print('Scanned QR Code: $result');
                     }
                   },
                 ),
@@ -200,17 +205,15 @@ class _ConfirmStudyStatusScreenState extends State<ConfirmStudyStatusScreen> {
                 AppButton(
                   lbl: 'إنشاء حساب',
                   onPressed: () {
-                    // Validate inputs before making the API call.
                     if (_registrationNumberController.text.isEmpty ||
                         _selectedCollege == null ||
                         _selectedGender == null ||
                         _qrCodeResult == null) {
-                      // Show an error message if any field is empty.
-                      print('**********************Please fill in all fields.');
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('يرجى تعبئة جميع الحقول')),
+                      );
                       return;
                     }
-
-                    // Prepare the student data.
                     final updatedStudentData = {
                       ...widget.studentData,
                       "uotNumber": _registrationNumberController.text,
@@ -218,9 +221,6 @@ class _ConfirmStudyStatusScreenState extends State<ConfirmStudyStatusScreen> {
                       "gender": _selectedGender,
                       "qrData": _qrCodeResult,
                     };
-
-                    // Print the student data.
-                    print('Student Data: $updatedStudentData');
                     context.read<StudentAuthCubit>().registerStudent(updatedStudentData);
                   },
                 ),

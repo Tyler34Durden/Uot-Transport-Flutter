@@ -73,6 +73,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final media = MediaQuery.of(context);
+    final width = media.size.width;
+    final height = media.size.height;
+    final padding = width * 0.04;
+    final titleFontSize = width * 0.05; // Responsive font size
+    final sectionSpacing = height * 0.03;
+    final itemSpacing = height * 0.015;
+
     final stations = context.watch<HomeStationCubit>().state.stations;
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -88,26 +96,26 @@ class _HomeScreenState extends State<HomeScreen> {
           },
           child: SingleChildScrollView(
             child: Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: EdgeInsets.all(padding),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // My Trips Section
-                  const Text(
+                  Text(
                     "رحلاتي:",
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: titleFontSize,
                       fontWeight: FontWeight.bold,
                       color: AppColors.primaryColor,
                     ),
                   ),
-                  const SizedBox(height: 25),
+                  SizedBox(height: sectionSpacing),
                   BlocBuilder<HomeStationCubit, HomeStationState>(
                     builder: (context, state) {
                       if (state.isFetchMyTripsLoading) {
                         return const Center(child: CircularProgressIndicator());
                       } else if (state.fetchMyTripsError != null) {
-                        return Center(child: Text('لم تقم بحجز رحلات بعد'));
+                        return Center(child: Text('لم تقم بحجز رحلات بعد', style: TextStyle(fontSize: width * 0.04)));
                       } else if (state.myTrips.isNotEmpty) {
                         return ListView.builder(
                           physics: const NeverScrollableScrollPhysics(),
@@ -116,27 +124,27 @@ class _HomeScreenState extends State<HomeScreen> {
                           itemBuilder: (context, index) {
                             final trip = state.myTrips[index];
                             return Padding(
-                              padding: const EdgeInsets.only(bottom: 10.0),
+                              padding: EdgeInsets.only(bottom: itemSpacing),
                               child: MyTripsWidget(trip: trip),
                             );
                           },
                         );
                       }
-                      return const Center(child: Text('No trips available.'));
+                      return Center(child: Text('No trips available.', style: TextStyle(fontSize: width * 0.04)));
                     },
                   ),
-                  const SizedBox(height: 20),
+                  SizedBox(height: sectionSpacing),
 
                   // Today's Trips Section with Pagination
-                  const Text(
+                  Text(
                     "رحلات اليوم:",
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: titleFontSize,
                       fontWeight: FontWeight.bold,
                       color: AppColors.primaryColor,
                     ),
                   ),
-                  const SizedBox(height: 25),
+                  SizedBox(height: sectionSpacing),
                   BlocBuilder<TripsCubit, TripsState>(
                     builder: (context, state) {
                       return Column(
@@ -156,11 +164,11 @@ class _HomeScreenState extends State<HomeScreen> {
                               );
                             },
                           ),
-                          const SizedBox(height: 20),
+                          SizedBox(height: itemSpacing),
                           if (state is TripsLoading && !_isLoadingMore)
                             const Center(child: CircularProgressIndicator())
                           else if (state is TripsError)
-                            Center(child: Text('لا توجد رحلات متجهة إلى تلك المحطة.'))
+                            Center(child: Text('لا توجد رحلات متجهة إلى تلك المحطة.', style: TextStyle(fontSize: width * 0.04)))
                           else if (state is TripsLoaded && state.trips.isNotEmpty)
                               Column(
                                 children: [
@@ -172,7 +180,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     itemBuilder: (context, index) {
                                       final trip = state.trips[index];
                                       return Padding(
-                                        padding: const EdgeInsets.only(bottom: 16.0),
+                                        padding: EdgeInsets.only(bottom: itemSpacing),
                                         child: ActiveTripsWidget(
                                           busId: trip['busId'].toString(),
                                           tripId: trip['tripId'].toString(),
@@ -184,14 +192,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                     },
                                   ),
                                   if (_isLoadingMore)
-                                    const Padding(
-                                      padding: EdgeInsets.symmetric(vertical: 16),
-                                      child: Center(child: CircularProgressIndicator()),
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(vertical: itemSpacing),
+                                      child: const Center(child: CircularProgressIndicator()),
                                     ),
                                 ],
                               )
                             else
-                              const Center(child: Text('No trips available.')),
+                              Center(child: Text('No trips available.', style: TextStyle(fontSize: width * 0.04))),
                         ],
                       );
                     },

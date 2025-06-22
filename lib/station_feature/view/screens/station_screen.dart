@@ -61,6 +61,14 @@ class _StationScreenState extends State<StationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final media = MediaQuery.of(context);
+    final width = media.size.width;
+    final height = media.size.height;
+    final padding = width * 0.05;
+    final titleFontSize = width * 0.06;
+    final filterFontSize = width * 0.045;
+    final sectionSpacing = height * 0.025;
+
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
       body: BlocBuilder<StationsCubit, StationsState>(
@@ -71,26 +79,31 @@ class _StationScreenState extends State<StationScreen> {
             return Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(28),
+                  padding: EdgeInsets.all(padding),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       FilterWidget(
                         selectedFilter: selectedFilter,
                         onFilterSelected: (value) => _onFilterSelected(context, value),
+                        fontSize: filterFontSize,
                       ),
-                      const AppText(
+                      AppText(
                         lbl: 'المحطات',
-                        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                        style: TextStyle(fontSize: titleFontSize, fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
                 ),
-                SearchBar(
-                  onSearch: (query) {
-                    context.read<StationsCubit>().searchStations(query);
-                  },
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: padding),
+                  child: SearchBar(
+                    onSearch: (query) {
+                      context.read<StationsCubit>().searchStations(query);
+                    },
+                  ),
                 ),
+                SizedBox(height: sectionSpacing),
                 Expanded(
                   child: Stack(
                     children: [
@@ -111,9 +124,9 @@ class _StationScreenState extends State<StationScreen> {
               ],
             );
           } else if (state is StationsFailure) {
-            return Center(child: Text('Error: ${state.error}'));
+            return Center(child: Text('Error: ${state.error}', style: TextStyle(fontSize: width * 0.045)));
           }
-          return const Center(child: Text('No data available'));
+          return Center(child: Text('No data available', style: TextStyle(fontSize: width * 0.045)));
         },
       ),
     );

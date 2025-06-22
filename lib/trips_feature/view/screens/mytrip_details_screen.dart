@@ -7,6 +7,7 @@ import 'package:uot_transport/auth_feature/view/widgets/app_text.dart';
 import 'package:uot_transport/core/app_colors.dart';
 import 'package:uot_transport/core/core_widgets/back_header.dart';
 import 'package:uot_transport/core/main_screen.dart';
+import 'package:uot_transport/trips_feature/view/screens/mytrip_scanner.dart';
 import 'package:uot_transport/trips_feature/view/widgets/bus_tracking_widget.dart';
 import 'package:uot_transport/trips_feature/view/widgets/departure_arrival_widget.dart';
 import 'package:uot_transport/trips_feature/view/widgets/trip_header_options.dart';
@@ -58,6 +59,14 @@ class _MyTripDetailsScreenState extends State<MyTripDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     final tripsCubit = context.read<TripsCubit>();
+    final media = MediaQuery.of(context);
+    final width = media.size.width;
+    final height = media.size.height;
+    final padding = width * 0.04;
+    final titleFontSize = width * 0.06;
+    final sectionSpacing = height * 0.025;
+    final labelFontSize = width * 0.045;
+    final iconSize = width * 0.25;
 
     return BlocListener<TripsCubit, TripsState>(
       listener: (context, state) {
@@ -92,35 +101,66 @@ class _MyTripDetailsScreenState extends State<MyTripDetailsScreen> {
                   child: SingleChildScrollView(
                     physics: const AlwaysScrollableScrollPhysics(),
                     child: Padding(
-                      padding: const EdgeInsets.all(16.0),
+                      padding: EdgeInsets.all(padding),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           AppText(
                             lbl: ' الرحلة: #$tripId',
-                            style: const TextStyle(
-                              fontSize: 24,
+                            style: TextStyle(
+                              fontSize: titleFontSize,
                               fontWeight: FontWeight.bold,
                               color: AppColors.primaryColor,
                             ),
                           ),
+                          SizedBox(height: sectionSpacing / 2),
+                          Icon(Icons.qr_code_scanner, size: iconSize, color: AppColors.primaryColor),
+                          SizedBox(height: sectionSpacing / 2),
+                          AppButton(
+                            lbl: 'مسح رمز QR',
+                            icon: Icons.camera_alt,
+                            onPressed: () async {
+                              final tripRouteId = firstTripRoute['id'];
+                              final tripId = tripData['tripId'];
+                              final result = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => MyTripScanner(
+                                    tripId: tripId,
+                                    tripRouteId: tripRouteId,
+                                    token: token!,
+                                    busId: bus['id']?.toString() ?? '',
+                                    tripState: tripState,
+                                    firstTripRoute: firstTripRoute,
+                                    lastTripRoute: lastTripRoute,
+                                  ),
+                                ),
+                              );
+                              if (result != null) {
+                                print('Scanned QR value: $result');
+                              }
+                            },
+                            color: AppColors.primaryColor,
+                            textColor: AppColors.backgroundColor,
+                          ),
+                          SizedBox(height: sectionSpacing / 2),
                           TripHeaderOptions(tripData: tripData),
                           DepartureArrivalWidget(
                             lastTripRoute: lastTripRoute,
                             firstTripRoute: firstTripRoute,
                           ),
-                          const SizedBox(height: 20),
-                          const AppText(
+                          SizedBox(height: sectionSpacing),
+                          AppText(
                             lbl: 'مسار الحافلة:',
                             style: TextStyle(
-                              fontSize: 20,
+                              fontSize: labelFontSize,
                               color: AppColors.primaryColor,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          const SizedBox(height: 10),
+                          SizedBox(height: sectionSpacing / 2),
                           BusTrackingWidget(stations: tripRoutes.cast<Map<String, dynamic>>()),
-                          const SizedBox(height: 20),
+                          SizedBox(height: sectionSpacing),
                           AppButton(
                             lbl: 'إلغاء الحجز',
                             onPressed: token == null
@@ -131,6 +171,8 @@ class _MyTripDetailsScreenState extends State<MyTripDetailsScreen> {
                                       tripsCubit,
                                       tripId,
                                       token!,
+                                      width,
+                                      height,
                                     );
                                   },
                             color: const Color(0xFFC12828),
@@ -141,7 +183,7 @@ class _MyTripDetailsScreenState extends State<MyTripDetailsScreen> {
                   ),
                 );
               } else if (state is TripDetailsError) {
-                return Center(child: Text('Error: ${state.error}'));
+                return Center(child: Text('Error: ${state.error}', style: TextStyle(fontSize: width * 0.045)));
               }
               return const SizedBox.shrink();
             },
@@ -156,27 +198,35 @@ class _MyTripDetailsScreenState extends State<MyTripDetailsScreen> {
     TripsCubit tripsCubit,
     String tripId,
     String token,
+    double screenWidth,
+    double screenHeight,
   ) {
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
+        final dialogWidth = screenWidth * 0.8;
+        final dialogHeight = screenHeight * 0.22;
+        final buttonWidth = screenWidth * 0.6;
+        final buttonHeight = screenHeight * 0.06;
+        final fontSize = screenWidth * 0.045;
+
         return Directionality(
           textDirection: TextDirection.rtl,
           child: AlertDialog(
-            title: const Align(
+            title: Align(
               alignment: Alignment.centerRight,
-              child: Text('هل انت متأكد من إلغاء حجز الرحلة'),
+              child: Text('هل انت متأكد من إلغاء حجز الرحلة', style: TextStyle(fontSize: fontSize)),
             ),
             content: SizedBox(
-              width: 500,
-              height: 150,
+              width: dialogWidth,
+              height: dialogHeight,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("سوف تقوم بإلغاء حجز الحافلة رقم $tripId"),
-                  const SizedBox(height: 20),
+                  Text("سوف تقوم بإلغاء حجز الحافلة رقم $tripId", style: TextStyle(fontSize: fontSize)),
+                  SizedBox(height: screenHeight * 0.02),
                   AppButton(
                     lbl: "تأكيد",
                     onPressed: () {
@@ -185,14 +235,14 @@ class _MyTripDetailsScreenState extends State<MyTripDetailsScreen> {
                         token: token,
                       );
                       Navigator.of(context).pop();
-                      _showConfirmationDialog(context);
+                      _showConfirmationDialog(context, screenWidth, screenHeight);
                     },
                     color: AppColors.primaryColor,
                     textColor: AppColors.backgroundColor,
-                    width: 265,
-                    height: 45,
+                    width: buttonWidth,
+                    height: buttonHeight,
                   ),
-                  const SizedBox(height: 10),
+                  SizedBox(height: screenHeight * 0.01),
                   AppButton(
                     lbl: "إلغاء",
                     onPressed: () {
@@ -200,8 +250,8 @@ class _MyTripDetailsScreenState extends State<MyTripDetailsScreen> {
                     },
                     color: AppColors.secondaryColor,
                     textColor: AppColors.primaryColor,
-                    width: 265,
-                    height: 45,
+                    width: buttonWidth,
+                    height: buttonHeight,
                   ),
                 ],
               ),
@@ -212,28 +262,32 @@ class _MyTripDetailsScreenState extends State<MyTripDetailsScreen> {
     );
   }
 
-  void _showConfirmationDialog(BuildContext context) {
+  void _showConfirmationDialog(BuildContext context, double screenWidth, double screenHeight) {
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
+        final dialogWidth = screenWidth * 0.8;
+        final dialogHeight = screenHeight * 0.18;
+        final fontSize = screenWidth * 0.045;
+
         return AlertDialog(
           title: SvgPicture.asset("assets/icons/check.svg"),
-          content: Container(
-            width: 800,
-            height: 150,
+          content: SizedBox(
+            width: dialogWidth,
+            height: dialogHeight,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text('تم تأكيد إلغاء الحجز بنجاح'),
-                const SizedBox(height: 20),
+                Text('تم تأكيد إلغاء الحجز بنجاح', style: TextStyle(fontSize: fontSize)),
+                SizedBox(height: screenHeight * 0.025),
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).pushReplacement(
                       MaterialPageRoute(builder: (context) => const MainScreen()),
                     );
                   },
-                  child: const Text('الذهاب إلى الصفحة الرئيسية'),
+                  child: Text('الذهاب إلى الصفحة الرئيسية', style: TextStyle(fontSize: fontSize)),
                 ),
               ],
             ),
@@ -244,15 +298,16 @@ class _MyTripDetailsScreenState extends State<MyTripDetailsScreen> {
   }
 
   void _showErrorDialog(BuildContext context, String errorMessage) {
+    final width = MediaQuery.of(context).size.width;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('حدث خطأ'),
-        content: Text(errorMessage),
+        title: Text('حدث خطأ', style: TextStyle(fontSize: width * 0.045)),
+        content: Text(errorMessage, style: TextStyle(fontSize: width * 0.04)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('حسناً'),
+            child: Text('حسناً', style: TextStyle(fontSize: width * 0.04)),
           ),
         ],
       ),

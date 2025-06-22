@@ -122,6 +122,24 @@
             }
           }
 
+
+          Future<void> updateTicketState({
+            required int tripRouteId,
+            required String token,
+          }) async {
+            try {
+              final String url = "ticket/updateState/$tripRouteId";
+              final response = await _apiService.putRequest(url, {}, token: token);
+              logger.i('Ticket state updated successfully: ${response.data}');
+            } on DioError catch (e) {
+              logger.e('Error updating ticket state: ${e.message}');
+              if (e.response != null) {
+                logger.e('DioError Response: ${e.response?.data}');
+              }
+              rethrow;
+            }
+          }
+
         // Future<Response> fetchStations() async {
         //   try {
         //     final response = await _apiService.getRequest('stations');

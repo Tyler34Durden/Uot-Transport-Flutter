@@ -98,9 +98,7 @@ class _SplashScreenState extends State<SplashScreen> {
           width: 255,
           decoration: const BoxDecoration(
             image: DecorationImage(
-              image: AssetImage(
-                AppIcons.logoPath,
-              ),
+              image: AssetImage("assets/images/splash_logo.png"),
               fit: BoxFit.cover,
             ),
           ),

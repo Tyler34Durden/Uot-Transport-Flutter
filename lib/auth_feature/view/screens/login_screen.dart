@@ -1,182 +1,189 @@
 import 'package:flutter/material.dart';
-      import 'package:flutter_bloc/flutter_bloc.dart';
-      import 'package:uot_transport/auth_feature/view/screens/forgot_password.dart';
-      import 'package:uot_transport/auth_feature/view/screens/signup_screen.dart';
-      import 'package:uot_transport/auth_feature/view/widgets/app_button.dart';
-      import 'package:uot_transport/auth_feature/view/widgets/app_input.dart';
-      import 'package:uot_transport/auth_feature/view/widgets/app_text.dart';
-      import 'package:uot_transport/core/core_widgets/back_header.dart';
-      import 'package:uot_transport/core/app_colors.dart';
-      import 'package:uot_transport/core/main_screen.dart';
-      import 'package:uot_transport/auth_feature/view_model/cubit/student_auth_cubit.dart';
-      import 'package:uot_transport/auth_feature/view_model/cubit/student_auth_state.dart';
-      import 'package:logger/logger.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:uot_transport/auth_feature/view/screens/forgot_password.dart';
+import 'package:uot_transport/auth_feature/view/screens/signup_screen.dart';
+import 'package:uot_transport/auth_feature/view/widgets/app_button.dart';
+import 'package:uot_transport/auth_feature/view/widgets/app_input.dart';
+import 'package:uot_transport/auth_feature/view/widgets/app_text.dart';
+import 'package:uot_transport/core/core_widgets/back_header.dart';
+import 'package:uot_transport/core/app_colors.dart';
+import 'package:uot_transport/core/main_screen.dart';
+import 'package:uot_transport/auth_feature/view_model/cubit/student_auth_cubit.dart';
+import 'package:uot_transport/auth_feature/view_model/cubit/student_auth_state.dart';
+import 'package:logger/logger.dart';
 
-      class LoginScreen extends StatelessWidget {
-        const LoginScreen({super.key});
+class LoginScreen extends StatelessWidget {
+  const LoginScreen({super.key});
 
-        static final TextEditingController emailController = TextEditingController();
-        static final TextEditingController passwordController = TextEditingController();
-        static final logger = Logger();
+  static final TextEditingController emailController = TextEditingController();
+  static final TextEditingController passwordController = TextEditingController();
+  static final logger = Logger();
 
-        @override
-        Widget build(BuildContext context) {
-          final screenHeight = MediaQuery.of(context).size.height;
-          final screenWidth = MediaQuery.of(context).size.width;
+  @override
+  Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final padding = screenWidth * 0.05;
+    final titleFontSize = screenWidth * 0.07;
+    final subtitleFontSize = screenWidth * 0.045;
+    final labelFontSize = screenWidth * 0.04;
+    final inputSpacing = screenHeight * 0.025;
+    final buttonSpacing = screenHeight * 0.06;
+    final bottomSpacing = screenHeight / 6;
 
-          return WillPopScope(
-            onWillPop: () async {
+    return WillPopScope(
+      onWillPop: () async {
+        emailController.clear();
+        passwordController.clear();
+        return true;
+      },
+      child: Scaffold(
+        backgroundColor: AppColors.backgroundColor,
+        appBar: BackHeader(),
+        body: BlocListener<StudentAuthCubit, StudentAuthState>(
+          listener: (context, state) {
+            if (state is StudentAuthLoading) {
+              logger.i('Loading...');
+            } else if (state is LoginSuccess) {
+              logger.i('Login successful');
               emailController.clear();
               passwordController.clear();
-              return true;
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const MainScreen()),
+              );
+            } else if (state is StudentAuthFailure) {
+              String errorMessage = 'هناك خطأ ما في البريد الإلكتروني أو كلمة المرور.';
+              final error = state.error;
+              if (error is Map && error[0] != null) {
+                errorMessage = error[0].toString();
+              } else if (error is String) {
+                errorMessage = error;
+              }
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(errorMessage)),
+              );
+            }
+          },
+          child: GestureDetector(
+            onTap: () {
+              FocusScope.of(context).unfocus();
             },
-            child: Scaffold(
-              backgroundColor: AppColors.backgroundColor,
-              appBar: BackHeader(),
-              body: BlocListener<StudentAuthCubit, StudentAuthState>(
-                listener: (context, state) {
-                  if (state is StudentAuthLoading) {
-                    logger.i('Loading...');
-                  } else if (state is LoginSuccess) {
-                    logger.i('Login successful');
-                    emailController.clear();
-                    passwordController.clear();
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => const MainScreen()),
-                    );
-                  } else if (state is StudentAuthFailure) {
-                    String errorMessage = 'هناك خطأ ما في البريد الإلكتروني أو كلمة المرور.';
-                    final error = state.error;
-                    if (error is Map && error[0] != null) {
-                      errorMessage = error[0].toString();
-                    } else if (error is String) {
-                      errorMessage = error;
-                    }
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(errorMessage)),
-                    );
-                  }
-                },
-                child: GestureDetector(
-                  onTap: () {
-                    FocusScope.of(context).unfocus();
-                  },
-                  child: SingleChildScrollView(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          const Center(
-                            child: AppText(
-                              lbl: 'تسجيل الدخول',
-                              style: TextStyle(
-                                color: AppColors.primaryColor,
-                                fontSize: 28,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: screenHeight * 0.02),
-                          const AppText(
-                            textAlign: TextAlign.center,
-                            lbl: 'سجّل دخولك للوصول إلى خدمات النقل الجامعي بسهولة وراحة',
-                            style: TextStyle(
-                              color: AppColors.textColor,
-                              fontSize: 20,
-                            ),
-                          ),
-                          SizedBox(height: screenHeight * 0.04),
-                          const AppText(
-                            lbl: 'ادخل بريدك الإلكتروني',
-                            style: TextStyle(
-                              color: AppColors.textColor,
-                              fontSize: 14,
-                            ),
-                            textAlign: TextAlign.right,
-                          ),
-                          SizedBox(height: screenHeight * 0.02),
-                          AppInput(
-                            suffixIcon: const Icon(Icons.email_rounded),
-                            controller: emailController,
-                            hintText: 'البريد الالكتروني',
-                            textAlign: TextAlign.right,
-                          ),
-                          SizedBox(height: screenHeight * 0.04),
-                          const AppText(
-                            lbl: 'ادخل كلمة مرورك ',
-                            style: TextStyle(
-                              color: AppColors.textColor,
-                              fontSize: 14,
-                            ),
-                            textAlign: TextAlign.right,
-                          ),
-                          SizedBox(height: screenHeight * 0.02),
-                          AppInput(
-                            suffixIcon: const Icon(Icons.lock_rounded),
-                            obscureText: true,
-                            controller: passwordController,
-                            hintText: 'كلمة المرور ',
-                            textAlign: TextAlign.right,
-                          ),
-                          SizedBox(height: screenHeight * 0.02),
-                          AppText(
-                            lbl: 'هل نسيت كلمة مرورك؟',
-                            style: const TextStyle(
-                              color: AppColors.primaryColor,
-                              fontSize: 14,
-                              decoration: TextDecoration.underline,
-                            ),
-                            textAlign: TextAlign.right,
-                            onTap: () {
-                              logger.i('Navigating to Forgot Password screen');
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const ForgotPassword(),
-                                ),
-                              );
-                            },
-                          ),
-                          SizedBox(height: screenHeight * 0.06),
-                          AppButton(
-                            lbl: 'تسجيل الدخول',
-                            onPressed: () {
-                              final loginData = {
-                                "email": emailController.text,
-                                "password": passwordController.text,
-                              };
-                              logger.i('Attempting to login with data: $loginData');
-                              context.read<StudentAuthCubit>().login(loginData);
-                            },
-                          ),
-                          SizedBox(height: screenHeight / 6),
-                          AppText(
-                            lbl: 'ليس لديك حساب؟ انشىء حساب',
-                            style: const TextStyle(
-                              color: AppColors.primaryColor,
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            textAlign: TextAlign.center,
-                            onTap: () {
-                              logger.i('Navigating to Signup screen');
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => const SignupScreen()),
-                              );
-                            },
-                          ),
-                          SizedBox(height: screenHeight * 0.02),
-                        ],
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.all(padding),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Center(
+                      child: AppText(
+                        lbl: 'تسجيل الدخول',
+                        style: TextStyle(
+                          color: AppColors.primaryColor,
+                          fontSize: titleFontSize,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
-                  ),
+                    SizedBox(height: inputSpacing * 0.8),
+                    AppText(
+                      textAlign: TextAlign.center,
+                      lbl: 'سجّل دخولك للوصول إلى خدمات النقل الجامعي بسهولة وراحة',
+                      style: TextStyle(
+                        color: AppColors.textColor,
+                        fontSize: subtitleFontSize,
+                      ),
+                    ),
+                    SizedBox(height: inputSpacing * 1.5),
+                    AppText(
+                      lbl: 'ادخل بريدك الإلكتروني',
+                      style: TextStyle(
+                        color: AppColors.textColor,
+                        fontSize: labelFontSize,
+                      ),
+                      textAlign: TextAlign.right,
+                    ),
+                    SizedBox(height: inputSpacing * 0.8),
+                    AppInput(
+                      suffixIcon: const Icon(Icons.email_rounded),
+                      controller: emailController,
+                      hintText: 'البريد الالكتروني',
+                      textAlign: TextAlign.right,
+                    ),
+                    SizedBox(height: inputSpacing * 1.5),
+                    AppText(
+                      lbl: 'ادخل كلمة مرورك ',
+                      style: TextStyle(
+                        color: AppColors.textColor,
+                        fontSize: labelFontSize,
+                      ),
+                      textAlign: TextAlign.right,
+                    ),
+                    SizedBox(height: inputSpacing * 0.8),
+                    AppInput(
+                      suffixIcon: const Icon(Icons.lock_rounded),
+                      obscureText: true,
+                      controller: passwordController,
+                      hintText: 'كلمة المرور ',
+                      textAlign: TextAlign.right,
+                    ),
+                    SizedBox(height: inputSpacing * 0.8),
+                    AppText(
+                      lbl: 'هل نسيت كلمة مرورك؟',
+                      style: TextStyle(
+                        color: AppColors.primaryColor,
+                        fontSize: labelFontSize,
+                        decoration: TextDecoration.underline,
+                      ),
+                      textAlign: TextAlign.right,
+                      onTap: () {
+                        logger.i('Navigating to Forgot Password screen');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ForgotPassword(),
+                          ),
+                        );
+                      },
+                    ),
+                    SizedBox(height: buttonSpacing),
+                    AppButton(
+                      lbl: 'تسجيل الدخول',
+                      onPressed: () {
+                        final loginData = {
+                          "email": emailController.text,
+                          "password": passwordController.text,
+                        };
+                        logger.i('Attempting to login with data: $loginData');
+                        context.read<StudentAuthCubit>().login(loginData);
+                      },
+                    ),
+                    SizedBox(height: bottomSpacing),
+                    AppText(
+                      lbl: 'ليس لديك حساب؟ انشىء حساب',
+                      style: TextStyle(
+                        color: AppColors.primaryColor,
+                        fontSize: labelFontSize,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                      onTap: () {
+                        logger.i('Navigating to Signup screen');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const SignupScreen()),
+                        );
+                      },
+                    ),
+                    SizedBox(height: inputSpacing * 0.8),
+                  ],
                 ),
               ),
             ),
-          );
-        }
-      }
+          ),
+        ),
+      ),
+    );
+  }
+}

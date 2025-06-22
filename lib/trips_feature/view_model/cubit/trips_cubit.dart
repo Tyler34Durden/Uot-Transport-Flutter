@@ -108,4 +108,20 @@ Future<void> createTicket({
   }
 
 
+  Future<void> updateTicketState({
+    required int tripRouteId,
+    required String token,
+  }) async {
+    emit(TripsTicketLoading());
+    try {
+      await _tripsRepository.updateTicketState(
+        tripRouteId: tripRouteId,
+        token: token,
+      );
+      emit(TripsTicketSuccess('Ticket state updated successfully'));
+    } catch (e) {
+      _logger.e('Error while updating ticket state: $e');
+      emit(TripsTicketError(e.toString()));
+    }
+  }
 }

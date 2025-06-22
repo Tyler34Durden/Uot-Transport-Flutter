@@ -16,49 +16,48 @@ class ProfileImageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double size = MediaQuery.of(context).size.width * 0.3;
+
     return SizedBox(
-      width: 120,
-      height: 120,
+      width: size,
+      height: size,
       child: Stack(
         children: [
           Positioned.fill(
             child: CircleAvatar(
-              backgroundColor: AppColors.primaryColor,
-              child: imageUrl.isEmpty
-                  ? SvgPicture.asset(
-                AppIcons.user,
-                width: 60,
-                height: 60,
-              )
-                  : null,
-            ),
-          ),
-          Positioned(
-            bottom: 0,
-            right: 0,
-            child: GestureDetector(
-              onTap: onEdit,
-              child: Container(
-                width: 35,
-                height: 35,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white,
-                  border: Border.all(
-                    color: Colors.white,
-                    width: 2,
-                  ),
-                ),
-                child: const Icon(
-                  Icons.edit,
-                  size: 18,
-                  color: AppColors.primaryColor,
-                ),
-              ),
-            ),
-          ),
-        ],
+      backgroundColor: AppColors.primaryColor,
+        backgroundImage: imageUrl.isNotEmpty ? NetworkImage(imageUrl) : null,
+        child: imageUrl.isEmpty
+            ? Icon(Icons.person, size: size * 0.5, color: Colors.white)
+            : null,
       ),
+          // Positioned(
+          //   bottom: 0,
+          //   right: 0,
+          //   child: GestureDetector(
+          //     onTap: onEdit,
+          //     child: Container(
+          //       width: 35,
+          //       height: 35,
+          //       decoration: BoxDecoration(
+          //         shape: BoxShape.circle,
+          //         color: Colors.white,
+          //         border: Border.all(
+          //           color: Colors.white,
+          //           width: 2,
+          //         ),
+          //       ),
+          //       child: const Icon(
+          //         Icons.edit,
+          //         size: 18,
+          //         color: AppColors.primaryColor,
+          //       ),
+          //     ),
+          //   ),
+          // ),
+      ),
+  ]
+    ),
     );
   }
 }

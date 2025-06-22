@@ -5,11 +5,14 @@ import 'package:uot_transport/core/app_icons.dart';
 class FilterWidget extends StatelessWidget {
   final String selectedFilter;
   final Function(String) onFilterSelected;
+  final double? fontSize;
 
   const FilterWidget({
     super.key,
     required this.selectedFilter,
     required this.onFilterSelected,
+    this.fontSize,
+
   });
 
   @override
