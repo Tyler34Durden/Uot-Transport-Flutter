@@ -64,6 +64,10 @@ import 'package:uot_transport/auth_feature/view/screens/onboarding_screen.dart';
 import 'package:uot_transport/core/app_colors.dart';
 import 'package:uot_transport/core/app_icons.dart';
 
+import '../../../main.dart';
+import '../../../notification_service.dart';
+
+
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -75,6 +79,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
+    NotificationService().init(scaffoldMessengerKey, context);
     _navigateToOnboarding();
   }
 

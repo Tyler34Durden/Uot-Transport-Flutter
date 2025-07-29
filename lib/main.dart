@@ -27,8 +27,8 @@ Future<void> main() async {
   await Firebase.initializeApp();
 
   // تهيئة خدمة الإشعارات وتمرير مفتاح Navigator
-  final notificationService = NotificationService();
-  await notificationService.init(scaffoldMessengerKey);
+  // final notificationService = NotificationService();
+  // await notificationService.init(scaffoldMessengerKey);
 
   final studentRepository = StudentAuthRepository();
   final homeRepository = HomeRepository();
