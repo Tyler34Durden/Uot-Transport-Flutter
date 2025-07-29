@@ -151,9 +151,49 @@ class LoginScreen extends StatelessWidget {
                     AppButton(
                       lbl: 'تسجيل الدخول',
                       onPressed: () {
+                        final email = emailController.text.trim();
+                        final password = passwordController.text;
+
+                        final emailRegExp = RegExp(r'^[\w\.-]+@[\w\.-]+\.\w+$');
+                        final passwordRegExp = RegExp(
+                            r"""^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$])[A-Za-z\d@#$]{8,}$"""
+                        );
+
+                        if (email.isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('الرجاء إدخال بريدك الإلكتروني')),
+                          );
+                          return;
+                        }
+                        if (!emailRegExp.hasMatch(email)) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('يرجى إدخال بريد إلكتروني صحيح')),
+                          );
+                          return;
+                        }
+                        if (password.isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('الرجاء إدخال كلمة المرور')),
+                          );
+                          return;
+                        }
+                        // if (!passwordRegExp.hasMatch(password)) {
+                        //   ScaffoldMessenger.of(context).showSnackBar(
+                        //     SnackBar(
+                        //       content: Text(
+                        //         """يجب أن تتكوّن كلمة المرور من 8 أحرف على الأقل، وتشمل أحرفًا كبيرة وصغيرة، أرقامًا، ورموزًا خاصة مثل (@، #، $).""",
+                        //       ),
+                        //     ),
+                        //   );
+                        //   return;
+                        // }
+
+
+
+
                         final loginData = {
-                          "email": emailController.text,
-                          "password": passwordController.text,
+                          "email": email,
+                          "password": password,
                         };
                         logger.i('Attempting to login with data: $loginData');
                         context.read<StudentAuthCubit>().login(loginData);

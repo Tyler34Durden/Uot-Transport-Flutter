@@ -36,7 +36,8 @@ import 'package:bloc/bloc.dart';
           print("after repo data in login");
           emit(LoginSuccess());
         } catch (e) {
-          emit(StudentAuthFailure(e.toString()));
+          String errorMessage = e is Map && e['message'] != null ? e['message'].toString() : e.toString();
+          emit(StudentAuthFailure(errorMessage));
         }
       }
 

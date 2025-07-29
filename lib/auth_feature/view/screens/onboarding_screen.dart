@@ -10,9 +10,8 @@ class OnBoardingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
+      backgroundColor: AppColors.backgroundColor,
       body: Column(
-
         children: [
           Spacer(),
           ImageCarousel(),

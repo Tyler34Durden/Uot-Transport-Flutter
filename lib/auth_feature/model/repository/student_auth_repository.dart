@@ -67,12 +67,17 @@ class StudentAuthRepository {
     try {
       // الحصول على رمز FCM وإضافته إلى بيانات تسجيل الدخول
       final fcmToken = await FirebaseMessaging.instance.getToken();
-      if (fcmToken != null) {
-        loginData['fcm_token'] = fcmToken;
+      logger.i('FCM Token obtained: $fcmToken');
+      if (fcmToken != null && fcmToken.isNotEmpty) {
+        loginData['fcmToken'] = fcmToken;
+      } else {
+        logger.w('FCM Token is null or empty!');
       }
-
+      logger.i('Login data being sent: ' + loginData.toString());
       final response =
       await _apiService.postRequest('student/login', loginData);
+      // Print the full notification response for debugging
+      logger.i('Login response: ' + response.toString());
       final token = response.data['token'];
       final user = response.data['user'];
       final prefs = await SharedPreferences.getInstance();
@@ -83,11 +88,10 @@ class StudentAuthRepository {
           'Token saved: $token, user data saved: $user, and FCM Token: $fcmToken');
       return response;
     } on DioError catch (e) {
-      logger.e('DioError: ${e.message}');
+      logger.e('DioError: [31m${e.message}[0m');
       if (e.response != null) {
         logger.e('DioError Response: ${e.response?.data}');
         throw e.response?.data;
-
       }
       rethrow;
     }

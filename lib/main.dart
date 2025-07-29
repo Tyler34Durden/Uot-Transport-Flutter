@@ -20,12 +20,13 @@ import 'package:uot_transport/profile_feature/view_model/cubit/profile_cubit.dar
 
 // تعريف مفتاح ScaffoldMessenger
 final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
-  // تهيئة خدمة الإشعارات وتمرير مفتاح ScaffoldMessenger
+  // تهيئة خدمة الإشعارات وتمرير مفتاح Navigator
   final notificationService = NotificationService();
   await notificationService.init(scaffoldMessengerKey);
 
@@ -96,6 +97,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       scaffoldMessengerKey: scaffoldMessengerKey, // تمرير المفتاح هنا حتى يتمكن ScaffoldMessenger من عرض الـ SnackBar
+      navigatorKey: navigatorKey, // تمرير navigatorKey هنا
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         fontFamily: 'Almarai',
