@@ -15,10 +15,19 @@
             required String token,
           }) async {
             try {
-              final String id1 = startStationId ?? "null";
-              final String id2 = endStationId ?? "null";
-              final String url = "tripRoutes/filter/$id1/$id2?page=$page&pageSize=$pageSize";
-              final response = await _apiService.getRequest(url,token: token);
+              // Build the filter part of the URL based on which IDs are provided
+              String filterPart;
+              if (startStationId != null && endStationId != null) {
+                filterPart = '$startStationId/$endStationId';
+              } else if (startStationId != null) {
+                filterPart = '$startStationId/null';
+              } else if (endStationId != null) {
+                filterPart = 'null/$endStationId';
+              } else {
+                filterPart = 'null/null';
+              }
+              final String url = "tripRoutes/filter/$filterPart?page=$page&pageSize=$pageSize";
+              final response = await _apiService.getRequest(url, token: token);
               logger.i('Trips fetched successfully: ${response.data}');
               dynamic responseData = response.data;
               if (responseData is List) {

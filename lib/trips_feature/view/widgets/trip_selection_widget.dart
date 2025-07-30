@@ -81,13 +81,33 @@ class _TripSelectionWidgetState extends State<TripSelectionWidget> {
 
               final stationNames = [
                 "اي محطة",
-                ...stationList.map((item) => item['name']!).toList()
+                ...stationList.map((item) => item['name']!).toSet().toList()
+              ];
+
+              // Filter 'to' station names to exclude the selected 'from' station (except for "اي محطة")
+              final toStationNames = [
+                "اي محطة",
+                ...stationList
+                  .map((item) => item['name']!)
+                  .where((name) => name != selectedStartName)
+                  .toSet()
+                  .toList()
+              ];
+
+              // Filter 'from' station names to exclude the selected 'to' station (except for "اي محطة")
+              final fromStationNames = [
+                "اي محطة",
+                ...stationList
+                  .map((item) => item['name']!)
+                  .where((name) => name != selectedEndName)
+                  .toSet()
+                  .toList()
               ];
 
               return Column(
                 children: [
                   AppDropdown(
-                    items: stationNames,
+                    items: fromStationNames,
                     hintText: 'من',
                     value: selectedStartName,
                     onChanged: (String? newValue) {
@@ -99,13 +119,18 @@ class _TripSelectionWidgetState extends State<TripSelectionWidget> {
                           selectedStartId = stationList
                               .firstWhere((item) => item['name'] == newValue)['id'];
                         }
+                        // If the selected 'to' station is now the same as 'from', reset 'to'
+                        if (selectedEndName == newValue) {
+                          selectedEndName = null;
+                          selectedEndId = null;
+                        }
                       });
                       _fetchTripsIfReady();
                     },
                   ),
                   const SizedBox(height: 20),
                   AppDropdown(
-                    items: stationNames,
+                    items: toStationNames,
                     hintText: 'الى',
                     value: selectedEndName,
                     onChanged: (String? newValue) {
@@ -116,6 +141,11 @@ class _TripSelectionWidgetState extends State<TripSelectionWidget> {
                         } else {
                           selectedEndId = stationList
                               .firstWhere((item) => item['name'] == newValue)['id'];
+                        }
+                        // If the selected 'from' station is now the same as 'to', reset 'from'
+                        if (selectedStartName == newValue) {
+                          selectedStartName = null;
+                          selectedStartId = null;
                         }
                       });
                       _fetchTripsIfReady();
