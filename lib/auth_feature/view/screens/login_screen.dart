@@ -177,16 +177,17 @@ class LoginScreen extends StatelessWidget {
                           );
                           return;
                         }
-                        // if (!passwordRegExp.hasMatch(password)) {
-                        //   ScaffoldMessenger.of(context).showSnackBar(
-                        //     SnackBar(
-                        //       content: Text(
-                        //         """يجب أن تتكوّن كلمة المرور من 8 أحرف على الأقل، وتشمل أحرفًا كبيرة وصغيرة، أرقامًا، ورموزًا خاصة مثل (@، #، $).""",
-                        //       ),
-                        //     ),
-                        //   );
-                        //   return;
-                        // }
+                        if (!passwordRegExp.hasMatch(password)) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                    'يجب أن تتكوّن كلمة المرور من 8 أحرف على الأقل، وتشمل أحرفًا كبيرة وصغيرة، أرقامًا، ورموزًا خاصة مثل'
+                                        ' (@، #، \$).'
+                                ),
+                              ),
+                          );
+                          return;
+                        }
 
 
 

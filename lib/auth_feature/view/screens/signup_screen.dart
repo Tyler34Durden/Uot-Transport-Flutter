@@ -171,10 +171,11 @@ import 'package:flutter/material.dart';
                                                 showError(context, 'الرجاء إدخال كلمة المرور');
                                                 return;
                                               }
-                                              //  if (!passwordRegExp.hasMatch(password)) {
-                                              //    showError(context, """يجب أن تتكوّن كلمة المرور من 8 أحرف على الأقل، وتشمل أحرفًا كبيرة وصغيرة، أرقامًا، ورموزًا خاصة مثل (@، #، $).""");
-                                              //    return;
-                                              // }
+                                               if (!passwordRegExp.hasMatch(password)) {
+                                                 showError(context, """يجب أن تتكوّن كلمة المرور من 8 أحرف على الأقل، وتشمل أحرفًا كبيرة وصغيرة، أرقامًا، ورموزًا خاصة مثل
+                                                  (@، #، \$).""");
+                                                 return;
+                                              }
                                               if (password != confirmPassword) {
                                                 showError(context, 'كلمة المرور وتأكيد كلمة المرور غير متطابقتين');
                                                 return;

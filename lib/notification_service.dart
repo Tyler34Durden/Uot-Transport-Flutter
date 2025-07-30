@@ -40,7 +40,7 @@ class NotificationService {
       final notificationBody = message.notification?.body ?? message.data['body'] ?? 'Notification clicked!';
       final notificationTitle = message.notification?.title ?? message.data['title'] ?? 'إشعار جديد';
 
-      Flushbar(
+Flushbar(
         titleText: Directionality(
           textDirection: TextDirection.rtl,
           child: Text(
@@ -65,10 +65,23 @@ class NotificationService {
         backgroundColor: AppColors.backgroundColor,
         duration: const Duration(seconds: 4),
         flushbarPosition: FlushbarPosition.TOP,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.zero,
         margin: const EdgeInsets.all(12),
         padding: const EdgeInsets.all(16),
-      ).show(context);
-    });
+        boxShadows: [
+          BoxShadow(
+            color: Colors.blue,
+            offset: Offset(0, 4), // Position at the bottom
+            blurRadius: 0,
+            spreadRadius: 0,
+          ),
+          BoxShadow(
+            color: Colors.blue,
+            offset: Offset(0, 4),
+            blurRadius: 0,
+            spreadRadius: 0,
+          ),
+        ],
+      ).show(context);    });
   }
 }
