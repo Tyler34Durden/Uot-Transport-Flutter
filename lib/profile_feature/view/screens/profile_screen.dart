@@ -444,12 +444,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             lbl: 'تسجيل خروج',
                             color: AppColors.secondaryColor,
                             textColor: AppColors.primaryColor,
-                            onPressed: () {
-                              Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(
-                                    builder: (context) => const LoginScreen()),
-                              );
-                            },
+                              onPressed: () async {
+                                try {
+                                  // Call the logout API
+                                  await ApiService().postRequest('user/logout', {}, token: _token);
+
+                                  // Clear local user data
+                                  final prefs = await SharedPreferences.getInstance();
+                                  await prefs.remove('auth_token');
+                                  await prefs.remove('user_profile');
+
+                                  // Navigate to login screen
+                                  Navigator.of(context).pushAndRemoveUntil(
+                                    MaterialPageRoute(builder: (context) => const LoginScreen()),
+                                        (route) => false,
+                                  );
+                                } catch (e) {
+                                  _logger.e('Logout failed: $e');
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text('فشل تسجيل الخروج')),
+                                  );
+                                }
+                              }
                           ),
                         ),
                       ],

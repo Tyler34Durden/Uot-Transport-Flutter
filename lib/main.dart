@@ -90,8 +90,26 @@ Future<void> main() async {
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+    // Initialize NotificationService after the widget tree is built
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      NotificationService().init(
+        scaffoldMessengerKey,
+        navigatorKey.currentContext!,
+        navigatorKey,
+      );
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

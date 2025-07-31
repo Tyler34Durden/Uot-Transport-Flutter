@@ -95,6 +95,15 @@ class _StationDetailsScreenState extends State<StationDetailsScreen> {
                         if (state is StationTripsLoading) {
                           return const Center(child: CircularProgressIndicator());
                         } else if (state is StationTripsFailure) {
+                          final isNoRouteToHost = state.error.toString().contains('No route to host');
+                          if (isNoRouteToHost) {
+                            return Center(
+                              child: Text(
+                                'لا يوجد اتصال بالخادم',
+                                style: TextStyle(fontSize: screenWidth * 0.045, color: AppColors.primaryColor),
+                              ),
+                            );
+                          }
                           return Center(child: Text('Error: ${state.error}'));
                         } else if (state is StationTripsSuccess) {
                           final trips = state.trips;

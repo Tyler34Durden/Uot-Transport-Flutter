@@ -9,6 +9,7 @@ class NotificationService {
   Future<void> init(
       GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey,
       BuildContext context, // ✅ تم تمريره هنا
+      GlobalKey<NavigatorState> navigatorKey, // <-- add this parameter
       ) async {
     NotificationSettings settings = await _firebaseMessaging.requestPermission();
     print('User granted permission: ${settings.authorizationStatus}');
@@ -40,7 +41,7 @@ class NotificationService {
       final notificationBody = message.notification?.body ?? message.data['body'] ?? 'Notification clicked!';
       final notificationTitle = message.notification?.title ?? message.data['title'] ?? 'إشعار جديد';
 
-Flushbar(
+      Flushbar(
         titleText: Directionality(
           textDirection: TextDirection.rtl,
           child: Text(
@@ -82,6 +83,7 @@ Flushbar(
             spreadRadius: 0,
           ),
         ],
-      ).show(context);    });
+      ).show(navigatorKey.currentContext!);
+    });
   }
 }

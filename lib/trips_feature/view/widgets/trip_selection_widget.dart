@@ -6,6 +6,8 @@ import 'package:uot_transport/station_feature/view_model/cubit/stations_cubit.da
 import 'package:uot_transport/station_feature/view_model/cubit/stations_state.dart';
 import 'package:uot_transport/trips_feature/view_model/cubit/trips_cubit.dart';
 
+import '../../../core/app_colors.dart';
+
 class TripSelectionWidget extends StatefulWidget {
   const TripSelectionWidget({super.key});
 
@@ -84,30 +86,10 @@ class _TripSelectionWidgetState extends State<TripSelectionWidget> {
                 ...stationList.map((item) => item['name']!).toSet().toList()
               ];
 
-              // Filter 'to' station names to exclude the selected 'from' station (except for "اي محطة")
-              final toStationNames = [
-                "اي محطة",
-                ...stationList
-                  .map((item) => item['name']!)
-                  .where((name) => name != selectedStartName)
-                  .toSet()
-                  .toList()
-              ];
-
-              // Filter 'from' station names to exclude the selected 'to' station (except for "اي محطة")
-              final fromStationNames = [
-                "اي محطة",
-                ...stationList
-                  .map((item) => item['name']!)
-                  .where((name) => name != selectedEndName)
-                  .toSet()
-                  .toList()
-              ];
-
               return Column(
                 children: [
                   AppDropdown(
-                    items: fromStationNames,
+                    items: stationNames,
                     hintText: 'من',
                     value: selectedStartName,
                     onChanged: (String? newValue) {
@@ -119,18 +101,13 @@ class _TripSelectionWidgetState extends State<TripSelectionWidget> {
                           selectedStartId = stationList
                               .firstWhere((item) => item['name'] == newValue)['id'];
                         }
-                        // If the selected 'to' station is now the same as 'from', reset 'to'
-                        if (selectedEndName == newValue) {
-                          selectedEndName = null;
-                          selectedEndId = null;
-                        }
                       });
                       _fetchTripsIfReady();
                     },
                   ),
                   const SizedBox(height: 20),
                   AppDropdown(
-                    items: toStationNames,
+                    items: stationNames,
                     hintText: 'الى',
                     value: selectedEndName,
                     onChanged: (String? newValue) {
@@ -142,11 +119,6 @@ class _TripSelectionWidgetState extends State<TripSelectionWidget> {
                           selectedEndId = stationList
                               .firstWhere((item) => item['name'] == newValue)['id'];
                         }
-                        // If the selected 'from' station is now the same as 'to', reset 'from'
-                        if (selectedStartName == newValue) {
-                          selectedStartName = null;
-                          selectedStartId = null;
-                        }
                       });
                       _fetchTripsIfReady();
                     },
@@ -154,9 +126,23 @@ class _TripSelectionWidgetState extends State<TripSelectionWidget> {
                 ],
               );
             } else if (state is StationsFailure) {
+              final isNoRouteToHost = state.error.toString().contains('No route to host');
+              if (isNoRouteToHost) {
+                return const Center(
+                  child: Text(
+                    'لا يوجد اتصال بالخادم',
+                    style: TextStyle(fontSize: 16, color: AppColors.primaryColor),
+                  ),
+                );
+              }
               return const Center(
                 child: Text(
-                  'Failed to load station filters. Please try again.',
+                  'تعذّر تحميل فلاتر المحطات. يُرجى المحاولة مجددًا.',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: AppColors.primaryColor,
+                  ),
+
                 ),
               );
             }

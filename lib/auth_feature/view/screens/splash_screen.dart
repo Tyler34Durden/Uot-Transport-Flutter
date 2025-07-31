@@ -79,7 +79,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    NotificationService().init(scaffoldMessengerKey, context);
+    //NotificationService().init(scaffoldMessengerKey, context);
     _navigateToOnboarding();
   }
 

@@ -134,6 +134,15 @@ class _TripsScreenState extends State<TripsScreen> {
                       ],
                     );
                   } else if (state is TripsError) {
+                    final isNoRouteToHost = state.error.contains('No route to host');
+                    if (isNoRouteToHost) {
+                      return Center(
+                        child: Text(
+                          'لا يوجد اتصال بالخادم',
+                          style: TextStyle(fontSize: width * 0.045, color: AppColors.primaryColor),
+                        ),
+                      );
+                    }
                     return Center(
                       child: Text("لا توجد رحلات تبدأ بهذه المحطة", style: TextStyle(fontSize: width * 0.04)),
                     );

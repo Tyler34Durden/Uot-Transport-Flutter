@@ -39,4 +39,14 @@ class ProfileRepository {
       throw Exception('Error changing password');
     }
   }
+
+  Future<void> logout(String token) async {
+    try {
+      final response = await _apiService.postRequest('user/logout', {}, token: token);
+      logger.i('Logout successful: ${response.data}');
+    } on DioError catch (e) {
+      logger.e('Error during logout: ${e.message}');
+      throw Exception('Error during logout');
+    }
+  }
 }
