@@ -11,6 +11,7 @@ import 'package:uot_transport/home_feature/view_model/cubit/advertising_state.da
 import 'package:uot_transport/home_feature/view_model/cubit/home_station_cubit.dart';
 import 'package:uot_transport/trips_feature/view_model/cubit/trips_cubit.dart';
 import 'package:uot_transport/trips_feature/view_model/cubit/trips_state.dart';
+import 'package:uot_transport/main.dart' show routeObserver;
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -19,7 +20,7 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with RouteAware{
   int? selectedStationId;
   String? token;
   final ScrollController _tripsScrollController = ScrollController();
@@ -32,10 +33,24 @@ class _HomeScreenState extends State<HomeScreen> {
     _tripsScrollController.addListener(_onTripsScroll);
   }
 
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    routeObserver.subscribe(this, ModalRoute.of(context)! as PageRoute);
+  }
+
   @override
   void dispose() {
+    routeObserver.unsubscribe(this);
     _tripsScrollController.dispose();
     super.dispose();
+  }
+
+  @override
+  void didPopNext() {
+    // Called when coming back to this screen
+    _loadTrips();
   }
 
   Future<void> _initializeToken() async {
@@ -43,12 +58,17 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       token = prefs.getString('auth_token');
     });
+    _loadTrips();
+  }
+
+  Future<void> _loadTrips() async {
     if (token != null) {
-      context.read<HomeStationCubit>().fetchStations(token!);
-      context.read<HomeStationCubit>().fetchMyTrips(token!);
-      context.read<TripsCubit>().fetchTripsByStations(loadMore: false, token: token!);
-    } else {
-      debugPrint('Token not found. Redirecting to login...');
+      await context.read<HomeStationCubit>().fetchStations(token!);
+      await context.read<HomeStationCubit>().fetchMyTrips(token!);
+      await context.read<TripsCubit>().fetchTripsByStations(
+        loadMore: false,
+        token: token!,
+      );
     }
   }
 
@@ -130,7 +150,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           },
                         );
                       }
-                      return Center(child: Text('No trips available.', style: TextStyle(fontSize: width * 0.04)));
+                      return Center(child: Text('جاري تحميل الرحلات', style: TextStyle(fontSize: width * 0.04)));
                     },
                   ),
                   SizedBox(height: sectionSpacing),
@@ -199,7 +219,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ],
                               )
                             else
-                              Center(child: Text('No trips available.', style: TextStyle(fontSize: width * 0.04))),
+                              Center(child: Text('جاري تحميل الرحلات', style: TextStyle(fontSize: width * 0.04))),
                         ],
                       );
                     },

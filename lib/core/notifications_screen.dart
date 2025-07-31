@@ -46,34 +46,19 @@ class Notifications extends StatelessWidget {
                     }
                     return Column(
                       children: [
+                        // Inside your NotificationsLoaded branch, replace the Row with:
                         Padding(
                           padding: const EdgeInsets.only(top: 28, right: 28, left: 28),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const AppText(
-                                lbl: 'الإشعارات',
-                                style: TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                          child: Align(
+                            alignment: Alignment.centerRight,
+                            child: Text(
+                              'إشعارات ($notificationCount)',
+                              style: const TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.primaryColor,
                               ),
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                                decoration: BoxDecoration(
-                                  color: AppColors.primaryColor,
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Text(
-                                  '$notificationCount',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                              ),
-                            ],
+                            ),
                           ),
                         ),
                         const SizedBox(height: 20),

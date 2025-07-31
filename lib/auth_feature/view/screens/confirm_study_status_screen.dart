@@ -27,6 +27,7 @@ class ConfirmStudyStatusScreen extends StatefulWidget {
     required this.confirmPasswordController,
   });
 
+
   @override
   _ConfirmStudyStatusScreenState createState() =>
       _ConfirmStudyStatusScreenState();
@@ -38,6 +39,12 @@ class _ConfirmStudyStatusScreenState extends State<ConfirmStudyStatusScreen> {
   String? _selectedCollege;
   String? _selectedGender;
   String? _qrCodeResult;
+
+
+  final Map<String, String> genderMap = {
+    'ذكر': 'male',
+    'أنثى': 'female',
+  };
 
   @override
   void initState() {
@@ -75,7 +82,13 @@ class _ConfirmStudyStatusScreenState extends State<ConfirmStudyStatusScreen> {
             if (error is Map && error[0] != null) {
               errorMessage = error[0].toString();
             } else if (error is String) {
-              errorMessage = error;
+              final regex = RegExp(r'^\{error:\s*(.*?)\}$');
+              final match = regex.firstMatch(error);
+              if (match != null) {
+                errorMessage = match.group(1) ?? error;
+              } else {
+                errorMessage = error;
+              }
             }
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(errorMessage)),
@@ -135,10 +148,29 @@ class _ConfirmStudyStatusScreenState extends State<ConfirmStudyStatusScreen> {
                 SizedBox(height: screenHeight * 0.02),
                 AppDropdown(
                   items: const [
-                    'كلية الهندسة',
-                    'كلية تقنية المعلومات',
                     'كلية العلوم',
-                    'كلية الآداب',
+                    'كلية الهندسة',
+                    'كلية الفنون',
+                    'كلية الزراعة',
+                    'كلية تقنية المعلومات',
+                    'كلية الصيدلة',
+                    'كلية الطب البشري',
+                    'كلية الطب البيطري',
+                    'كلية طب وجراحة الفم والأسنان',
+                    'كلية التقنية الطبية',
+                    'كلية الإقتصاد والعلوم السياسية',
+                    'كلية التربية البدنية وعلوم الرياضة',
+                    'كلية التربية/ قصر بن غشير',
+                    'كلية التربية طرابلس',
+                    'كلية التمريض',
+                    'كلية التربية جنزور',
+                    'كلية القانون',
+                    'كلية العلوم الشرعية - تاجوراء',
+                    'كلية العلوم الشرعية - سوق الجمعة',
+                    'كلية الإقتصاد والادارة تاجوراء',
+                    'المرحلة التمهيدية',
+                    'كلية الإعلام',
+                    'كلية الآداب واللغات',
                   ],
                   hintText: 'الكلية',
                   onChanged: (String? newValue) {
@@ -153,12 +185,13 @@ class _ConfirmStudyStatusScreenState extends State<ConfirmStudyStatusScreen> {
                   style: TextStyle(
                     color: AppColors.textColor,
                     fontSize: 14,
+                    // fontFamily: 'YourFontFamily', // Add a valid font family if needed, or remove this line
                   ),
                   textAlign: TextAlign.right,
                 ),
                 SizedBox(height: screenHeight * 0.02),
                 AppDropdown(
-                  items: const ['female', 'male'],
+                  items: const ['ذكر', 'أنثى'],
                   hintText: 'الجنس',
                   onChanged: (String? newValue) {
                     setState(() {
@@ -218,7 +251,7 @@ class _ConfirmStudyStatusScreenState extends State<ConfirmStudyStatusScreen> {
                       ...widget.studentData,
                       "uotNumber": _registrationNumberController.text,
                       "userZone": _selectedCollege,
-                      "gender": _selectedGender,
+                      "gender": genderMap[_selectedGender], // This sends 'male' or 'female'
                       "qrData": _qrCodeResult,
                     };
                     context.read<StudentAuthCubit>().registerStudent(updatedStudentData);

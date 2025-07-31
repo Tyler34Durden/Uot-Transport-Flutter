@@ -169,7 +169,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
       builder: (BuildContext context) {
         if (tripRoutes.isEmpty) {
           return const AlertDialog(
-            content: Center(child: Text('No routes available.')),
+            content: Center(child: Text('لا توجد محطات متاحة لهذه الرحلة')),
           );
         }
 
@@ -183,7 +183,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
 
         final fromItems = stationItems.sublist(0, stationItems.length - 1);
         final fromIdToLabel = {
-          for (var item in fromItems) item['id'] as String: '${item['id']} - ${item['name']}'
+          for (var item in fromItems) item['id'] as String: '${item['order']} - ${item['name']}'
         };
         final fromLabels = fromIdToLabel.values.toList();
 
@@ -202,7 +202,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
             ),
             content: SizedBox(
               width: screenWidth * 0.9,
-              height: screenHeight * 0.32,
+              //height: screenHeight * 0.35,
               child: StatefulBuilder(
                 builder: (context, setState) {
                   List<Map<String, dynamic>> toItems = [];
@@ -216,21 +216,21 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
                         .firstWhere((e) => e['id'] == selectedFromStationId)['order'];
                     toItems = stationItems.where((item) => item['order'] > fromOrder).toList();
                     toIdToLabel = {
-                      for (var item in toItems) item['id'] as String: '${item['id']} - ${item['name']}'
+                      for (var item in toItems) item['id'] as String: '${item['order']} - ${item['name']}'
                     };
                     toLabels = toIdToLabel.values.toList();
                   }
-
-                  return Column(
-                    mainAxisSize: MainAxisSize.min,
+                  return SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
                     children: [
                       AppDropdown(
-                        items: fromLabels,
+                        items: fromLabels, // ['1 - StationA', '2 - StationB', ...]
                         hintText: 'اختر محطة البداية',
-                        value: selectedFromLabel,
+                        value: selectedFromLabel, // should be '1 - StationA', not just id
                         onChanged: (value) {
                           setState(() {
-                            selectedFromLabel = value;
+                            selectedFromLabel = value; // value is the label string
                             selectedToLabel = null;
                             errorText = null;
                           });
@@ -295,28 +295,23 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
                         width: screenWidth * 0.7,
                         height: screenHeight * 0.06,
                       ),
+                      SizedBox(height: screenHeight * 0.015),
+                      AppButton(
+                        lbl: "إغلاق",
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        color: AppColors.secondaryColor,
+                        textColor: AppColors.primaryColor,
+                        width: double.infinity,
+                        height: screenHeight * 0.06,
+                      ),
                     ],
+                  ),
                   );
                 },
               ),
             ),
-            actions: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  AppButton(
-                    lbl: "إغلاق",
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    color: AppColors.secondaryColor,
-                    textColor: AppColors.primaryColor,
-                    width: screenWidth * 0.7,
-                    height: screenHeight * 0.06,
-                  ),
-                ],
-              ),
-            ],
           ),
         );
       },
@@ -324,17 +319,17 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
   }
 
   void _showBookingDialog(
-    BuildContext context,
-    TripsCubit tripsCubit,
-    String tripId,
-    String fromStation,
-    String toStation,
-    int fromStationId,
-    int toStationId,
-    String token,
-    double screenWidth,
-    double screenHeight,
-  ) {
+      BuildContext context,
+      TripsCubit tripsCubit,
+      String tripId,
+      String fromStation,
+      String toStation,
+      int fromStationId,
+      int toStationId,
+      String token,
+      double screenWidth,
+      double screenHeight,
+      ) {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -348,45 +343,48 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
             ),
             content: SizedBox(
               width: screenWidth * 0.8,
-              height: screenHeight * 0.22,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "سوف تقوم بحجز الحافلة رقم $tripId من $fromStation إلى $toStation",
-                    style: TextStyle(fontSize: screenWidth * 0.045),
-                  ),
-                  SizedBox(height: screenHeight * 0.025),
-                  AppButton(
-                    lbl: "تأكيد الحجز",
-                    onPressed: () {
-                      tripsCubit.createTicket(
-                        tripID: int.parse(tripId),
-                        fromTripRoute: fromStationId,
-                        toTripRoute: toStationId,
-                        token: token,
-                      );
-                      Navigator.of(context).pop();
-                      _showConfirmationDialog(context, screenWidth, screenHeight);
-                    },
-                    color: AppColors.primaryColor,
-                    textColor: AppColors.backgroundColor,
-                    width: screenWidth * 0.7,
-                    height: screenHeight * 0.06,
-                  ),
-                  SizedBox(height: screenHeight * 0.015),
-                  AppButton(
-                    lbl: "إلغاء",
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    color: AppColors.secondaryColor,
-                    textColor: AppColors.primaryColor,
-                    width: screenWidth * 0.7,
-                    height: screenHeight * 0.06,
-                  ),
-                ],
+              // No height for flexibility
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      "سوف تقوم بحجز الحافلة رقم $tripId من $fromStation إلى $toStation",
+                      style: TextStyle(fontSize: screenWidth * 0.045),
+                    ),
+                    SizedBox(height: screenHeight * 0.025),
+                    AppButton(
+                      lbl: "تأكيد الحجز",
+                      onPressed: () {
+                        tripsCubit.createTicket(
+                          tripID: int.parse(tripId),
+                          fromTripRoute: fromStationId,
+                          toTripRoute: toStationId,
+                          token: token,
+                        );
+                        Navigator.of(context).pop();
+                        _showConfirmationDialog(context, screenWidth, screenHeight);
+                      },
+                      color: AppColors.primaryColor,
+                      textColor: AppColors.backgroundColor,
+                      width: screenWidth * 0.7,
+                      height: screenHeight * 0.06,
+                    ),
+                    SizedBox(height: screenHeight * 0.015),
+                    AppButton(
+                      lbl: "إلغاء",
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      color: AppColors.secondaryColor,
+                      textColor: AppColors.primaryColor,
+                      width: screenWidth * 0.7,
+                      height: screenHeight * 0.06,
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -394,6 +392,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
       },
     );
   }
+
 
   void _showConfirmationDialog(BuildContext context, double screenWidth, double screenHeight) {
     showDialog(
@@ -404,21 +403,24 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
           title: SvgPicture.asset("assets/icons/check.svg"),
           content: SizedBox(
             width: screenWidth * 0.8,
-            height: screenHeight * 0.18,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text('تم تأكيد الحجز بنجاح', style: TextStyle(fontSize: screenWidth * 0.045)),
-                SizedBox(height: screenHeight * 0.025),
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(builder: (context) => const MainScreen()),
-                    );
-                  },
-                  child: Text('الذهاب إلى الصفحة الرئيسية', style: TextStyle(fontSize: screenWidth * 0.045)),
-                ),
-              ],
+            // No height for flexibility
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text('تم تأكيد الحجز بنجاح', style: TextStyle(fontSize: screenWidth * 0.045)),
+                  SizedBox(height: screenHeight * 0.025),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(builder: (context) => const MainScreen()),
+                      );
+                    },
+                    child: Text('الذهاب إلى الصفحة الرئيسية', style: TextStyle(fontSize: screenWidth * 0.045)),
+                  ),
+                ],
+              ),
             ),
           ),
         );

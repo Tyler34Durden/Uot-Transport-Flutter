@@ -9,7 +9,7 @@ import 'package:uot_transport/core/core_widgets/back_header.dart';
 import 'package:uot_transport/core/app_colors.dart';
 import 'package:uot_transport/auth_feature/view_model/cubit/student_auth_cubit.dart';
 import 'package:uot_transport/auth_feature/view_model/cubit/student_auth_state.dart';
-
+import 'package:flutter/services.dart';
 class PasswordOtp extends StatelessWidget {
   final String email;
 
@@ -83,13 +83,23 @@ class PasswordOtp extends StatelessWidget {
                   controller: otpController,
                   hintText: 'رمز التحقق',
                   textAlign: TextAlign.right,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 ),
+
                 SizedBox(height: screenHeight * 0.04),
                 AppButton(
                   lbl: ' التحقق من الرمز',
                   onPressed: () {
+                    final otp = otpController.text.trim();
+                    if (otp.isEmpty || otp.length != 6) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('يرجى إدخال رمز تحقق مكون من 6 أرقام')),
+                      );
+                      return;
+                    }
                     final otpData = {
-                      "otp": otpController.text,
+                      "otp": otp,
                       "email": email
                     };
                     context.read<StudentAuthCubit>().validateOtp(otpData);

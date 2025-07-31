@@ -87,7 +87,22 @@ class ForgotPassword extends StatelessWidget {
                 AppButton(
                   lbl: ' إعادة تعيين كلمة المرور',
                   onPressed: () {
-                    final email = emailController.text;
+                    final email = emailController.text.trim();
+                    final emailRegExp = RegExp(r'^[\w\.-]+@[\w\.-]+\.\w+$');
+
+                    if (email.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('الرجاء إدخال بريدك الإلكتروني')),
+                      );
+                      return;
+                    }
+                    if (!emailRegExp.hasMatch(email)) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('يرجى إدخال بريد إلكتروني صحيح')),
+                      );
+                      return;
+                    }
+
                     context.read<StudentAuthCubit>().forgotPassword(email);
                   },
                 ),

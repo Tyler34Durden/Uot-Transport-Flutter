@@ -1,5 +1,6 @@
 //added after removed
 import 'package:flutter/material.dart';
+import 'package:uot_transport/auth_feature/view/screens/testing_lottie.dart';
 import 'package:uot_transport/auth_feature/view/widgets/image_carousel.dart';
 import 'package:uot_transport/auth_feature/view/widgets/uot_button.dart';
 import 'package:uot_transport/core/app_colors.dart';
@@ -54,7 +55,15 @@ class OnBoardingScreen extends StatelessWidget {
               ),
             ),
           ),
-          Spacer(),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const TestingLottie()),
+              );
+            },
+            child: const Text("data"),
+          ),          Spacer(),
         ],
       ),
     );

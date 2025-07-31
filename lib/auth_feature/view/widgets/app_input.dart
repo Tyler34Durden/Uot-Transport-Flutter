@@ -23,7 +23,7 @@ class AppInput extends StatelessWidget {
     this.decoration,
     this.locale,
     this.maxLength,
-    super.key,
+    super.key, this.inputFormatters,
   });
 
   final double? br;
@@ -43,6 +43,7 @@ class AppInput extends StatelessWidget {
   final String? Function(String?)? validator;
   final TextInputType? keyboardType;
   final InputDecoration? decoration;
+  final List<TextInputFormatter>? inputFormatters; // <-- Add this line
   final Locale? locale;
   final int? maxLength;
 
