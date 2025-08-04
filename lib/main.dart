@@ -1,7 +1,9 @@
 //added the code after i removed it
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:uot_transport/auth_feature/model/repository/student_auth_repository.dart';
 import 'package:uot_transport/auth_feature/view/screens/splash_screen.dart';
 import 'package:uot_transport/auth_feature/view_model/cubit/student_auth_cubit.dart';
@@ -24,14 +26,43 @@ import 'package:uot_transport/auth_feature/view_model/cubit/change_season_cubit.
 final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  // Handle background message
+  print('Handling a background message: ${message.messageId}');
+}
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
   // تهيئة خدمة الإشعارات وتمرير مفتاح Navigator
   // final notificationService = NotificationService();
   // await notificationService.init(scaffoldMessengerKey);
+
+  const AndroidInitializationSettings androidInitSettings =
+  AndroidInitializationSettings('@mipmap/ic_launcher');
+  final DarwinInitializationSettings iosInitSettings = DarwinInitializationSettings();
+  final InitializationSettings initSettings = InitializationSettings(
+    android: androidInitSettings,
+    iOS: iosInitSettings,
+  );
+  await flutterLocalNotificationsPlugin.initialize(initSettings);
+
+  // Android notification channel setup
+  const AndroidNotificationChannel channel = AndroidNotificationChannel(
+    'channel_id',
+    'channel_name',
+    importance: Importance.max,
+  );
+  await flutterLocalNotificationsPlugin
+      .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+      ?.createNotificationChannel(channel);
+
 
   final studentRepository = StudentAuthRepository();
   final homeRepository = HomeRepository();

@@ -2,22 +2,44 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:uot_transport/core/app_colors.dart';
 import 'package:another_flushbar/flushbar.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
+Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  flutterLocalNotificationsPlugin.show(
+    0,
+    message.notification?.title ?? 'إشعار جديد',
+    message.notification?.body ?? 'No message body',
+    const NotificationDetails(
+      android: AndroidNotificationDetails(
+        'channel_id',
+        'channel_name',
+        importance: Importance.max,
+        priority: Priority.high,
+      ),
+    ),
+  );
+}
 
 class NotificationService {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
   Future<void> init(
-      GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey,
-      BuildContext context, // ✅ تم تمريره هنا
-      GlobalKey<NavigatorState> navigatorKey, // <-- add this parameter
-      ) async {
+    GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey,
+    BuildContext context,
+    GlobalKey<NavigatorState> navigatorKey,
+  ) async {
     NotificationSettings settings = await _firebaseMessaging.requestPermission();
     print('User granted permission: ${settings.authorizationStatus}');
 
     String? token = await _firebaseMessaging.getToken();
     print('Firebase Messaging Token: $token');
 
-    // الاستماع للرسائل عندما يكون التطبيق نشطًا
+    // Register background handler
+    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+
+    // Foreground notifications
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       final notificationBody = message.notification?.body ?? message.data['body'] ?? 'No message body';
       final notificationTitle = message.notification?.title ?? message.data['title'] ?? 'إشعار جديد';
@@ -36,7 +58,7 @@ class NotificationService {
       ).show(context);
     });
 
-    // عند النقر على الإشعار
+    // When notification is tapped
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       final notificationBody = message.notification?.body ?? message.data['body'] ?? 'Notification clicked!';
       final notificationTitle = message.notification?.title ?? message.data['title'] ?? 'إشعار جديد';
@@ -46,7 +68,7 @@ class NotificationService {
           textDirection: TextDirection.rtl,
           child: Text(
             notificationTitle,
-            style: TextStyle(
+            style: const TextStyle(
               color: AppColors.primaryColor,
               fontWeight: FontWeight.bold,
               fontSize: 16,
@@ -57,7 +79,7 @@ class NotificationService {
           textDirection: TextDirection.rtl,
           child: Text(
             notificationBody,
-            style: TextStyle(
+            style: const TextStyle(
               color: AppColors.textColor,
               fontSize: 14,
             ),
@@ -70,13 +92,13 @@ class NotificationService {
         margin: const EdgeInsets.all(12),
         padding: const EdgeInsets.all(16),
         boxShadows: [
-          BoxShadow(
+          const BoxShadow(
             color: Colors.blue,
-            offset: Offset(0, 4), // Position at the bottom
+            offset: Offset(0, 4),
             blurRadius: 0,
             spreadRadius: 0,
           ),
-          BoxShadow(
+          const BoxShadow(
             color: Colors.blue,
             offset: Offset(0, 4),
             blurRadius: 0,
