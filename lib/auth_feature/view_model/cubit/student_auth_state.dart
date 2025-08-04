@@ -18,6 +18,8 @@ class ValidateOtpSuccess extends StudentAuthState {}
 
 class ResetPasswordSuccess extends StudentAuthState {}
 
+class SeasonChangeRequired extends StudentAuthState {}
+
 class StudentAuthFailure extends StudentAuthState {
   final String error;
 

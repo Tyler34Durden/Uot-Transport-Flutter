@@ -80,35 +80,25 @@ class ChangeSeasonCubit extends Cubit<ChangeSeasonState> {
     }
   }
 
-  Future<void> updateSemester(Map<String, dynamic> data, BuildContext context) async {
+  Future<void> updateSemester(Map<String, dynamic> data) async {
     emit(ChangeSeasonLoading());
     try {
       await repository.updateSemester(data);
       emit(ChangeSeasonSuccess());
     } catch (e) {
-      String errorMsg;
-      if (e is DioError && e.response?.data != null && e.response?.data['message'] != null) {
-        errorMsg = e.response?.data['message']?.toString() ?? 'حدث خطأ غير متوقع';
+      String errorMsg = 'حدث خطأ غير متوقع';
+      if (e is DioError) {
+        final msg = e.response?.data['message'] ?? e.response?.data['error'];
+        if (msg != null) errorMsg = msg.toString();
       } else if (e is Map && e['message'] != null) {
-        errorMsg = e['message']?.toString() ?? 'حدث خطأ غير متوقع';
+        errorMsg = e['message'].toString();
       } else if (e is String) {
         final regex = RegExp(r'Error Data: \{message: ([^}]+)\}');
         final match = regex.firstMatch(e);
         if (match != null) {
-          errorMsg = match.group(1)?.trim() ?? 'حدث خطأ غير متوقع';
-        } else {
-          final fallbackRegex = RegExp(r'\{message: ([^}]+)\}');
-          final fallbackMatch = fallbackRegex.firstMatch(e);
-          if (fallbackMatch != null) {
-            errorMsg = fallbackMatch.group(1)?.trim() ?? 'حدث خطأ غير متوقع';
-          } else {
-            errorMsg = e.toString().split('\n').first;
-          }
+          errorMsg = match.group(1)?.trim() ?? errorMsg;
         }
-      } else {
-        errorMsg = e.toString().split('\n').first;
       }
       emit(ChangeSeasonFailure(errorMsg));
     }
-  }
-}
+  }}

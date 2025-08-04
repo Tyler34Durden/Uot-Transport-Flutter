@@ -91,7 +91,11 @@ class StudentAuthRepository {
       logger.e('DioError: [31m${e.message}[0m');
       if (e.response != null) {
         logger.e('DioError Response: ${e.response?.data}');
-        throw e.response?.data;
+      //throw e.response?.data;
+        throw {
+          'statusCode': e.response?.statusCode,
+          ...?e.response?.data
+        };
       }
       rethrow;
     }
