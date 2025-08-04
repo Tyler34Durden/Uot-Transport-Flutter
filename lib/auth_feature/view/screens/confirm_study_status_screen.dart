@@ -254,7 +254,7 @@ class _ConfirmStudyStatusScreenState extends State<ConfirmStudyStatusScreen> {
                       "gender": genderMap[_selectedGender], // This sends 'male' or 'female'
                       "qrData": _qrCodeResult,
                     };
-                    context.read<StudentAuthCubit>().registerStudent(updatedStudentData);
+                    context.read<StudentAuthCubit>().registerStudent(updatedStudentData, context);
                   },
                 ),
                 SizedBox(height: screenHeight * 0.06),

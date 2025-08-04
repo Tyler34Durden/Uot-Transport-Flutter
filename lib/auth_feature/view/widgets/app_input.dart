@@ -23,7 +23,9 @@ class AppInput extends StatelessWidget {
     this.decoration,
     this.locale,
     this.maxLength,
-    super.key, this.inputFormatters,
+    this.inputFormatters,
+    this.readOnly, // <-- Add this line
+    super.key,
   });
 
   final double? br;
@@ -43,9 +45,10 @@ class AppInput extends StatelessWidget {
   final String? Function(String?)? validator;
   final TextInputType? keyboardType;
   final InputDecoration? decoration;
-  final List<TextInputFormatter>? inputFormatters; // <-- Add this line
+  final List<TextInputFormatter>? inputFormatters;
   final Locale? locale;
   final int? maxLength;
+  final bool? readOnly; // <-- Add this line
 
   @override
   Widget build(BuildContext context) {
@@ -110,6 +113,8 @@ class AppInput extends StatelessWidget {
       maxLength: maxLength,
       maxLengthEnforcement: MaxLengthEnforcement.enforced,
       buildCounter: (BuildContext context, {int? currentLength, bool? isFocused, int? maxLength}) => null,
+      inputFormatters: inputFormatters,
+      readOnly: readOnly ?? false, // <-- Add this line
     );
   }
 }

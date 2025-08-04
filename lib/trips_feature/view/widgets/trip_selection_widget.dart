@@ -142,7 +142,6 @@ class _TripSelectionWidgetState extends State<TripSelectionWidget> {
                     fontSize: 16,
                     color: AppColors.primaryColor,
                   ),
-
                 ),
               );
             }

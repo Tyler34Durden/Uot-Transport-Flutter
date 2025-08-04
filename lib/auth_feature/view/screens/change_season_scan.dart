@@ -3,19 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:uot_transport/core/core_widgets/back_header.dart';
 import 'package:uot_transport/core/app_colors.dart';
+import 'package:logger/logger.dart';
 
-class QRScanScreen extends StatefulWidget {
-  final String? uotNumber;
+class ChangeSeasonScan extends StatefulWidget {
 
-  const QRScanScreen({super.key, this.uotNumber});
+  const ChangeSeasonScan({super.key,});
 
   @override
-  _QRScanScreenState createState() => _QRScanScreenState();
+  _ChangeSeasonScanState createState() => _ChangeSeasonScanState();
 }
 
-class _QRScanScreenState extends State<QRScanScreen> {
+class _ChangeSeasonScanState extends State<ChangeSeasonScan> {
   MobileScannerController controller = MobileScannerController();
   bool hasScanned = false;
+  final Logger logger = Logger();
 
   @override
   void dispose() {
@@ -44,22 +45,17 @@ class _QRScanScreenState extends State<QRScanScreen> {
                 for (final barcode in barcodes) {
                   if (barcode.rawValue != null) {
                     final String code = barcode.rawValue!;
-                    print('Barcode found! $code');
-                    // If uotNumber is provided, check for match, else accept any scan
-                    if (widget.uotNumber == null || code.contains(widget.uotNumber!)) {
-                      setState(() {
-                        hasScanned = true;
-                      });
-                      Navigator.pop(context, code);
-                    } else {
-                      print('Scanned code does not match UOT number.');
-                    }
+                    logger.i('Barcode found! $code');
+                    setState(() {
+                      hasScanned = true;
+                    });
+                    Navigator.pop(context, code);
                     break;
                   }
                 }
               },
               errorBuilder: (context, error, child) {
-                print('MobileScanner error: $error');
+                logger.e('MobileScanner error: $error');
                 return Center(
                   child: Text(
                     'Camera error: $error',

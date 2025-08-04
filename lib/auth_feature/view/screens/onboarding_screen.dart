@@ -63,7 +63,9 @@ class OnBoardingScreen extends StatelessWidget {
               );
             },
             child: const Text("data"),
-          ),          Spacer(),
+          ),
+          Spacer(),
+
         ],
       ),
     );

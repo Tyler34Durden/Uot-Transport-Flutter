@@ -17,6 +17,8 @@ import 'package:uot_transport/trips_feature/model/repository/trips_repository.da
 import 'package:uot_transport/trips_feature/view_model/cubit/trips_cubit.dart';
 import 'package:uot_transport/profile_feature/model/repository/profile_repository.dart';
 import 'package:uot_transport/profile_feature/view_model/cubit/profile_cubit.dart';
+import 'package:uot_transport/auth_feature/model/repository/change_season_repository.dart';
+import 'package:uot_transport/auth_feature/view_model/cubit/change_season_cubit.dart';
 
 // تعريف مفتاح ScaffoldMessenger
 final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
@@ -37,6 +39,7 @@ Future<void> main() async {
   final profileRepository = ProfileRepository();
   final stationTripsRepository = StationTripsRepository();
   final tripsRepository = TripsRepository(); // Pass ApiService to TripsRepository
+  final changeSeasonRepository = ChangeSeasonRepository();
 
   runApp(
     MultiRepositoryProvider(
@@ -58,6 +61,9 @@ Future<void> main() async {
         ),
         RepositoryProvider<TripsRepository>(
           create: (context) => tripsRepository, // Provide TripsRepository
+        ),
+        RepositoryProvider<ChangeSeasonRepository>(
+          create: (context) => changeSeasonRepository,
         ),
       ],
       child: MultiBlocProvider(
@@ -83,6 +89,9 @@ Future<void> main() async {
           ),
           BlocProvider(
             create: (context) => ProfileCubit(profileRepository),
+          ),
+          BlocProvider(
+            create: (context) => ChangeSeasonCubit(changeSeasonRepository),
           ),
         ],
         child: const MyApp(),

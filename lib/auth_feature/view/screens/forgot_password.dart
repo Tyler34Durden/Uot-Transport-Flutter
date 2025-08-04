@@ -33,9 +33,32 @@ class ForgotPassword extends StatelessWidget {
               ),
             );
           } else if (state is StudentAuthFailure) {
-            // Show error message
+            // Show DioError response message if available
+            dynamic errorMsg = state.error;
+            // Try to extract the message from a map or from the error string
+            if (errorMsg is Map && errorMsg['message'] != null) {
+              errorMsg = errorMsg['message'].toString();
+            } else if (errorMsg is String) {
+              // Try to extract {message: ...} from any part of the string
+              final regex = RegExp(r'Error Data: \{message: ([^}]+)\}');
+              final match = regex.firstMatch(errorMsg);
+              if (match != null) {
+                errorMsg = match.group(1)?.trim() ?? errorMsg;
+              } else {
+                // Fallback: Try to extract {message: ...} from any part of the string
+                final fallbackRegex = RegExp(r'\{message: ([^}]+)\}');
+                final fallbackMatch = fallbackRegex.firstMatch(errorMsg);
+                if (fallbackMatch != null) {
+                  errorMsg = fallbackMatch.group(1)?.trim() ?? errorMsg;
+                } else {
+                  // If no message found, show only the first line or a generic message
+                  errorMsg = errorMsg.split('\n').first;
+                }
+              }
+            }
+            // Remove debug print for production
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.error)),
+              SnackBar(content: Text(errorMsg)),
             );
           }
         },
@@ -61,7 +84,7 @@ class ForgotPassword extends StatelessWidget {
                 const AppText(
                   textAlign: TextAlign.center,
                   lbl:
-                  'ادخل بياناتك ليتم إرسال اليك رمز تحقق لكي تعد تعيين كلمة مرورك',
+                  'دخل بياناتك ليتم إرسال اليك رمز تحقق لكي تعد تعيين كلمة مرورك',
                   style: TextStyle(
                     color: AppColors.textColor,
                     fontSize: 20,
@@ -69,7 +92,7 @@ class ForgotPassword extends StatelessWidget {
                 ),
                 SizedBox(height: screenHeight * 0.06),
                 const AppText(
-                  lbl: 'ادخل بريدك الإلكتروني',
+                  lbl: 'ا��خل بريدك الإلكتروني',
                   style: TextStyle(
                     color: AppColors.textColor,
                     fontSize: 14,

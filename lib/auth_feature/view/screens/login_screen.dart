@@ -12,6 +12,8 @@ import 'package:uot_transport/auth_feature/view_model/cubit/student_auth_cubit.d
 import 'package:uot_transport/auth_feature/view_model/cubit/student_auth_state.dart';
 import 'package:logger/logger.dart';
 
+import 'change_season.dart';
+
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
@@ -200,7 +202,23 @@ class LoginScreen extends StatelessWidget {
                         context.read<StudentAuthCubit>().login(loginData);
                       },
                     ),
-                    SizedBox(height: bottomSpacing),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.013),
+                    AppButton(
+                      lbl: 'تحديث السنة الدراسية',
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ChangeSeason(),
+                          ),
+                        );
+                      },
+                      color: AppColors.secondaryColor,
+                      textColor: AppColors.primaryColor,
+                    ),
+                    //SizedBox(height: bottomSpacing),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.013),
+
                     AppText(
                       lbl: 'ليس لديك حساب؟ انشىء حساب',
                       style: TextStyle(
