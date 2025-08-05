@@ -104,7 +104,7 @@ class _TripsScreenState extends State<TripsScreen> {
                     final trips = state.trips;
                     if (trips.isEmpty) {
                       return Center(
-                        child: Text('No trips available', style: TextStyle(fontSize: width * 0.04)),
+                        child: Text('لا توجد رحلات', style: TextStyle(fontSize: width * 0.04)),
                       );
                     }
                     return Column(
