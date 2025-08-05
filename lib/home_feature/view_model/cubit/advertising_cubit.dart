@@ -17,6 +17,7 @@ class AdvertisingsCubit extends Cubit<AdvertisingsState> {
         return {
           'photo': ad['photo']?.toString() ?? '',
           'title': ad['title']?.toString() ?? '',
+          'description': ad['description']?.toString() ?? '',
         };
       }).toList();
       emit(AdvertisingsLoaded(transformedAdvertisings));

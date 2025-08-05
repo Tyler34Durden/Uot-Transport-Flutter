@@ -58,6 +58,9 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware{
     setState(() {
       token = prefs.getString('auth_token');
     });
+    if (token != null) {
+      await context.read<AdvertisingsCubit>().fetchAdvertisings(token!);
+    }
     _loadTrips();
   }
 
@@ -120,6 +123,20 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware{
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  BlocBuilder<AdvertisingsCubit, AdvertisingsState>(
+                    builder: (context, state) {
+                      if (state is AdvertisingsLoading) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (state is AdvertisingsLoaded) {
+                        final advertisings = state.advertisings.cast<Map<String, dynamic>>();
+                        return HomeSlider(advertisings: advertisings);
+                      } else if (state is AdvertisingsError) {
+                        return Center(child: Text('Error: ${state.message}'));
+                      }
+                      return const SizedBox.shrink();
+                    },
+                  ),
+                  const SizedBox(height: 20),
                   // My Trips Section
                   Text(
                     "رحلاتي:",
