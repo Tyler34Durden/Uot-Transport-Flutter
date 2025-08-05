@@ -29,4 +29,8 @@ class NotificationsRepository {
       rethrow;
     }
   }
+
+  Future<void> markAllAsRead(String token) async {
+    await _apiService.patchRequest('notifications/read-all',{}, token: token);
+  }
 }

@@ -27,4 +27,13 @@ class NotificationsCubit extends Cubit<NotificationsState> {
       emit(NotificationsError(e.toString()));
     }
   }
+
+
+  Future<void> markAllAsRead(String token) async {
+    try {
+      await repository.markAllAsRead(token);
+    } catch (e) {
+      // Handle error if needed
+    }
+  }
 }
