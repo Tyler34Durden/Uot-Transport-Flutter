@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:uot_transport/auth_feature/view/widgets/app_button.dart';
-import 'package:uot_transport/auth_feature/view/widgets/app_dropdown.dart';
-import 'package:uot_transport/core/app_colors.dart';
-import 'package:uot_transport/core/main_screen.dart';
-import 'package:uot_transport/trips_feature/view/screens/trip_details_screen.dart';
-import 'package:uot_transport/trips_feature/view_model/cubit/trips_cubit.dart';
-import 'package:uot_transport/trips_feature/view_model/cubit/trips_state.dart';
+
+import '../../../auth_feature/view/widgets/app_button.dart';
+import '../../../auth_feature/view/widgets/app_dropdown.dart';
+import '../../../core/main_screen.dart';
+import '../../../core/app_colors.dart';
+import '../../../trips_feature/view/screens/trip_details_screen.dart';
+import '../../../trips_feature/view_model/cubit/trips_cubit.dart';
+import '../../../trips_feature/view_model/cubit/trips_state.dart';
 
 class ActiveTripsWidget extends StatefulWidget {
   final String busId;
@@ -53,6 +54,8 @@ class _ActiveTripsWidgetState extends State<ActiveTripsWidget> {
   @override
   Widget build(BuildContext context) {
     final tripsCubit = context.read<TripsCubit>();
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
 
     return GestureDetector(
       onTap: () {
@@ -128,7 +131,7 @@ class _ActiveTripsWidgetState extends State<ActiveTripsWidget> {
                   onPressed: () {
                     if (token != null) {
                       tripsCubit.fetchTripRoutes(widget.tripId, token!);
-                      _showStationDialog(context, tripsCubit, widget.tripId, token!);
+                      _showStationDialog(context, tripsCubit, widget.tripId, token!, screenWidth, screenHeight);
                     }
                   },
                   color: AppColors.secondaryColor,
@@ -154,7 +157,6 @@ class _ActiveTripsWidgetState extends State<ActiveTripsWidget> {
       TripsCubit tripsCubit,
       String tripId,
       String token,
-      List<Map<String, dynamic>> tripRoutes,
       double screenWidth,
       double screenHeight,
       ) {
@@ -162,152 +164,163 @@ class _ActiveTripsWidgetState extends State<ActiveTripsWidget> {
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
-        if (tripRoutes.isEmpty) {
-          return const AlertDialog(
-            content: Center(child: Text('لا توجد محطات متاحة لهذه الرحلة')),
-          );
-        }
+        return BlocBuilder<TripsCubit, TripsState>(
+          builder: (context, state) {
+            if (state is TripsLoading) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (state is TripRoutesLoaded) {
+              final tripRoutes = state.tripRoutes;
+              if (tripRoutes.isEmpty) {
+                return const AlertDialog(
+                  content: Center(child: Text('لا توجد محطات متاحة لهذه الرحلة')),
+                );
+              }
 
-        final stationItems = tripRoutes
-            .map<Map<String, dynamic>>((route) => {
-          'id': route['id'].toString(),
-          'name': route['stationName'] ?? 'Unknown',
-          'order': route['OrderNumber'] as int,
-        })
-            .toList();
+              final stationItems = tripRoutes
+                  .map<Map<String, dynamic>>((route) => {
+                'id': route['id'].toString(),
+                'name': route['stationName'] ?? 'Unknown',
+                'order': route['OrderNumber'] as int,
+              })
+                  .toList();
 
-        final fromItems = stationItems.sublist(0, stationItems.length - 1);
-        final fromIdToLabel = {
-          for (var item in fromItems) item['id'] as String: '${item['order']} - ${item['name']}'
-        };
-        final fromLabels = fromIdToLabel.values.toList();
+              final fromItems = stationItems.sublist(0, stationItems.length - 1);
+              final fromIdToLabel = {
+                for (var item in fromItems) item['id'] as String: '${item['order']} - ${item['name']}'
+              };
+              final fromLabels = fromIdToLabel.values.toList();
 
-        String? selectedFromLabel;
-        String? selectedToLabel;
-        String? selectedFromStationId;
-        String? selectedToStationId;
-        String? errorText;
+              String? selectedFromLabel;
+              String? selectedToLabel;
+              String? selectedFromStationId;
+              String? selectedToStationId;
+              String? errorText;
 
-        return Directionality(
-          textDirection: TextDirection.rtl,
-          child: AlertDialog(
-            title: const Align(
-              alignment: Alignment.centerRight,
-              child: Text('تفاصيل الرحلة'),
-            ),
-            content: SizedBox(
-              width: screenWidth * 0.9,
-              //height: screenHeight * 0.35,
-              child: StatefulBuilder(
-                builder: (context, setState) {
-                  List<Map<String, dynamic>> toItems = [];
-                  Map<String, String> toIdToLabel = {};
-                  List<String> toLabels = [];
-                  if (selectedFromLabel != null) {
-                    selectedFromStationId = fromIdToLabel.entries
-                        .firstWhere((entry) => entry.value == selectedFromLabel)
-                        .key;
-                    final fromOrder = fromItems
-                        .firstWhere((e) => e['id'] == selectedFromStationId)['order'];
-                    toItems = stationItems.where((item) => item['order'] > fromOrder).toList();
-                    toIdToLabel = {
-                      for (var item in toItems) item['id'] as String: '${item['order']} - ${item['name']}'
-                    };
-                    toLabels = toIdToLabel.values.toList();
-                  }
-                  return SingleChildScrollView(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        AppDropdown(
-                          items: fromLabels, // ['1 - StationA', '2 - StationB', ...]
-                          hintText: 'اختر محطة البداية',
-                          value: selectedFromLabel, // should be '1 - StationA', not just id
-                          onChanged: (value) {
-                            setState(() {
-                              selectedFromLabel = value; // value is the label string
-                              selectedToLabel = null;
-                              errorText = null;
-                            });
-                          },
-                        ),
-                        SizedBox(height: screenHeight * 0.02),
-                        AppDropdown(
-                          items: toLabels,
-                          hintText: 'اختر محطة النهاية',
-                          value: selectedToLabel,
-                          onChanged: (value) {
-                            setState(() {
-                              selectedToLabel = value;
-                              errorText = null;
-                            });
-                          },
-                        ),
-                        SizedBox(height: screenHeight * 0.02),
-                        if ((errorText ?? '').isNotEmpty)
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 1.0),
-                            child: Text(
-                              errorText ?? '',
-                              style: TextStyle(color: Colors.red, fontSize: screenWidth * 0.035),
-                            ),
+              return Directionality(
+                textDirection: TextDirection.rtl,
+                child: AlertDialog(
+                  title: const Align(
+                    alignment: Alignment.centerRight,
+                    child: Text('تفاصيل الرحلة'),
+                  ),
+                  content: SizedBox(
+                    width: screenWidth * 0.9,
+                    child: StatefulBuilder(
+                      builder: (context, setState) {
+                        List<Map<String, dynamic>> toItems = [];
+                        Map<String, String> toIdToLabel = {};
+                        List<String> toLabels = [];
+                        if (selectedFromLabel != null) {
+                          selectedFromStationId = fromIdToLabel.entries
+                              .firstWhere((entry) => entry.value == selectedFromLabel)
+                              .key;
+                          final fromOrder = fromItems
+                              .firstWhere((e) => e['id'] == selectedFromStationId)['order'];
+                          toItems = stationItems.where((item) => item['order'] > fromOrder).toList();
+                          toIdToLabel = {
+                            for (var item in toItems) item['id'] as String: '${item['order']} - ${item['name']}'
+                          };
+                          toLabels = toIdToLabel.values.toList();
+                        }
+                        return SingleChildScrollView(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              AppDropdown(
+                                items: fromLabels,
+                                hintText: 'اختر محطة البداية',
+                                value: selectedFromLabel,
+                                onChanged: (value) {
+                                  setState(() {
+                                    selectedFromLabel = value;
+                                    selectedToLabel = null;
+                                    errorText = null;
+                                  });
+                                },
+                              ),
+                              SizedBox(height: screenHeight * 0.02),
+                              AppDropdown(
+                                items: toLabels,
+                                hintText: 'اختر محطة النهاية',
+                                value: selectedToLabel,
+                                onChanged: (value) {
+                                  setState(() {
+                                    selectedToLabel = value;
+                                    errorText = null;
+                                  });
+                                },
+                              ),
+                              SizedBox(height: screenHeight * 0.02),
+                              if ((errorText ?? '').isNotEmpty)
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 1.0),
+                                  child: Text(
+                                    errorText ?? '',
+                                    style: TextStyle(color: Colors.red, fontSize: screenWidth * 0.035),
+                                  ),
+                                ),
+                              SizedBox(height: screenHeight * 0.02),
+                              AppButton(
+                                lbl: "إرسال",
+                                onPressed: () {
+                                  if (selectedFromLabel != null && selectedToLabel != null) {
+                                    selectedFromStationId = fromIdToLabel.entries
+                                        .firstWhere((entry) => entry.value == selectedFromLabel)
+                                        .key;
+                                    selectedToStationId = toIdToLabel.entries
+                                        .firstWhere((entry) => entry.value == selectedToLabel)
+                                        .key;
+
+                                    final fromStation = stationItems.firstWhere((e) => e['id'] == selectedFromStationId);
+                                    final toStation = stationItems.firstWhere((e) => e['id'] == selectedToStationId);
+
+                                    _showBookingDialog(
+                                      context,
+                                      tripsCubit,
+                                      tripId,
+                                      fromStation['name'],
+                                      toStation['name'],
+                                      int.parse(fromStation['id']),
+                                      int.parse(toStation['id']),
+                                      token,
+                                      screenWidth,
+                                      screenHeight,
+                                    );
+                                  } else {
+                                    setState(() {
+                                      errorText = 'يرجى اختيار محطة البداية والنهاية';
+                                    });
+                                  }
+                                },
+                                color: AppColors.primaryColor,
+                                textColor: AppColors.backgroundColor,
+                                width: screenWidth * 0.7,
+                                height: screenHeight * 0.06,
+                              ),
+                              SizedBox(height: screenHeight * 0.015),
+                              AppButton(
+                                lbl: "إغلاق",
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                color: AppColors.secondaryColor,
+                                textColor: AppColors.primaryColor,
+                                width: double.infinity,
+                                height: screenHeight * 0.06,
+                              ),
+                            ],
                           ),
-                        SizedBox(height: screenHeight * 0.02),
-                        AppButton(
-                          lbl: "إرسال",
-                          onPressed: () {
-                            if (selectedFromLabel != null && selectedToLabel != null) {
-                              selectedFromStationId = fromIdToLabel.entries
-                                  .firstWhere((entry) => entry.value == selectedFromLabel)
-                                  .key;
-                              selectedToStationId = toIdToLabel.entries
-                                  .firstWhere((entry) => entry.value == selectedToLabel)
-                                  .key;
-
-                              final fromStation = stationItems.firstWhere((e) => e['id'] == selectedFromStationId);
-                              final toStation = stationItems.firstWhere((e) => e['id'] == selectedToStationId);
-
-                              _showBookingDialog(
-                                context,
-                                tripsCubit,
-                                tripId,
-                                fromStation['name'],
-                                toStation['name'],
-                                int.parse(fromStation['id']),
-                                int.parse(toStation['id']),
-                                token,
-                                screenWidth,
-                                screenHeight,
-                              );
-                            } else {
-                              setState(() {
-                                errorText = 'يرجى اختيار محطة البداية والنهاية';
-                              });
-                            }
-                          },
-                          color: AppColors.primaryColor,
-                          textColor: AppColors.backgroundColor,
-                          width: screenWidth * 0.7,
-                          height: screenHeight * 0.06,
-                        ),
-                        SizedBox(height: screenHeight * 0.015),
-                        AppButton(
-                          lbl: "إغلاق",
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          color: AppColors.secondaryColor,
-                          textColor: AppColors.primaryColor,
-                          width: double.infinity,
-                          height: screenHeight * 0.06,
-                        ),
-                      ],
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
-            ),
-          ),
+                  ),
+                ),
+              );
+            }
+            // Default: show loading
+            return const Center(child: CircularProgressIndicator());
+          },
         );
       },
     );
@@ -338,7 +351,6 @@ class _ActiveTripsWidgetState extends State<ActiveTripsWidget> {
             ),
             content: SizedBox(
               width: screenWidth * 0.8,
-              // No height for flexibility
               child: SingleChildScrollView(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -388,7 +400,6 @@ class _ActiveTripsWidgetState extends State<ActiveTripsWidget> {
     );
   }
 
-
   void _showConfirmationDialog(BuildContext context, double screenWidth, double screenHeight) {
     showDialog(
       context: context,
@@ -398,7 +409,6 @@ class _ActiveTripsWidgetState extends State<ActiveTripsWidget> {
           title: SvgPicture.asset("assets/icons/check.svg"),
           content: SizedBox(
             width: screenWidth * 0.8,
-            // No height for flexibility
             child: SingleChildScrollView(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,

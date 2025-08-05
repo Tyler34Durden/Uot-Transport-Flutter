@@ -44,6 +44,7 @@ class StationList extends StatelessWidget {
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           child: Card(
+            color: AppColors.backgroundColor,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15),
               side: const BorderSide(color: AppColors.primaryColor, width: 1),
