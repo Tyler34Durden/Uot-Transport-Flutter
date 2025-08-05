@@ -150,18 +150,44 @@ class _ActiveTripsWidgetState extends State<ActiveTripsWidget> {
   }
 
   void _showStationDialog(
-    BuildContext context,
-    TripsCubit tripsCubit,
-    String tripId,
-    String token,
-  ) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
-
+      BuildContext context,
+      TripsCubit tripsCubit,
+      String tripId,
+      String token,
+      List<Map<String, dynamic>> tripRoutes,
+      double screenWidth,
+      double screenHeight,
+      ) {
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
+        if (tripRoutes.isEmpty) {
+          return const AlertDialog(
+            content: Center(child: Text('لا توجد محطات متاحة لهذه الرحلة')),
+          );
+        }
+
+        final stationItems = tripRoutes
+            .map<Map<String, dynamic>>((route) => {
+          'id': route['id'].toString(),
+          'name': route['stationName'] ?? 'Unknown',
+          'order': route['OrderNumber'] as int,
+        })
+            .toList();
+
+        final fromItems = stationItems.sublist(0, stationItems.length - 1);
+        final fromIdToLabel = {
+          for (var item in fromItems) item['id'] as String: '${item['order']} - ${item['name']}'
+        };
+        final fromLabels = fromIdToLabel.values.toList();
+
+        String? selectedFromLabel;
+        String? selectedToLabel;
+        String? selectedFromStationId;
+        String? selectedToStationId;
+        String? errorText;
+
         return Directionality(
           textDirection: TextDirection.rtl,
           child: AlertDialog(
@@ -170,131 +196,117 @@ class _ActiveTripsWidgetState extends State<ActiveTripsWidget> {
               child: Text('تفاصيل الرحلة'),
             ),
             content: SizedBox(
-              width: screenWidth * 0.8,
-              height: screenHeight * 0.275,
-              child: BlocBuilder<TripsCubit, TripsState>(
-                bloc: tripsCubit,
-                builder: (context, state) {
-                  if (state is TripRoutesLoading) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (state is TripRoutesError) {
-                    return Center(child: Text('Error: ${state.error}'));
-                  } else if (state is TripRoutesLoaded) {
-                    final tripRoutes = state.tripRoutes;
-                    if (tripRoutes.isEmpty) {
-                      return const Center(child: Text('No routes available.'));
-                    }
-                    final stationNames = tripRoutes
-                        .map<String>((route) => route['stationName'] ?? 'Unknown')
-                        .toList();
-                    final stationIds = tripRoutes
-                        .map<String>((route) => route['id'].toString())
-                        .toList();
-                    final orderNumbers = tripRoutes
-                        .map<int>((route) => route['OrderNumber'] as int)
-                        .toList();
-
-                    String? selectedFromStation;
-                    String? selectedToStation;
-                    String? errorText;
-
-                    return StatefulBuilder(
-                      builder: (context, setState) {
-                        return Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            AppDropdown(
-                              items: stationNames.sublist(0, stationNames.length - 1),
-                              hintText: 'اختر محطة البداية',
-                              value: selectedFromStation,
-                              onChanged: (value) {
-                                setState(() {
-                                  selectedFromStation = value;
-                                  selectedToStation = null;
-                                });
-                              },
-                            ),
-                            SizedBox(height: screenHeight * 0.02),
-                            AppDropdown(
-                              items: selectedFromStation != null
-                                  ? stationNames.where((station) {
-                                      final fromIndex = stationNames.indexOf(selectedFromStation!);
-                                      final toIndex = stationNames.indexOf(station);
-                                      return orderNumbers[toIndex] > orderNumbers[fromIndex];
-                                    }).toList()
-                                  : [],
-                              hintText: 'اختر محطة النهاية',
-                              value: selectedToStation,
-                              onChanged: (value) {
-                                setState(() {
-                                  selectedToStation = value;
-                                });
-                              },
-                            ),
-                            SizedBox(height: screenHeight * 0.02),
-                            if ((errorText ?? '').isNotEmpty)
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 1.0),
-                                child: Text(
-                                  errorText ?? '',
-                                  style: const TextStyle(color: Colors.red, fontSize: 14),
-                                ),
-                              ),
-                            SizedBox(height: screenHeight * 0.02),
-                            AppButton(
-                              lbl: "إرسال",
-                              onPressed: () {
-                                if (selectedFromStation != null && selectedToStation != null) {
-                                  final fromStationId = stationIds[stationNames.indexOf(selectedFromStation!)];
-                                  final toStationId = stationIds[stationNames.indexOf(selectedToStation!)];
-
-                                  _showBookingDialog(
-                                    context,
-                                    tripsCubit,
-                                    tripId,
-                                    selectedFromStation!,
-                                    selectedToStation!,
-                                    int.parse(fromStationId),
-                                    int.parse(toStationId),
-                                    token,
-                                  );
-                                } else {
-                                  setState(() {
-                                    errorText = 'يرجى اختيار محطة البداية والنهاية';
-                                  });
-                                }
-                              },
-                              color: AppColors.primaryColor,
-                              textColor: AppColors.backgroundColor,
-                              width: 265,
-                              height: 45,
-                            ),
-                          ],
-                        );
-                      },
-                    );
+              width: screenWidth * 0.9,
+              //height: screenHeight * 0.35,
+              child: StatefulBuilder(
+                builder: (context, setState) {
+                  List<Map<String, dynamic>> toItems = [];
+                  Map<String, String> toIdToLabel = {};
+                  List<String> toLabels = [];
+                  if (selectedFromLabel != null) {
+                    selectedFromStationId = fromIdToLabel.entries
+                        .firstWhere((entry) => entry.value == selectedFromLabel)
+                        .key;
+                    final fromOrder = fromItems
+                        .firstWhere((e) => e['id'] == selectedFromStationId)['order'];
+                    toItems = stationItems.where((item) => item['order'] > fromOrder).toList();
+                    toIdToLabel = {
+                      for (var item in toItems) item['id'] as String: '${item['order']} - ${item['name']}'
+                    };
+                    toLabels = toIdToLabel.values.toList();
                   }
-                  return const Center(child: Text('No data available.'));
+                  return SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        AppDropdown(
+                          items: fromLabels, // ['1 - StationA', '2 - StationB', ...]
+                          hintText: 'اختر محطة البداية',
+                          value: selectedFromLabel, // should be '1 - StationA', not just id
+                          onChanged: (value) {
+                            setState(() {
+                              selectedFromLabel = value; // value is the label string
+                              selectedToLabel = null;
+                              errorText = null;
+                            });
+                          },
+                        ),
+                        SizedBox(height: screenHeight * 0.02),
+                        AppDropdown(
+                          items: toLabels,
+                          hintText: 'اختر محطة النهاية',
+                          value: selectedToLabel,
+                          onChanged: (value) {
+                            setState(() {
+                              selectedToLabel = value;
+                              errorText = null;
+                            });
+                          },
+                        ),
+                        SizedBox(height: screenHeight * 0.02),
+                        if ((errorText ?? '').isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 1.0),
+                            child: Text(
+                              errorText ?? '',
+                              style: TextStyle(color: Colors.red, fontSize: screenWidth * 0.035),
+                            ),
+                          ),
+                        SizedBox(height: screenHeight * 0.02),
+                        AppButton(
+                          lbl: "إرسال",
+                          onPressed: () {
+                            if (selectedFromLabel != null && selectedToLabel != null) {
+                              selectedFromStationId = fromIdToLabel.entries
+                                  .firstWhere((entry) => entry.value == selectedFromLabel)
+                                  .key;
+                              selectedToStationId = toIdToLabel.entries
+                                  .firstWhere((entry) => entry.value == selectedToLabel)
+                                  .key;
+
+                              final fromStation = stationItems.firstWhere((e) => e['id'] == selectedFromStationId);
+                              final toStation = stationItems.firstWhere((e) => e['id'] == selectedToStationId);
+
+                              _showBookingDialog(
+                                context,
+                                tripsCubit,
+                                tripId,
+                                fromStation['name'],
+                                toStation['name'],
+                                int.parse(fromStation['id']),
+                                int.parse(toStation['id']),
+                                token,
+                                screenWidth,
+                                screenHeight,
+                              );
+                            } else {
+                              setState(() {
+                                errorText = 'يرجى اختيار محطة البداية والنهاية';
+                              });
+                            }
+                          },
+                          color: AppColors.primaryColor,
+                          textColor: AppColors.backgroundColor,
+                          width: screenWidth * 0.7,
+                          height: screenHeight * 0.06,
+                        ),
+                        SizedBox(height: screenHeight * 0.015),
+                        AppButton(
+                          lbl: "إغلاق",
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          color: AppColors.secondaryColor,
+                          textColor: AppColors.primaryColor,
+                          width: double.infinity,
+                          height: screenHeight * 0.06,
+                        ),
+                      ],
+                    ),
+                  );
                 },
               ),
             ),
-            actions: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  AppButton(
-                    lbl: "إغلاق",
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    color: AppColors.secondaryColor,
-                    textColor: AppColors.primaryColor,
-                    width: 265,
-                    height: 45,
-                  ),
-                ],
-              ),
-            ],
           ),
         );
       },
@@ -302,18 +314,17 @@ class _ActiveTripsWidgetState extends State<ActiveTripsWidget> {
   }
 
   void _showBookingDialog(
-    BuildContext context,
-    TripsCubit tripsCubit,
-    String tripId,
-    String fromStation,
-    String toStation,
-    int fromStationId,
-    int toStationId,
-    String token,
-  ) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
-
+      BuildContext context,
+      TripsCubit tripsCubit,
+      String tripId,
+      String fromStation,
+      String toStation,
+      int fromStationId,
+      int toStationId,
+      String token,
+      double screenWidth,
+      double screenHeight,
+      ) {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -327,18 +338,18 @@ class _ActiveTripsWidgetState extends State<ActiveTripsWidget> {
             ),
             content: SizedBox(
               width: screenWidth * 0.8,
+              // No height for flexibility
               child: SingleChildScrollView(
                 child: Column(
-                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
                       "سوف تقوم بحجز الحافلة رقم $tripId من $fromStation إلى $toStation",
-                      style: const TextStyle(fontSize: 16),
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(fontSize: screenWidth * 0.045),
                     ),
-                    const SizedBox(height: 20),
+                    SizedBox(height: screenHeight * 0.025),
                     AppButton(
                       lbl: "تأكيد الحجز",
                       onPressed: () {
@@ -349,14 +360,14 @@ class _ActiveTripsWidgetState extends State<ActiveTripsWidget> {
                           token: token,
                         );
                         Navigator.of(context).pop();
-                        _showConfirmationDialog(context);
+                        _showConfirmationDialog(context, screenWidth, screenHeight);
                       },
                       color: AppColors.primaryColor,
                       textColor: AppColors.backgroundColor,
-                      width: 265,
-                      height: 45,
+                      width: screenWidth * 0.7,
+                      height: screenHeight * 0.06,
                     ),
-                    const SizedBox(height: 10),
+                    SizedBox(height: screenHeight * 0.015),
                     AppButton(
                       lbl: "إلغاء",
                       onPressed: () {
@@ -364,8 +375,8 @@ class _ActiveTripsWidgetState extends State<ActiveTripsWidget> {
                       },
                       color: AppColors.secondaryColor,
                       textColor: AppColors.primaryColor,
-                      width: 265,
-                      height: 45,
+                      width: screenWidth * 0.7,
+                      height: screenHeight * 0.06,
                     ),
                   ],
                 ),
@@ -377,32 +388,34 @@ class _ActiveTripsWidgetState extends State<ActiveTripsWidget> {
     );
   }
 
-  void _showConfirmationDialog(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
+
+  void _showConfirmationDialog(BuildContext context, double screenWidth, double screenHeight) {
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
           title: SvgPicture.asset("assets/icons/check.svg"),
-          content: Container(
-            width: screenWidth * 0.7,
-            height: screenHeight * 0.22,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text('تم تأكيد الحجز بنجاح'),
-                const SizedBox(height: 20),
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(builder: (context) => const MainScreen()),
-                    );
-                  },
-                  child: const Text('الذهاب إلى الصفحة الرئيسية'),
-                ),
-              ],
+          content: SizedBox(
+            width: screenWidth * 0.8,
+            // No height for flexibility
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text('تم تأكيد الحجز بنجاح', style: TextStyle(fontSize: screenWidth * 0.045)),
+                  SizedBox(height: screenHeight * 0.025),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(builder: (context) => const MainScreen()),
+                      );
+                    },
+                    child: Text('الذهاب إلى الصفحة الرئيسية', style: TextStyle(fontSize: screenWidth * 0.045)),
+                  ),
+                ],
+              ),
             ),
           ),
         );

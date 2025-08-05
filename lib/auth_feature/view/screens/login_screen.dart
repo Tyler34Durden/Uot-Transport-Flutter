@@ -45,86 +45,98 @@ import 'package:flutter/material.dart';
                                                       listener: (context, state) {
                                                         if (state is StudentAuthLoading) {
                                                           logger.i('Loading...');
-                                                        } else if (state is LoginSuccess) {
-                                                          logger.i('Login successful');
-                                                          emailController.clear();
-                                                          passwordController.clear();
-                                                          Navigator.pushReplacement(
-                                                            context,
-                                                            MaterialPageRoute(builder: (context) => const MainScreen()),
+                                                          showDialog(
+                                                            context: context,
+                                                            barrierDismissible: false,
+                                                            builder: (context) => Center(
+                                                              child: CircularProgressIndicator(
+                                                                color: AppColors.primaryColor,
+                                                              ),
+                                                            ),
                                                           );
-                                                        } else if (state is StudentAuthFailure) {
-                                                          String errorMessage = 'هناك خطأ ما في البريد الإلكتروني أو كلمة المرور.';
-                                                          final error = state.error;
-                                                          if (error is Map && error[0] != null) {
-                                                            errorMessage = error[0].toString();
-                                                          } else if (error is String) {
-                                                            errorMessage = error;
-                                                          }
-                                                          ScaffoldMessenger.of(context).showSnackBar(
-                                                            SnackBar(content: Text(errorMessage)),
-                                                          );
-                                                        } else if (state is SeasonChangeRequired) {
-                                                          Future.microtask(() {
-                                                            if (ModalRoute.of(context)?.isCurrent ?? true) {
-                                                              showDialog(
-                                                                context: context,
-                                                                barrierDismissible: false,
-                                                                builder: (BuildContext context) {
-                                                                  return Directionality(
-                                                                    textDirection: TextDirection.rtl,
-                                                                    child: AlertDialog(
-                                                                      title: const Align(
-                                                                        alignment: Alignment.centerRight,
-                                                                        child: Text('تحديث السنة الدراسية'),
-                                                                      ),
-                                                                      content: SizedBox(
-                                                                        width: screenWidth * 0.8,
-                                                                        child: SingleChildScrollView(
-                                                                          child: Column(
-                                                                            mainAxisSize: MainAxisSize.min,
-                                                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                                                            children: [
-                                                                              Text(
-                                                                                'يجب عليك تحديث السنة الدراسية للمتابعة.',
-                                                                                style: TextStyle(fontSize: screenWidth * 0.045),
-                                                                              ),
-                                                                              SizedBox(height: screenHeight * 0.025),
-                                                                              AppButton(
-                                                                                lbl: 'تحديث',
-                                                                                onPressed: () {
-                                                                                  Navigator.of(context).pop();
-                                                                                  Navigator.push(
-                                                                                    context,
-                                                                                    MaterialPageRoute(builder: (context) => const ChangeSeason()),
-                                                                                  );
-                                                                                },
-                                                                                color: AppColors.primaryColor,
-                                                                                textColor: AppColors.backgroundColor,
-                                                                                width: screenWidth * 0.7,
-                                                                                height: screenHeight * 0.06,
-                                                                              ),
-                                                                              SizedBox(height: screenHeight * 0.015),
-                                                                              AppButton(
-                                                                                lbl: 'إلغاء',
-                                                                                onPressed: () {
-                                                                                  Navigator.of(context).pop();
-                                                                                },
-                                                                                color: AppColors.secondaryColor,
-                                                                                textColor: AppColors.primaryColor,
-                                                                                width: screenWidth * 0.7,
-                                                                                height: screenHeight * 0.06,
-                                                                              ),
-                                                                            ],
+                                                        } else {
+                                                          Navigator.of(context, rootNavigator: true).popUntil((route) => route is! PopupRoute);
+                                                          if (state is LoginSuccess) {
+                                                            logger.i('Login successful');
+                                                            emailController.clear();
+                                                            passwordController.clear();
+                                                            Navigator.pushReplacement(
+                                                              context,
+                                                              MaterialPageRoute(builder: (context) => const MainScreen()),
+                                                            );
+                                                          } else if (state is StudentAuthFailure) {
+                                                            String errorMessage = 'هناك خطأ ما في البريد الإلكتروني أو كلمة المرور.';
+                                                            final error = state.error;
+                                                            if (error is Map && error[0] != null) {
+                                                              errorMessage = error[0].toString();
+                                                            } else if (error is String) {
+                                                              errorMessage = error;
+                                                            }
+                                                            ScaffoldMessenger.of(context).showSnackBar(
+                                                              SnackBar(content: Text(errorMessage)),
+                                                            );
+                                                          } else if (state is SeasonChangeRequired) {
+                                                            Future.microtask(() {
+                                                              if (ModalRoute.of(context)?.isCurrent ?? true) {
+                                                                showDialog(
+                                                                  context: context,
+                                                                  barrierDismissible: false,
+                                                                  builder: (BuildContext context) {
+                                                                    return Directionality(
+                                                                      textDirection: TextDirection.rtl,
+                                                                      child: AlertDialog(
+                                                                        title: const Align(
+                                                                          alignment: Alignment.centerRight,
+                                                                          child: Text('تحديث السنة الدراسية'),
+                                                                        ),
+                                                                        content: SizedBox(
+                                                                          width: screenWidth * 0.8,
+                                                                          child: SingleChildScrollView(
+                                                                            child: Column(
+                                                                              mainAxisSize: MainAxisSize.min,
+                                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                                              children: [
+                                                                                Text(
+                                                                                  'يجب عليك تحديث السنة الدراسية للمتابعة.',
+                                                                                  style: TextStyle(fontSize: screenWidth * 0.045),
+                                                                                ),
+                                                                                SizedBox(height: screenHeight * 0.025),
+                                                                                AppButton(
+                                                                                  lbl: 'تحديث',
+                                                                                  onPressed: () {
+                                                                                    Navigator.of(context).pop();
+                                                                                    Navigator.push(
+                                                                                      context,
+                                                                                      MaterialPageRoute(builder: (context) => const ChangeSeason()),
+                                                                                    );
+                                                                                  },
+                                                                                  color: AppColors.primaryColor,
+                                                                                  textColor: AppColors.backgroundColor,
+                                                                                  width: screenWidth * 0.7,
+                                                                                  height: screenHeight * 0.06,
+                                                                                ),
+                                                                                SizedBox(height: screenHeight * 0.015),
+                                                                                AppButton(
+                                                                                  lbl: 'إلغاء',
+                                                                                  onPressed: () {
+                                                                                    Navigator.of(context).pop();
+                                                                                  },
+                                                                                  color: AppColors.secondaryColor,
+                                                                                  textColor: AppColors.primaryColor,
+                                                                                  width: screenWidth * 0.7,
+                                                                                  height: screenHeight * 0.06,
+                                                                                ),
+                                                                              ],
+                                                                            ),
                                                                           ),
                                                                         ),
                                                                       ),
-                                                                    ),
-                                                                  );
-                                                                },
-                                                              );
-                                                            }
-                                                          });
+                                                                    );
+                                                                  },
+                                                                );
+                                                              }
+                                                            });
+                                                          }
                                                         }
                                                       },
                                                       child: GestureDetector(
