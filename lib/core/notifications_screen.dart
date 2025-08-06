@@ -91,63 +91,70 @@ class Notifications extends StatelessWidget {
                             ),
                             SizedBox(height: screenHeight * 0.025),
                             Expanded(
-                              child: ListView.builder(
-                                itemCount: state.notifications.length,
-                                itemBuilder: (context, index) {
-                                  final notification = state.notifications[index];
-                                  String notificationText = '';
-                                  String notificationBody = '';
-                                  if (notification is Map && notification['data'] is Map) {
-                                    notificationText = notification['data']['title']?.toString() ?? '';
-                                    notificationBody = notification['data']['body']?.toString() ?? '';
-                                  } else {
-                                    notificationText = notification.toString();
+                              child: RefreshIndicator(
+                                onRefresh: () async {
+                                  final prefs = await SharedPreferences.getInstance();
+                                  final token = prefs.getString('auth_token');
+                                  if (token != null) {
+                                    await context.read<NotificationsCubit>().fetchNotifications(token);
                                   }
-                                  final notificationId = notification is Map && notification['id'] != null
-                                      ? notification['id'].toString()
-                                      : null;
-                                  final isRead = notification is Map && notification['read_at'] != null;
-                                  return GestureDetector(
-                                    onTap: () async {
-                                      if (notification is Map && notification['data'] is Map) {
-                                        final data = notification['data'] as Map;
-                                        if (data['type'] == 'trips' && data['id'] != null) {
-                                          final tripId = data['id'].toString();
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) => MyTripDetailsScreen(
-                                                tripId: tripId,
-                                                busId: '', // Pass busId if available
-                                                tripState: '', // Pass tripState if available
-                                                firstTripRoute: const {}, // Pass route if available
-                                                lastTripRoute: const {},  // Pass route if available
-                                              ),
-                                            ),
-                                          );
-                                          return;
-                                        }
-                                      }
-                                      // Existing mark as read logic...
-                                      if (notificationId != null) {
-                                        final prefs = await SharedPreferences.getInstance();
-                                        final token = prefs.getString('auth_token');
-                                        if (token != null) {
-                                          await context.read<NotificationsCubit>().markAsRead(notificationId, token);
-                                          await context.read<NotificationsCubit>().fetchNotifications(token);
-                                        }
-                                      }
-                                    },
-                                    child: NotificationsWidget(
-                                      notificationText: notificationText,
-                                      notificationBody: notificationBody,
-                                      isRead: isRead,
-                                    ),
-                                  );
                                 },
+                                child: ListView.builder(
+                                  itemCount: state.notifications.length,
+                                  itemBuilder: (context, index) {
+                                    final notification = state.notifications[index];
+                                    String notificationText = '';
+                                    String notificationBody = '';
+                                    if (notification is Map && notification['data'] is Map) {
+                                      notificationText = notification['data']['title']?.toString() ?? '';
+                                      notificationBody = notification['data']['body']?.toString() ?? '';
+                                    } else {
+                                      notificationText = notification.toString();
+                                    }
+                                    final notificationId = notification is Map && notification['id'] != null
+                                        ? notification['id'].toString()
+                                        : null;
+                                    final isRead = notification is Map && notification['read_at'] != null;
+                                    return GestureDetector(
+                                      onTap: () async {
+                                        if (notification is Map && notification['data'] is Map) {
+                                          final data = notification['data'] as Map;
+                                          if (data['type'] == 'trips' && data['id'] != null) {
+                                            final tripId = data['id'].toString();
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) => MyTripDetailsScreen(
+                                                  tripId: tripId,
+                                                  busId: '',
+                                                  tripState: '',
+                                                  firstTripRoute: const {},
+                                                  lastTripRoute: const {},
+                                                ),
+                                              ),
+                                            );
+                                            return;
+                                          }
+                                        }
+                                        if (notificationId != null) {
+                                          final prefs = await SharedPreferences.getInstance();
+                                          final token = prefs.getString('auth_token');
+                                          if (token != null) {
+                                            await context.read<NotificationsCubit>().markAsRead(notificationId, token);
+                                            await context.read<NotificationsCubit>().fetchNotifications(token);
+                                          }
+                                        }
+                                      },
+                                      child: NotificationsWidget(
+                                        notificationText: notificationText,
+                                        notificationBody: notificationBody,
+                                        isRead: isRead,
+                                      ),
+                                    );
+                                  },
+                                ),
                               ),
-                            ),
-                          ],
+                            )                          ],
                         );
                       } else if (state is NotificationsError) {
                         final isNoRouteToHost = state.message.contains('No route to host');
