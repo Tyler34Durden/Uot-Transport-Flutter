@@ -76,6 +76,59 @@ class _StationDetailsScreenState extends State<StationDetailsScreen> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
+
+                SizedBox(height: screenHeight * 0.01),
+                // Split trips into active and soon
+                if (token != null)
+                  BlocProvider(
+                    create: (context) => StationTripsCubit(StationTripsRepository())
+                      ..fetchStationTrips(stationId, token!),
+                    child: BlocBuilder<StationTripsCubit, StationTripsState>(
+                      builder: (context, state) {
+                        if (state is StationTripsLoading) {
+                          return const Center(child: CircularProgressIndicator());
+                        } else if (state is StationTripsFailure) {
+                          final isNoRouteToHost = state.error.toString().contains('No route to host');
+                          if (isNoRouteToHost) {
+                            return Center(
+                              child: Text(
+                                'لا يوجد اتصال بالخادم',
+                                style: TextStyle(fontSize: screenWidth * 0.045, color: AppColors.primaryColor),
+                              ),
+                            );
+                          }
+                          return Center(child: Text('Error: ${state.error}'));
+                        } else if (state is StationTripsSuccess) {
+                          final trips = state.trips;
+                          final activeTrips = trips.where((trip) => trip['tripState'] == 'active').toList();
+                          if (activeTrips.isEmpty) {
+                            return const Center(child: Text('لا توجد رحلات حاليا'));
+                          }
+                          return ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: activeTrips.length,
+                            itemBuilder: (context, index) {
+                              final trip = activeTrips[index];
+                              return Padding(
+                                padding: EdgeInsets.only(bottom: screenHeight * 0.02),
+                                child: ActiveTripsWidget(
+                                  busId: trip['busId']?.toString() ?? '',
+                                  tripId: trip['tripId']?.toString() ?? '',
+                                  tripState: trip['tripState']?.toString() ?? 'unknown',
+                                  firstTripRoute: trip['firstTripRoute'] ?? {},
+                                  lastTripRoute: trip['lastTripRoute'] ?? {},
+                                ),
+                              );
+                            },
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      },
+                    ),
+                  )
+                else
+                  const Center(child: CircularProgressIndicator()),
                 SizedBox(height: screenHeight * 0.01),
                 const AppText(
                   lbl: 'الرحلات القادمة:',
@@ -107,12 +160,16 @@ class _StationDetailsScreenState extends State<StationDetailsScreen> {
                           return Center(child: Text('Error: ${state.error}'));
                         } else if (state is StationTripsSuccess) {
                           final trips = state.trips;
+                          final soonTrips = trips.where((trip) => trip['tripState'] == 'soon').toList();
+                          if (soonTrips.isEmpty) {
+                            return const Center(child: Text('لا توجد رحلات حاليا'));
+                          }
                           return ListView.builder(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
-                            itemCount: trips.length,
+                            itemCount: soonTrips.length,
                             itemBuilder: (context, index) {
-                              final trip = trips[index];
+                              final trip = soonTrips[index];
                               return Padding(
                                 padding: EdgeInsets.only(bottom: screenHeight * 0.02),
                                 child: ActiveTripsWidget(

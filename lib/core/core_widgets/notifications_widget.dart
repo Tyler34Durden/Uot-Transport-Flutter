@@ -5,11 +5,13 @@ import 'package:uot_transport/core/app_colors.dart';
 
 class NotificationsWidget extends StatelessWidget {
   final String notificationText;
+  final String? notificationBody;
   final bool isRead;
 
   const NotificationsWidget({
     super.key,
     required this.notificationText,
+    this.notificationBody,
     this.isRead = false,
   });
 
@@ -24,44 +26,42 @@ class NotificationsWidget extends StatelessWidget {
           borderRadius: BorderRadius.circular(8),
         ),
         padding: const EdgeInsets.all(16),
-        child: Row(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(width: 5),
-            SvgPicture.asset(
-              'assets/icons/bus.svg',
-              color: isRead ? Colors.grey : AppColors.primaryColor,
+            Row(
+              children: [
+                const SizedBox(width: 5),
+                SvgPicture.asset(
+                  'assets/icons/notification.svg',
+                  width: 24,
+                  height: 24,
+                  color: AppColors.primaryColor,
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: AppText(
+                    lbl: notificationText,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: AppColors.primaryColor,
+                    ),
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(width: 20),
-            Expanded(
-              child: AppText(
-                lbl: notificationText,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: isRead ? Colors.grey : AppColors.textColor,
+            if (notificationBody != null && notificationBody!.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0, right: 34.0),
+                child: AppText(
+                  lbl: notificationBody!,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: AppColors.textColor,
+                  ),
                 ),
               ),
-            ),
-            // Blue circle for unread notifications
-            AnimatedOpacity(
-              opacity: isRead ? 0.0 : 1.0,
-              duration: const Duration(milliseconds: 200),
-              child: isRead
-                  ? const SizedBox(width: 22) // keep alignment
-                  : Row(
-                      children: [
-                        const SizedBox(width: 10),
-                        Container(
-                          width: 12,
-                          height: 12,
-                          decoration: const BoxDecoration(
-                            color: AppColors.primaryColor,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                      ],
-                    ),
-            ),
           ],
         ),
       ),
