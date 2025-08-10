@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
 import 'package:meta/meta.dart';
 import 'package:uot_transport/home_feature/model/repository/home_repository.dart';
@@ -18,7 +19,15 @@ class HomeStationCubit extends Cubit<HomeStationState> {
       emit(state.copyWith(isLoading: true, error: null));
       final trips = await _homeRepository.fetchTodayTrips(stationId: stationId, token: token);
       emit(state.copyWith(trips: trips, isLoading: false, error: null));
-    } catch (e) {
+    } on DioException catch (e) {
+      _logger.e('Error fetching today\'s trips: ${e.message}');
+      final errorData = e.response?.data;
+      String errorMessage;
+      if (errorData is Map && errorData['message'] != null) {
+        errorMessage = errorData['message'].toString();
+      } else {
+        errorMessage = e.toString();
+      }
       emit(state.copyWith(isLoading: false, error: e.toString()));
     }
   }
@@ -30,7 +39,15 @@ class HomeStationCubit extends Cubit<HomeStationState> {
       emit(state.copyWith(isLoading: true));
       final stations = await _homeRepository.fetchStations(token);
       emit(state.copyWith(stations: stations, isLoading: false));
-    } catch (e) {
+    }  on DioException catch (e) {
+      _logger.e('Error fetching stations: ${e.message}');
+      final errorData = e.response?.data;
+      String errorMessage;
+      if (errorData is Map && errorData['message'] != null) {
+        errorMessage = errorData['message'].toString();
+      } else {
+        errorMessage = e.toString();
+      }
       emit(state.copyWith(error: e.toString(), isLoading: false));
     }
   }
@@ -44,7 +61,15 @@ class HomeStationCubit extends Cubit<HomeStationState> {
         isFetchMyTripsLoading: false,
         fetchMyTripsError: null,
       ));
-    } catch (e) {
+    } on DioException catch (e) {
+      _logger.e('Error fetching my trips: ${e.message}');
+      final errorData = e.response?.data;
+      String errorMessage;
+      if (errorData is Map && errorData['message'] != null) {
+        errorMessage = errorData['message'].toString();
+      } else {
+        errorMessage = e.toString();
+      }
       emit(state.copyWith(
         isFetchMyTripsLoading: false,
         fetchMyTripsError: e.toString(),

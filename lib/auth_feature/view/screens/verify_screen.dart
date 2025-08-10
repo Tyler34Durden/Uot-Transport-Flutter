@@ -29,11 +29,10 @@ class VerifyScreen extends StatelessWidget {
           if (state is StudentAuthLoading) {
             // Optionally show a loading indicator.
           } else if (state is VerifyOtpSuccess) {
-            Navigator.pushReplacement(
+            Navigator.pushAndRemoveUntil(
               context,
-              MaterialPageRoute(
-                builder: (context) => const LoginScreen(),
-              ),
+              MaterialPageRoute(builder: (context) => const LoginScreen()),
+              (route) => false, // Removes all previous routes
             );
           } else if (state is StudentAuthFailure) {
             print('Error: ${state.error}');

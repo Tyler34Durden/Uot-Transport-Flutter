@@ -86,10 +86,11 @@ class _SplashScreenState extends State<SplashScreen> {
   _navigateToOnboarding() async {
     await Future.delayed(const Duration(seconds: 4), () {
       // ignore: use_build_context_synchronously
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => OnBoardingScreen()),
-      );
+     Navigator.pushAndRemoveUntil(
+       context,
+       MaterialPageRoute(builder: (context) => OnBoardingScreen()),
+       (route) => false, // Removes all previous routes
+     );
     });
   }
 

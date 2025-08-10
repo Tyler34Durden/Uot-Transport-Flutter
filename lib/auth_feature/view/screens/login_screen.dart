@@ -60,9 +60,10 @@ import 'package:flutter/material.dart';
                                                             logger.i('Login successful');
                                                             emailController.clear();
                                                             passwordController.clear();
-                                                            Navigator.pushReplacement(
+                                                            Navigator.pushAndRemoveUntil(
                                                               context,
                                                               MaterialPageRoute(builder: (context) => const MainScreen()),
+                                                              (route) => false, // This removes all previous routes
                                                             );
                                                           } else if (state is StudentAuthFailure) {
                                                             String errorMessage = 'هناك خطأ ما في البريد الإلكتروني أو كلمة المرور.';

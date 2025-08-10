@@ -1,5 +1,6 @@
 //added after emoved
 import 'package:bloc/bloc.dart';
+import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
 import 'package:uot_transport/station_feature/model/repository/stations_repository.dart';
 import 'package:uot_transport/station_feature/view_model/cubit/stations_state.dart';
@@ -44,8 +45,15 @@ class StationsCubit extends Cubit<StationsState> {
       } else {
         throw Exception('Invalid data format in stations response');
       }
-    } catch (e) {
+    } on DioException catch (e) {
       _logger.e('Error while fetching stations: $e');
+      final errorData = e.response?.data;
+      if (errorData is Map && errorData['message'] != null) {
+        emit(StationsFailure(errorData['message']));
+      } else {
+        emit(StationsFailure(e.toString()));
+      }
+    } catch (e) {
       emit(StationsFailure(e.toString()));
     }
   }
@@ -71,8 +79,15 @@ class StationsCubit extends Cubit<StationsState> {
         _logger.e('Invalid data format in filtered stations response: $data');
         throw Exception('Invalid data format in filtered stations response');
       }
-    } catch (e) {
+    } on DioException catch (e) {
       _logger.e('Error while fetching filtered stations: $e');
+      final errorData = e.response?.data;
+      if (errorData is Map && errorData['message'] != null) {
+        emit(StationsFailure(errorData['message']));
+      } else {
+        emit(StationsFailure(e.toString()));
+      }
+    } catch (e) {
       emit(StationsFailure(e.toString()));
     }
   }
@@ -98,8 +113,15 @@ class StationsCubit extends Cubit<StationsState> {
         _logger.e('Invalid data format in search stations response: $data');
         throw Exception('Invalid data format in search stations response');
       }
-    } catch (e) {
+    } on DioException catch (e) {
       _logger.e('Error while searching stations: $e');
+      final errorData = e.response?.data;
+      if (errorData is Map && errorData['message'] != null) {
+        emit(StationsFailure(errorData['message']));
+      } else {
+        emit(StationsFailure(e.toString()));
+      }
+    } catch (e) {
       emit(StationsFailure(e.toString()));
     }
   }
@@ -121,8 +143,15 @@ class StationsCubit extends Cubit<StationsState> {
        _logger.e('Invalid data format in city filters response: $data');
        throw Exception('Invalid data format in city filters response');
      }
-   } catch (e) {
+   } on DioException catch (e) {
      _logger.e('Error while fetching city filters: $e');
+     final errorData = e.response?.data;
+     if (errorData is Map && errorData['message'] != null) {
+       emit(StationsFailure(errorData['message']));
+     } else {
+       emit(StationsFailure(e.toString()));
+     }
+    } catch (e) {
      emit(StationsFailure(e.toString()));
    }
  }

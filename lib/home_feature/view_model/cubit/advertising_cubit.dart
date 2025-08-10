@@ -1,10 +1,13 @@
 
 import 'package:bloc/bloc.dart';
+import 'package:dio/dio.dart';
+import 'package:logger/logger.dart';
 import 'package:uot_transport/home_feature/model/repository/home_repository.dart';
 import 'package:uot_transport/home_feature/view_model/cubit/advertising_state.dart';
 
 class AdvertisingsCubit extends Cubit<AdvertisingsState> {
   final HomeRepository _repository;
+  final Logger _logger = Logger();
 
   AdvertisingsCubit(this._repository) : super(AdvertisingsInitial());
 
@@ -21,7 +24,14 @@ class AdvertisingsCubit extends Cubit<AdvertisingsState> {
         };
       }).toList();
       emit(AdvertisingsLoaded(transformedAdvertisings));
-    } catch (e) {
+    } on DioException catch (e) {
+      _logger.e('Error while fetching advertisings: $e');
+      final errorData = e.response?.data;
+      if (errorData is Map && errorData['message'] != null) {
+        emit(AdvertisingsError(errorData['message']));
+      } else {
+        emit(AdvertisingsError(e.toString()));
+      }
       emit(AdvertisingsError('Failed to fetch advertisings: ${e.toString()}'));
     }
   }

@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
 import 'package:uot_transport/trips_feature/model/repository/trips_repository.dart';
 import 'package:uot_transport/trips_feature/view_model/cubit/trips_state.dart';
@@ -41,8 +42,15 @@ class TripsCubit extends Cubit<TripsState> {
       _trips.addAll(newTrips);
       emit(TripsLoaded(_trips));
       _currentPage++;
-    } catch (e) {
+    } on DioException catch (e) {
       _logger.e('Error while fetching trips: $e');
+      final errorData = e.response?.data;
+      if (errorData is Map && errorData['message'] != null) {
+        emit(TripsError(errorData['message']));
+      } else {
+        emit(TripsError(e.toString()));
+      }
+    } catch (e) {
       emit(TripsError(e is Exception ? e.toString().replaceFirst('Exception: ', '') : e.toString()));
     }
   }
@@ -52,8 +60,14 @@ class TripsCubit extends Cubit<TripsState> {
     try {
       final tripDetails = await _tripsRepository.fetchTripDetailsScreen(tripID, token);
       emit(TripDetailsLoaded(tripDetails));
-    } catch (e) {
+    } on DioException catch (e) {
       _logger.e('Error while fetching trip details from API: $e');
+      final errorData = e.response?.data;
+      if (errorData is Map && errorData['message'] != null) {
+        emit(TripDetailsError(errorData['message']));
+      } else {
+        emit(TripDetailsError(e.toString()));
+      }
       emit(TripDetailsError(e.toString()));
     }
   }
@@ -65,8 +79,15 @@ class TripsCubit extends Cubit<TripsState> {
       final tripRoutes = await _tripsRepository.fetchTripRoutes(tripID,token);
       print("before the emit in the fetch trips by route");
       emit(TripRoutesLoaded(tripRoutes));
-    } catch (e) {
+    } on DioException catch (e) {
       _logger.e('Error while fetching trip routes: $e');
+      final errorData = e.response?.data;
+      if (errorData is Map && errorData['message'] != null) {
+        emit(TripRoutesError(errorData['message']));
+      } else {
+        emit(TripRoutesError(e.toString()));
+      }
+    } catch (e) {
       emit(TripRoutesError(e.toString()));
     }
   }
@@ -85,8 +106,15 @@ Future<void> createTicket({
         token: token,
       );
       emit(TripsTicketSuccess('Ticket created successfully'));
-    } catch (e) {
+    } on DioException catch (e) {
       _logger.e('Error while creating ticket: $e');
+    final errorData = e.response?.data;
+    if (errorData is Map && errorData['message'] != null) {
+    emit(TripsTicketError(errorData['message']));
+    } else {
+    emit(TripsTicketError(e.toString()));
+    }
+    } catch (e) {
       emit(TripsTicketError(e.toString()));
     }
   }
@@ -101,8 +129,15 @@ Future<void> createTicket({
         token: token,
       );
       emit(TripsTicketSuccess('Ticket cancelled successfully'));
-    } catch (e) {
+    } on DioException catch (e) {
       _logger.e('Error while cancelling ticket: $e');
+    final errorData = e.response?.data;
+    if (errorData is Map && errorData['message'] != null) {
+    emit(TripCancelError(errorData['message']));
+    } else {
+    emit(TripCancelError(e.toString()));
+    }
+    } catch (e) {
       emit(TripCancelError(e.toString()));
     }
   }
@@ -119,8 +154,15 @@ Future<void> createTicket({
         token: token,
       );
       emit(TripsTicketSuccess('Ticket state updated successfully'));
-    } catch (e) {
+    } on DioException catch (e) {
       _logger.e('Error while updating ticket state: $e');
+    final errorData = e.response?.data;
+    if (errorData is Map && errorData['message'] != null) {
+    emit(TripsTicketError(errorData['message']));
+    } else {
+    emit(TripsTicketError(e.toString()));
+    }
+    } catch (e) {
       emit(TripsTicketError(e.toString()));
     }
   }
