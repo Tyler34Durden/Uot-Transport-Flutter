@@ -89,6 +89,8 @@ class _StationDetailsScreenState extends State<StationDetailsScreen> {
                           return const Center(child: CircularProgressIndicator());
                         } else if (state is StationTripsFailure) {
                           final isNoRouteToHost = state.error.toString().contains('No route to host');
+                          String errorMessage = '${state.error}';
+                          final error = state.error;
                           if (isNoRouteToHost) {
                             return Center(
                               child: Text(
@@ -97,13 +99,10 @@ class _StationDetailsScreenState extends State<StationDetailsScreen> {
                               ),
                             );
                           }
-                          return Center(child: Text('Error: ${state.error}'));
+                          return Center(child: Text('${state.error}'));
                         } else if (state is StationTripsSuccess) {
                           final trips = state.trips;
                           final activeTrips = trips.where((trip) => trip['tripState'] == 'active').toList();
-                          if (activeTrips.isEmpty) {
-                            return const Center(child: Text('لا توجد رحلات حاليا'));
-                          }
                           return ListView.builder(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
@@ -157,13 +156,10 @@ class _StationDetailsScreenState extends State<StationDetailsScreen> {
                               ),
                             );
                           }
-                          return Center(child: Text('Error: ${state.error}'));
+                          return Center(child: Text('${state.error}'));
                         } else if (state is StationTripsSuccess) {
                           final trips = state.trips;
                           final soonTrips = trips.where((trip) => trip['tripState'] == 'soon').toList();
-                          if (soonTrips.isEmpty) {
-                            return const Center(child: Text('لا توجد رحلات حاليا'));
-                          }
                           return ListView.builder(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
