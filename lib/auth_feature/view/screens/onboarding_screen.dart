@@ -14,6 +14,11 @@ class OnBoardingScreen extends StatelessWidget {
       onWillPop: () async => false,
       child: Scaffold(
         backgroundColor: AppColors.backgroundColor,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          toolbarHeight: 56,
+        ),
         body: Column(
           children: [
             Spacer(),

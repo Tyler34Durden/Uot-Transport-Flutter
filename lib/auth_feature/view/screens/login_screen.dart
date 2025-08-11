@@ -35,17 +35,21 @@ import 'package:flutter/material.dart';
 
                                                 return PopScope(
                                                   canPop: false,
-                                                  onPopInvoked: (bool didPop) {
+                                                  onPopInvoked: (didPop) {
                                                     if (didPop) {
                                                       return;
                                                     }
                                                     emailController.clear();
                                                     passwordController.clear();
-                                                    Navigator.of(context).pop();
                                                   },
                                                   child: Scaffold(
                                                     backgroundColor: AppColors.backgroundColor,
-                                                    appBar: BackHeader(),
+                                                    appBar: AppBar(
+                                                      backgroundColor: Colors.transparent,
+                                                      elevation: 0,
+                                                      automaticallyImplyLeading: false,
+                                                      toolbarHeight: 56,
+                                                    ),
                                                     body: BlocListener<StudentAuthCubit, StudentAuthState>(
                                                       listener: (context, state) {
                                                         if (state is StudentAuthLoading) {
