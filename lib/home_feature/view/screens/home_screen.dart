@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uot_transport/core/app_colors.dart';
+import 'package:uot_transport/core/core_widgets/dt_loading.dart';
 import 'package:uot_transport/home_feature/view/widgets/active_trips_widget.dart';
 import 'package:uot_transport/home_feature/view/widgets/home_slider.dart';
 import 'package:uot_transport/home_feature/view/widgets/my_trips_widget.dart';
@@ -12,6 +13,7 @@ import 'package:uot_transport/home_feature/view_model/cubit/home_station_cubit.d
 import 'package:uot_transport/trips_feature/view_model/cubit/trips_cubit.dart';
 import 'package:uot_transport/trips_feature/view_model/cubit/trips_state.dart';
 import 'package:uot_transport/main.dart' show routeObserver;
+import 'package:lottie/lottie.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -126,17 +128,27 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware{
                   BlocBuilder<AdvertisingsCubit, AdvertisingsState>(
                     builder: (context, state) {
                       if (state is AdvertisingsLoading) {
-                        return const Center(child: CircularProgressIndicator());
+                        return const Center(
+                          child: DTLoading()
+                          ,
+                        );
                       } else if (state is AdvertisingsLoaded) {
+                        if (state.advertisings.isEmpty) {
+                          return const SizedBox.shrink();
+                        }
                         final advertisings = state.advertisings.cast<Map<String, dynamic>>();
-                        return HomeSlider(advertisings: advertisings);
+                        return Column(
+                          children: [
+                            HomeSlider(advertisings: advertisings),
+                            SizedBox(height: sectionSpacing),
+                          ],
+                        );
                       } else if (state is AdvertisingsError) {
                         return Center(child: Text('Error: ${state.message}'));
                       }
                       return const SizedBox.shrink();
                     },
                   ),
-                  const SizedBox(height: 20),
                   // My Trips Section
                   Text(
                     "رحلاتي:",
@@ -150,7 +162,7 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware{
                   BlocBuilder<HomeStationCubit, HomeStationState>(
                     builder: (context, state) {
                       if (state.isFetchMyTripsLoading) {
-                        return const Center(child: CircularProgressIndicator());
+                        return  Center(child: DTLoading());
                       } else if (state.fetchMyTripsError != null) {
                         return Center(child: Text('لم تقم بحجز رحلات بعد', style: TextStyle(fontSize: width * 0.04)));
                       } else if (state.myTrips.isNotEmpty) {
@@ -203,7 +215,7 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware{
                           ),
                           SizedBox(height: itemSpacing),
                           if (state is TripsLoading && !_isLoadingMore)
-                            const Center(child: CircularProgressIndicator())
+                             Center(child: DTLoading())
                           else if (state is TripsError)
                             Center(child: Text('لا توجد رحلات متجهة إلى تلك المحطة.', style: TextStyle(fontSize: width * 0.04)))
                           else if (state is TripsLoaded && state.trips.isNotEmpty)
@@ -231,7 +243,7 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware{
                                   if (_isLoadingMore)
                                     Padding(
                                       padding: EdgeInsets.symmetric(vertical: itemSpacing),
-                                      child: const Center(child: CircularProgressIndicator()),
+                                      child:  Center(child: DTLoading()),
                                     ),
                                 ],
                               )

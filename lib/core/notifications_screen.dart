@@ -8,6 +8,7 @@ import 'package:uot_transport/core/model/repository/notifications_repository.dar
 import 'package:uot_transport/core/view_model/cubit/notifications_cubit.dart';
 
 import '../trips_feature/view/screens/mytrip_details_screen.dart';
+import 'core_widgets/dt_loading.dart';
 
 class Notifications extends StatelessWidget {
   const Notifications({super.key});
@@ -25,7 +26,7 @@ class Notifications extends StatelessWidget {
         future: _getToken(),
         builder: (context, snapshot) {
           if (!snapshot.hasData || snapshot.data == null) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: DTLoading());
           }
           final token = snapshot.data!;
           return BlocProvider(
@@ -63,7 +64,7 @@ class Notifications extends StatelessWidget {
                   body: BlocBuilder<NotificationsCubit, NotificationsState>(
                     builder: (context, state) {
                       if (state is NotificationsLoading) {
-                        return const Center(child: CircularProgressIndicator());
+                        return const Center(child: DTLoading());
                       } else if (state is NotificationsLoaded) {
                         final notificationCount = state.notifications.length;
                         if (notificationCount == 0) {
@@ -168,7 +169,7 @@ class Notifications extends StatelessWidget {
                         }
                         return Center(child: Text('خطأ: ${state.message}'));
                       }
-                      return const Center(child: CircularProgressIndicator());
+                      return const Center(child: DTLoading());
                     },
                   ),
                 );

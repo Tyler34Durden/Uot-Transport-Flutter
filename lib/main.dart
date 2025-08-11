@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:uot_transport/auth_feature/model/repository/student_auth_repository.dart';
-import 'package:uot_transport/auth_feature/view/screens/splash_screen.dart';
 import 'package:uot_transport/auth_feature/view_model/cubit/student_auth_cubit.dart';
 import 'package:uot_transport/home_feature/model/repository/home_repository.dart';
 import 'package:uot_transport/home_feature/view_model/cubit/advertising_cubit.dart';
@@ -21,6 +20,8 @@ import 'package:uot_transport/profile_feature/model/repository/profile_repositor
 import 'package:uot_transport/profile_feature/view_model/cubit/profile_cubit.dart';
 import 'package:uot_transport/auth_feature/model/repository/change_season_repository.dart';
 import 'package:uot_transport/auth_feature/view_model/cubit/change_season_cubit.dart';
+
+import 'auth_feature/view/screens/splash_screen.dart';
 
 // تعريف مفتاح ScaffoldMessenger
 final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();

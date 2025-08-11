@@ -8,6 +8,8 @@ import 'package:flutter/material.dart' hide SearchBar;
           import 'package:uot_transport/station_feature/view_model/cubit/stations_state.dart';
           import 'package:uot_transport/station_feature/view/widgets/filter_widget.dart';
 
+import '../../../core/core_widgets/dt_loading.dart';
+
           class StationScreen extends StatefulWidget {
             const StationScreen({super.key});
 
@@ -74,7 +76,7 @@ import 'package:flutter/material.dart' hide SearchBar;
                 body: BlocBuilder<StationsCubit, StationsState>(
                   builder: (context, state) {
                     if (state is StationsLoading && !(state is StationsSuccess)) {
-                      return const Center(child: CircularProgressIndicator());
+                      return const Center(child: DTLoading());
                     } else if (state is StationsSuccess) {
                       return Column(
                         children: [
@@ -116,7 +118,7 @@ import 'package:flutter/material.dart' hide SearchBar;
                                     left: 0,
                                     right: 0,
                                     bottom: 8,
-                                    child: Center(child: CircularProgressIndicator()),
+                                    child: Center(child: DTLoading()),
                                   ),
                               ],
                             ),

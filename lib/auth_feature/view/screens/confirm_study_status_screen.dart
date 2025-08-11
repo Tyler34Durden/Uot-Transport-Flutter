@@ -10,6 +10,7 @@ import 'package:uot_transport/core/core_widgets/back_header.dart';
 import 'package:uot_transport/core/app_colors.dart';
 import 'package:uot_transport/auth_feature/view_model/cubit/student_auth_cubit.dart';
 import 'package:uot_transport/auth_feature/view_model/cubit/student_auth_state.dart';
+import 'package:uot_transport/core/core_widgets/dt_loading.dart';
 
 class ConfirmStudyStatusScreen extends StatefulWidget {
   final Map<String, dynamic> studentData;
@@ -64,7 +65,7 @@ class _ConfirmStudyStatusScreenState extends State<ConfirmStudyStatusScreen> {
       body: BlocListener<StudentAuthCubit, StudentAuthState>(
         listener: (context, state) {
           if (state is StudentAuthLoading) {
-            // Optionally show a loading indicator.
+             Center(child: DTLoading(),);
           } else if (state is RegisterStudentSuccess) {
             Future.delayed(Duration.zero, () {
               Navigator.pushReplacement(
@@ -230,8 +231,13 @@ class _ConfirmStudyStatusScreenState extends State<ConfirmStudyStatusScreen> {
                     decoration: TextDecoration.underline,
                   ),
                   textAlign: TextAlign.right,
-                  onTap: () {
-                    // Handle additional navigation if needed.
+                  onTap: () async {
+                    // final Uri url = Uri.parse('https://www.facebook.com/your_post_url');
+                    // if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+                    //   ScaffoldMessenger.of(context).showSnackBar(
+                    //     const SnackBar(content: Text('لا يمكن فتح الرابط')),
+                    //   );
+                    // }
                   },
                 ),
                 SizedBox(height: screenHeight * 0.06),

@@ -65,7 +65,9 @@ class _TripSelectionWidgetState extends State<TripSelectionWidget> {
         child: BlocBuilder<StationsCubit, StationsState>(
           builder: (context, state) {
             if (state is StationsLoading) {
-              return const Center(child: CircularProgressIndicator());
+              return const Center(
+                  //child: CircularProgressIndicator()
+              );
             } else if (state is StationsSuccess) {
               final stations = state.stations ?? [];
               final stationList = stations.map((stationData) {

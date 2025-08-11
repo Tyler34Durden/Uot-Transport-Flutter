@@ -8,6 +8,8 @@ import 'package:uot_transport/trips_feature/view/widgets/trip_selection_widget.d
 import 'package:uot_transport/trips_feature/view_model/cubit/trips_cubit.dart';
 import 'package:uot_transport/trips_feature/view_model/cubit/trips_state.dart';
 
+import '../../../core/core_widgets/dt_loading.dart';
+
 class TripsScreen extends StatefulWidget {
   const TripsScreen({super.key});
 
@@ -99,7 +101,9 @@ class _TripsScreenState extends State<TripsScreen> {
               BlocBuilder<TripsCubit, TripsState>(
                 builder: (context, state) {
                   if (state is TripsLoading && !_isLoadingMore) {
-                    return const Center(child: CircularProgressIndicator());
+                    return const Center(
+                        child: DTLoading()
+                    );
                   } else if (state is TripsLoaded) {
                     final trips = state.trips;
                     if (trips.isEmpty) {
@@ -129,7 +133,7 @@ class _TripsScreenState extends State<TripsScreen> {
                         if (_isLoadingMore)
                           Padding(
                             padding: EdgeInsets.symmetric(vertical: itemSpacing * 2),
-                            child: const Center(child: CircularProgressIndicator()),
+                            child: const Center(child: DTLoading()),
                           ),
                       ],
                     );

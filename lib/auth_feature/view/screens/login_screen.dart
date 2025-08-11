@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
                                             import 'package:uot_transport/auth_feature/view_model/cubit/student_auth_cubit.dart';
                                             import 'package:uot_transport/auth_feature/view_model/cubit/student_auth_state.dart';
                                             import 'package:logger/logger.dart';
+                                            import 'package:lottie/lottie.dart';
 
                                             import 'change_season.dart';
 
@@ -32,11 +33,15 @@ import 'package:flutter/material.dart';
                                                 final inputSpacing = screenHeight * 0.025;
                                                 final buttonSpacing = screenHeight * 0.06;
 
-                                                return WillPopScope(
-                                                  onWillPop: () async {
+                                                return PopScope(
+                                                  canPop: false,
+                                                  onPopInvoked: (bool didPop) {
+                                                    if (didPop) {
+                                                      return;
+                                                    }
                                                     emailController.clear();
                                                     passwordController.clear();
-                                                    return true;
+                                                    Navigator.of(context).pop();
                                                   },
                                                   child: Scaffold(
                                                     backgroundColor: AppColors.backgroundColor,
@@ -48,9 +53,29 @@ import 'package:flutter/material.dart';
                                                           showDialog(
                                                             context: context,
                                                             barrierDismissible: false,
-                                                            builder: (context) => Center(
-                                                              child: CircularProgressIndicator(
-                                                                color: AppColors.primaryColor,
+                                                            builder: (context) => Dialog(
+                                                              backgroundColor: AppColors.backgroundColor,
+                                                              elevation: 0,
+                                                              shape: RoundedRectangleBorder(
+                                                                borderRadius: BorderRadius.circular(16),
+                                                              ),
+                                                              child: Container(
+                                                                width: MediaQuery.of(context).size.width * 0.8,
+                                                                height: MediaQuery.of(context).size.width * 0.8,
+                                                                padding: const EdgeInsets.all(12),
+                                                                child: Lottie.asset(
+                                                                  'assets/icons/DT_Loading.json',
+                                                                  onLoaded: (composition) {
+                                                                    // Get animation duration and ensure at least one full cycle
+                                                                    Future.delayed(
+                                                                      Duration(milliseconds: 5000),
+                                                                          () {
+                                                                        // This will prevent the dialog from closing too early
+                                                                        // The dialog will still be closed by your existing state listener
+                                                                      },
+                                                                    );
+                                                                  },
+                                                                ),
                                                               ),
                                                             ),
                                                           );
@@ -63,18 +88,11 @@ import 'package:flutter/material.dart';
                                                             Navigator.pushAndRemoveUntil(
                                                               context,
                                                               MaterialPageRoute(builder: (context) => const MainScreen()),
-                                                              (route) => false, // This removes all previous routes
+                                                              (route) => false, // Removes all previous routes so user can't go back
                                                             );
                                                           } else if (state is StudentAuthFailure) {
-                                                            String errorMessage = 'هناك خطأ ما في البريد الإلكتروني أو كلمة المرور.';
-                                                            final error = state.error;
-                                                            if (error is Map && error[0] != null) {
-                                                              errorMessage = error[0].toString();
-                                                            } else if (error is String) {
-                                                              errorMessage = error;
-                                                            }
                                                             ScaffoldMessenger.of(context).showSnackBar(
-                                                              SnackBar(content: Text(errorMessage)),
+                                                              SnackBar(content: Text(state.error)),
                                                             );
                                                           } else if (state is SeasonChangeRequired) {
                                                             Future.microtask(() {
