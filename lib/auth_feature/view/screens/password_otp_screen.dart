@@ -10,12 +10,16 @@ import 'package:uot_transport/core/app_colors.dart';
 import 'package:uot_transport/auth_feature/view_model/cubit/student_auth_cubit.dart';
 import 'package:uot_transport/auth_feature/view_model/cubit/student_auth_state.dart';
 import 'package:flutter/services.dart';
-class PasswordOtp extends StatelessWidget {
+class PasswordOtp extends StatefulWidget {
   final String email;
-
   const PasswordOtp({super.key, required this.email});
 
-  static final TextEditingController otpController = TextEditingController();
+  @override
+  State<PasswordOtp> createState() => _PasswordOtpState();
+}
+
+class _PasswordOtpState extends State<PasswordOtp> {
+  final TextEditingController otpController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +35,7 @@ class PasswordOtp extends StatelessWidget {
               context,
               MaterialPageRoute(
                 builder: (context) => NewPassword(
-                  email: email,
+                  email: widget.email,
                   otp: otpController.text,
                 ),
               ),
@@ -63,12 +67,43 @@ class PasswordOtp extends StatelessWidget {
                 SizedBox(height: screenHeight * 0.02),
                 AppText(
                   textAlign: TextAlign.center,
-                  lbl: 'تم إرسال رابط رمز مكون من ستة ارقام إلى $email',
-                  style: const TextStyle(
+                  lbl: 'تم إرسال رمز مكون من ستة أرقام إلى ',
+                  style: TextStyle(
                     color: AppColors.textColor,
                     fontSize: 20,
                   ),
                 ),
+                SizedBox(height: 5),
+                AppText(
+                  textAlign: TextAlign.center,
+                  lbl: widget.email,
+                  style: TextStyle(
+                    color: AppColors.primaryColor,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w400,
+                    fontFamily: 'Arial', // LTR-friendly font for email
+                  ),
+                ),
+                // RichText(
+                //   textAlign: TextAlign.center,
+                //   text: Text(
+                //     style: TextStyle(
+                //       color: AppColors.textColor,
+                //       fontSize: 20,
+                //       fontFamily: Theme.of(context).textTheme.bodyLarge?.fontFamily,
+                //     ),
+                //     children: [
+                //       const TextSpan(text: 'تم إرسال رمز مكون من ستة أرقام إلى '),
+                //       TextSpan(
+                //         text: widget.email,
+                //         style: const TextStyle(
+                //           fontWeight: FontWeight.bold,
+                //           fontFamily: 'DMSans', // Use LTR-friendly font for email
+                //         ),
+                //       ),
+                //     ],
+                //   ),
+                // ),
                 SizedBox(height: screenHeight * 0.06),
                 const AppText(
                   lbl: 'ادخل رمز التحقق',
@@ -86,7 +121,6 @@ class PasswordOtp extends StatelessWidget {
                   keyboardType: TextInputType.number,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 ),
-
                 SizedBox(height: screenHeight * 0.04),
                 AppButton(
                   lbl: ' التحقق من الرمز',
@@ -100,7 +134,7 @@ class PasswordOtp extends StatelessWidget {
                     }
                     final otpData = {
                       "otp": otp,
-                      "email": email
+                      "email": widget.email
                     };
                     context.read<StudentAuthCubit>().validateOtp(otpData);
                   },

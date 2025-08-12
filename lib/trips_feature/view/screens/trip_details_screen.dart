@@ -6,6 +6,7 @@ import 'package:uot_transport/auth_feature/view/widgets/app_button.dart';
 import 'package:uot_transport/auth_feature/view/widgets/app_text.dart';
 import 'package:uot_transport/core/app_colors.dart';
 import 'package:uot_transport/core/core_widgets/back_header.dart';
+import 'package:uot_transport/core/core_widgets/dt_loading.dart';
 import 'package:uot_transport/core/main_screen.dart';
 import 'package:uot_transport/trips_feature/view/widgets/bus_tracking_widget.dart';
 import 'package:uot_transport/trips_feature/view/widgets/departure_arrival_widget.dart';
@@ -75,7 +76,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
         body: BlocBuilder<TripsCubit, TripsState>(
           builder: (context, state) {
             if (state is TripDetailsLoading) {
-              return const Center(child: CircularProgressIndicator());
+              return const Center(child: DTLoading());
             } else if (state is TripDetailsLoaded) {
               final tripData = state.tripDetails;
               final tripId = tripData['tripId'].toString();

@@ -15,6 +15,8 @@ import 'package:uot_transport/trips_feature/view_model/cubit/trips_cubit.dart';
 import 'package:uot_transport/trips_feature/view_model/cubit/trips_state.dart';
 import 'package:uot_transport/auth_feature/view/widgets/app_dropdown.dart';
 
+import '../../../core/core_widgets/dt_loading.dart';
+
 class MyTripDetailsScreen extends StatefulWidget {
   final String tripId;
   final String busId;
@@ -82,7 +84,7 @@ class _MyTripDetailsScreenState extends State<MyTripDetailsScreen> {
           body: BlocBuilder<TripsCubit, TripsState>(
             builder: (context, state) {
               if (state is TripDetailsLoading) {
-                return const Center(child: CircularProgressIndicator());
+                return const Center(child: DTLoading());
               } else if (state is TripDetailsLoaded) {
                 final tripData = state.tripDetails;
                 final tripId = tripData['tripId'].toString();
