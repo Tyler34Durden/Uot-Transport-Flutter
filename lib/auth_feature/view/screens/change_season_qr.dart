@@ -32,7 +32,10 @@ import 'package:flutter/material.dart';
                         appBar: BackHeader(
                           onBackbtn: () => Navigator.pop(context),
                         ),
-                          body: BlocProvider<ChangeSeasonCubit>(
+                        body: SafeArea(
+                          top: false,
+                          bottom: true,
+                          child: BlocProvider<ChangeSeasonCubit>(
                             create: (_) => ChangeSeasonCubit(ChangeSeasonRepository()),
                             child: BlocListener<ChangeSeasonCubit, ChangeSeasonState>(
                               listener: (context, state) {
@@ -56,7 +59,12 @@ import 'package:flutter/material.dart';
                               },
                               child: Builder(
                                 builder: (context) => Padding(
-                                  padding: EdgeInsets.all(screenWidth * 0.04),
+                                  padding: EdgeInsets.fromLTRB(
+                                    screenWidth * 0.04,
+                                    screenWidth * 0.04,
+                                    screenWidth * 0.04,
+                                    MediaQuery.of(context).padding.bottom + screenWidth * 0.04,
+                                  ),
                                   child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
@@ -144,7 +152,7 @@ import 'package:flutter/material.dart';
                           ),
                         ),
                       ),
-                      );
+                        ),);
 
                     }
                   }

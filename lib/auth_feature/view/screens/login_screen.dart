@@ -63,125 +63,132 @@ class _LoginScreenState extends State<LoginScreen> {
           automaticallyImplyLeading: false,
           toolbarHeight: 56,
         ),
-        body: BlocListener<StudentAuthCubit, StudentAuthState>(
-          listener: (context, state) {
-            if (state is StudentAuthLoading) {
-              logger.i('Loading...');
-              showDialog(
-                context: context,
-                barrierDismissible: false,
-                builder: (context) => Dialog(
-                  backgroundColor: AppColors.backgroundColor,
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Container(
-                    width: MediaQuery.of(context).size.width * 0.8,
-                    height: MediaQuery.of(context).size.width * 0.8,
-                    padding: const EdgeInsets.all(12),
-                    child: Lottie.asset(
-                      'assets/icons/DT_Loading.json',
-                      onLoaded: (composition) {
-                        Future.delayed(
-                          Duration(milliseconds: 5000),
-                          () {
-                            // This will prevent the dialog from closing too early
-                          },
-                        );
-                      },
+        body: SafeArea(
+          top: false,
+          bottom: true,
+          child: BlocListener<StudentAuthCubit, StudentAuthState>(
+            listener: (context, state) {
+              if (state is StudentAuthLoading) {
+                logger.i('Loading...');
+                showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (context) => Dialog(
+                    backgroundColor: AppColors.backgroundColor,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Container(
+                      width: MediaQuery.of(context).size.width * 0.8,
+                      height: MediaQuery.of(context).size.width * 0.8,
+                      padding: const EdgeInsets.all(12),
+                      child: Lottie.asset(
+                        'assets/icons/DT_Loading.json',
+                        onLoaded: (composition) {
+                          Future.delayed(
+                            Duration(milliseconds: 5000),
+                            () {
+                              // This will prevent the dialog from closing too early
+                            },
+                          );
+                        },
+                      ),
                     ),
                   ),
-                ),
-              );
-            } else {
-              Navigator.of(context, rootNavigator: true).popUntil((route) => route is! PopupRoute);
-              if (state is LoginSuccess) {
-                logger.i('Login successful');
-                emailController.clear();
-                passwordController.clear();
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (context) => const MainScreen()),
-                  (route) => false,
                 );
-              } else if (state is StudentAuthFailure) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(state.error)),
-                );
-              } else if (state is SeasonChangeRequired) {
-                Future.microtask(() {
-                  if (ModalRoute.of(context)?.isCurrent ?? true) {
-                    showDialog(
-                      context: context,
-                      barrierDismissible: false,
-                      builder: (BuildContext context) {
-                        return Directionality(
-                          textDirection: TextDirection.rtl,
-                          child: AlertDialog(
-                            title: const Align(
-                              alignment: Alignment.centerRight,
-                              child: Text('تحديث السنة الدراسية'),
-                            ),
-                            content: SizedBox(
-                              width: screenWidth * 0.8,
-                              child: SingleChildScrollView(
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'يجب عليك تحديث السنة الدراسية للمتابعة.',
-                                      style: TextStyle(fontSize: screenWidth * 0.045),
-                                    ),
-                                    SizedBox(height: screenHeight * 0.025),
-                                    AppButton(
-                                      lbl: 'تحديث',
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(builder: (context) => const ChangeSeason()),
-                                        );
-                                      },
-                                      color: AppColors.primaryColor,
-                                      textColor: AppColors.backgroundColor,
-                                      width: screenWidth * 0.7,
-                                      height: screenHeight * 0.06,
-                                    ),
-                                    SizedBox(height: screenHeight * 0.015),
-                                    AppButton(
-                                      lbl: 'إلغاء',
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                      color: AppColors.secondaryColor,
-                                      textColor: AppColors.primaryColor,
-                                      width: screenWidth * 0.7,
-                                      height: screenHeight * 0.06,
-                                    ),
-                                  ],
+              } else {
+                Navigator.of(context, rootNavigator: true).popUntil((route) => route is! PopupRoute);
+                if (state is LoginSuccess) {
+                  logger.i('Login successful');
+                  emailController.clear();
+                  passwordController.clear();
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => const MainScreen()),
+                    (route) => false,
+                  );
+                } else if (state is StudentAuthFailure) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(state.error)),
+                  );
+                } else if (state is SeasonChangeRequired) {
+                  Future.microtask(() {
+                    if (ModalRoute.of(context)?.isCurrent ?? true) {
+                      showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (BuildContext context) {
+                          return Directionality(
+                            textDirection: TextDirection.rtl,
+                            child: AlertDialog(
+                              title: const Align(
+                                alignment: Alignment.centerRight,
+                                child: Text('تحديث السنة الدراسية'),
+                              ),
+                              content: SizedBox(
+                                width: screenWidth * 0.8,
+                                child: SingleChildScrollView(
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'يجب عليك تحديث السنة الدراسية للمتابعة.',
+                                        style: TextStyle(fontSize: screenWidth * 0.045),
+                                      ),
+                                      SizedBox(height: screenHeight * 0.025),
+                                      AppButton(
+                                        lbl: 'تحديث',
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(builder: (context) => const ChangeSeason()),
+                                          );
+                                        },
+                                        color: AppColors.primaryColor,
+                                        textColor: AppColors.backgroundColor,
+                                        width: screenWidth * 0.7,
+                                        height: screenHeight * 0.06,
+                                      ),
+                                      SizedBox(height: screenHeight * 0.015),
+                                      AppButton(
+                                        lbl: 'إلغاء',
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        color: AppColors.secondaryColor,
+                                        textColor: AppColors.primaryColor,
+                                        width: screenWidth * 0.7,
+                                        height: screenHeight * 0.06,
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        );
-                      },
-                    );
-                  }
-                });
+                          );
+                        },
+                      );
+                    }
+                  });
+                }
               }
-            }
-          },
-          child: GestureDetector(
-            onTap: () {
-              FocusScope.of(context).unfocus();
             },
-            child: BlocBuilder<StudentAuthCubit, StudentAuthState>(
-              builder: (context, state) {
-                return SingleChildScrollView(
-                  child: Padding(
-                    padding: EdgeInsets.all(padding),
+            child: GestureDetector(
+              onTap: () {
+                FocusScope.of(context).unfocus();
+              },
+              child: BlocBuilder<StudentAuthCubit, StudentAuthState>(
+                builder: (context, state) {
+                  return SingleChildScrollView(
+                    padding: EdgeInsets.only(
+                      left: padding,
+                      right: padding,
+                      top: padding,
+                      bottom: MediaQuery.of(context).padding.bottom + 24,
+                    ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -341,9 +348,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         SizedBox(height: inputSpacing * 0.8),
                       ],
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
           ),
         ),

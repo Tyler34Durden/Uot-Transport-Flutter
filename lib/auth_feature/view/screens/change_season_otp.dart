@@ -28,26 +28,33 @@ class ChangeSeasonOtp extends StatelessWidget {
           return Scaffold(
             backgroundColor: AppColors.backgroundColor,
             appBar: BackHeader(),
-            body: BlocListener<ChangeSeasonCubit, ChangeSeasonState>(
-              listener: (context, state) {
-                if (state is ChangeSeasonSuccess) {
-                  final updatedLoginData = Map<String, dynamic>.from(loginData ?? {});
-                  updatedLoginData['otp'] = otpController.text.trim();
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ChangeSeasonQr(loginData: updatedLoginData),
-                    ),
-                  );
-                } else if (state is ChangeSeasonFailure) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Error: ${state.error}')),
-                  );
-                }
-              },
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
+            body: SafeArea(
+              top: false,
+              bottom: true,
+              child: BlocListener<ChangeSeasonCubit, ChangeSeasonState>(
+                listener: (context, state) {
+                  if (state is ChangeSeasonSuccess) {
+                    final updatedLoginData = Map<String, dynamic>.from(loginData ?? {});
+                    updatedLoginData['otp'] = otpController.text.trim();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ChangeSeasonQr(loginData: updatedLoginData),
+                      ),
+                    );
+                  } else if (state is ChangeSeasonFailure) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Error: ${state.error}')),
+                    );
+                  }
+                },
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    bottom: MediaQuery.of(context).padding.bottom + 24,
+                    top: 16,
+                  ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.stretch,

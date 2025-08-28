@@ -201,51 +201,63 @@ class _MainScreenState extends State<MainScreen> {
             const HomeScreen(),
           ],
         ),
-        bottomNavigationBar: Container(
-          height: 56,
-          color: AppColors.primaryColor,
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              double widthPerItem = constraints.maxWidth / 4;
-              // Recalculate underline's left position for new width (40) and center it.
-              double underlineLeft =
-                  widthPerItem * _selectedIndex + (widthPerItem - 40) / 2;
+        bottomNavigationBar: SafeArea(
+          top: false,
+          child: Builder(
+            builder: (context) {
+              final bottomInset = MediaQuery.of(context).padding.bottom;
+              final extra = bottomInset == 0 ? 12.0 : bottomInset; // ensure some spacing even if inset 0
+              return Container(
+                height: 56 + extra,
+                padding: EdgeInsets.only(bottom: extra),
+                color: AppColors.primaryColor,
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    double widthPerItem = constraints.maxWidth / 4;
+                    double underlineLeft =
+                        widthPerItem * _selectedIndex + (widthPerItem - 40) / 2;
 
-              return Stack(
-                children: [
-                  // Underline widget with a wider, rounder half-circle appearance.
-                  AnimatedPositioned(
-                    duration: const Duration(milliseconds: 250),
-                    curve: Curves.easeInOut,
-                    left: underlineLeft,
-                    bottom: 0,
-                    child: Container(
-                      width: 40,
-                      height: 4,
-                      decoration: BoxDecoration(
-                        color: AppColors.accentColor,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                    ),
-                  ),
-                  // Navigation icons row.
-                  Row(
-                    children: List.generate(4, (index) {
-                      return Expanded(
-                        child: GestureDetector(
-                          onTap: () => _onItemTapped(index),
-                          child: Center(
-                            child: SvgPicture.asset(
-                              _selectedIndex == index
-                                  ? selectedIcons[index]
-                                  : unselectedIcons[index],
+                    return Stack(
+                      children: [
+                        AnimatedPositioned(
+                          duration: const Duration(milliseconds: 250),
+                          curve: Curves.easeInOut,
+                          left: underlineLeft,
+                          bottom: extra - 4, // keep underline just above padding
+                          child: Container(
+                            width: 40,
+                            height: 4,
+                            decoration: BoxDecoration(
+                              color: AppColors.accentColor,
+                              borderRadius: BorderRadius.circular(4),
                             ),
                           ),
                         ),
-                      );
-                    }),
-                  ),
-                ],
+                        Positioned.fill(
+                          child: Align(
+                            alignment: Alignment.topCenter,
+                            child: Row(
+                              children: List.generate(4, (index) {
+                                return Expanded(
+                                  child: GestureDetector(
+                                    onTap: () => _onItemTapped(index),
+                                    child: Center(
+                                      child: SvgPicture.asset(
+                                        _selectedIndex == index
+                                            ? selectedIcons[index]
+                                            : unselectedIcons[index],
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              }),
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
               );
             },
           ),

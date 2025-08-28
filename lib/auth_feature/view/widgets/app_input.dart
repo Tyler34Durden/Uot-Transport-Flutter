@@ -25,6 +25,7 @@ class AppInput extends StatelessWidget {
     this.maxLength,
     this.inputFormatters,
     this.readOnly, // <-- Add this line
+    this.onSuffixIconTap, // <-- Add this line
     super.key,
   });
 
@@ -49,9 +50,19 @@ class AppInput extends StatelessWidget {
   final Locale? locale;
   final int? maxLength;
   final bool? readOnly; // <-- Add this line
+  final VoidCallback? onSuffixIconTap; // <-- Add this line
 
   @override
   Widget build(BuildContext context) {
+    // Create a wrapped suffix icon with tap detection if onSuffixIconTap is provided
+    Widget? wrappedSuffixIcon = suffixIcon;
+    if (suffixIcon != null && onSuffixIconTap != null) {
+      wrappedSuffixIcon = GestureDetector(
+        onTap: onSuffixIconTap,
+        child: suffixIcon!,
+      );
+    }
+
     return TextFormField(
       decoration: decoration?.copyWith(
         hintText: hintText,
@@ -74,7 +85,7 @@ class AppInput extends StatelessWidget {
               borderRadius: BorderRadius.circular(br ?? 15),
             ),
         prefixIcon: prefixIcon,
-        suffixIcon: suffixIcon,
+        suffixIcon: wrappedSuffixIcon,
       ) ??
           InputDecoration(
             contentPadding: const EdgeInsets.symmetric(
@@ -99,7 +110,7 @@ class AppInput extends StatelessWidget {
                   borderRadius: BorderRadius.circular(br ?? 15),
                 ),
             prefixIcon: prefixIcon,
-            suffixIcon: suffixIcon,
+            suffixIcon: wrappedSuffixIcon,
           ),
       autofocus: false,
       autocorrect: false,

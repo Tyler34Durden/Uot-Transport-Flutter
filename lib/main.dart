@@ -4,6 +4,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter/services.dart';
 import 'package:uot_transport/auth_feature/model/repository/student_auth_repository.dart';
 import 'package:uot_transport/auth_feature/view_model/cubit/student_auth_cubit.dart';
 import 'package:uot_transport/home_feature/model/repository/home_repository.dart';
@@ -20,6 +21,7 @@ import 'package:uot_transport/profile_feature/model/repository/profile_repositor
 import 'package:uot_transport/profile_feature/view_model/cubit/profile_cubit.dart';
 import 'package:uot_transport/auth_feature/model/repository/change_season_repository.dart';
 import 'package:uot_transport/auth_feature/view_model/cubit/change_season_cubit.dart';
+import 'package:uot_transport/core/app_colors.dart';
 
 import 'auth_feature/view/screens/splash_screen.dart';
 
@@ -39,6 +41,16 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+
+  // Force system UI overlays (no immersive), and set nav bar color to match app bar to avoid overlap/transparent issues.
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [SystemUiOverlay.top, SystemUiOverlay.bottom]);
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    statusBarColor: Colors.transparent,
+    statusBarIconBrightness: Brightness.dark,
+    systemNavigationBarColor: AppColors.primaryColor,
+    systemNavigationBarIconBrightness: Brightness.light,
+    systemNavigationBarDividerColor: Colors.transparent,
+  ));
 
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 

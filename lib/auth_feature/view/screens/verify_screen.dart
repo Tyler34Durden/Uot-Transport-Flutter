@@ -101,6 +101,11 @@ class VerifyScreen extends StatelessWidget {
                   ),
                   textAlign: TextAlign.center,
                   onTap: () {
+                    final otpData = {
+                      "otp": int.parse(otpController.text),
+                      "email": email
+                    };
+                    context.read<StudentAuthCubit>().verifyOtp(otpData);
                     // Handle resend OTP
                   },
                 ),

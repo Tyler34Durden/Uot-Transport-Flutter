@@ -6,13 +6,21 @@ import 'package:uot_transport/auth_feature/view/widgets/app_text.dart';
 import 'package:uot_transport/core/core_widgets/back_header.dart';
 import 'package:uot_transport/core/app_colors.dart';
 
-class SignupScreen extends StatelessWidget {
+class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
 
+  @override
+  State<SignupScreen> createState() => _SignupScreenState();
+}
+
+class _SignupScreenState extends State<SignupScreen> {
   static final TextEditingController fullNameController = TextEditingController();
   static final TextEditingController emailController = TextEditingController();
   static final TextEditingController passwordController = TextEditingController();
   static final TextEditingController confirmPasswordController = TextEditingController();
+
+  bool obscurePassword = true;
+  bool obscureConfirmPassword = true;
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +74,7 @@ class SignupScreen extends StatelessWidget {
                   ),
                   SizedBox(height: screenHeight * 0.04),
                   const AppText(
-                    lbl: 'ادخل اسمك الثلاثي  ',
+                    lbl: 'اسمك الثلاثي  ',
                     style: TextStyle(
                       color: AppColors.textColor,
                       fontSize: 14,
@@ -77,13 +85,13 @@ class SignupScreen extends StatelessWidget {
                   AppInput(
                     suffixIcon: const Icon(Icons.person_rounded),
                     controller: fullNameController,
-                    hintText: 'الاسم الثلاثي ',
+                    hintText: 'ادخل الاسم الثلاثي ',
                     textAlign: TextAlign.right,
                     maxLength: 30,
                   ),
                   SizedBox(height: screenHeight * 0.02),
                   const AppText(
-                    lbl: 'ادخل بريدك الإلكتروني',
+                    lbl: 'بريدك الإلكتروني',
                     style: TextStyle(
                       color: AppColors.textColor,
                       fontSize: 14,
@@ -94,13 +102,13 @@ class SignupScreen extends StatelessWidget {
                   AppInput(
                     suffixIcon: const Icon(Icons.email_rounded),
                     controller: emailController,
-                    hintText: 'البريد الإلكتروني ',
+                    hintText: 'ادخل البريد الإلكتروني ',
                     textAlign: TextAlign.right,
                     maxLength: 40,
                   ),
                   SizedBox(height: screenHeight * 0.02),
                   const AppText(
-                    lbl: 'ادخل كلمة مرورك  ',
+                    lbl: 'كلمة المرور  ',
                     style: TextStyle(
                       color: AppColors.textColor,
                       fontSize: 14,
@@ -110,7 +118,20 @@ class SignupScreen extends StatelessWidget {
                   SizedBox(height: screenHeight * 0.02),
                   AppInput(
                     suffixIcon: const Icon(Icons.lock_open_rounded),
-                    obscureText: true,
+                    prefixIcon: IconButton(
+                      icon: Icon(
+                        obscurePassword
+                            ? Icons.visibility_off_rounded
+                            : Icons.visibility_rounded,
+                        color: AppColors.textColor,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          obscurePassword = !obscurePassword;
+                        });
+                      },
+                    ),
+                    obscureText: obscurePassword,
                     controller: passwordController,
                     hintText: 'كلمة المرور  ',
                     textAlign: TextAlign.right,
@@ -127,12 +148,26 @@ class SignupScreen extends StatelessWidget {
                   ),
                   SizedBox(height: screenHeight * 0.02),
                   AppInput(
-                    suffixIcon: const Icon(Icons.lock_rounded),
-                    obscureText: true,
+                    suffixIcon: const Icon(Icons.lock_open_rounded),
+                    prefixIcon: IconButton(
+                      icon: Icon(
+                        obscureConfirmPassword
+                            ? Icons.visibility_off_rounded
+                            : Icons.visibility_rounded,
+                        color: AppColors.textColor,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          obscureConfirmPassword = !obscureConfirmPassword;
+                        });
+                      },
+                    ),
+                    obscureText: obscureConfirmPassword,
                     controller: confirmPasswordController,
-                    hintText: 'كلمة المرور (تأكيد)',
+                    hintText: 'ادخل كلمة المرور (تأكيد)',
                     textAlign: TextAlign.right,
                     maxLength: 25,
+
                   ),
                   SizedBox(height: screenHeight * 0.06),
                   AppButton(
