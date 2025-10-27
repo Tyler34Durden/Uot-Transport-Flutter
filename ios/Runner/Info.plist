@@ -45,5 +45,19 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+
+    <!-- Privacy usage descriptions required by App Store review -->
+    <key>NSCameraUsageDescription</key>
+    <string>نستخدم الكاميرا لمسح رمز QR الخاص بالرحلات.</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>نحتاج للوصول لمعرض الصور لاختيار صورة لمسح رمز QR.</string>
+    <key>NSPhotoLibraryAddUsageDescription</key>
+    <string>قد نحتاج لحفظ صور متعلقة بالرحلات إلى جهازك.</string>
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>نستخدم الموقع لعرض موقع المحطات على الخريطة بالقرب منك.</string>
+
+    <!-- Google Maps API Key (read in AppDelegate.swift) -->
+    <key>GMSApiKey</key>
+    <string>REPLACE_WITH_IOS_MAPS_KEY</string>
 </dict>
 </plist>
