@@ -1,17 +1,21 @@
+// File: `lib/core/network_config.dart`
 import 'package:dio/dio.dart';
 
 class NetworkConfig {
-  static const String baseUrl = 'http://156.38.56.111:8002/api/v1/';
+  static const String baseUrl = 'https://api.transport.uot.ly/api/v1/';
+
   static Dio createDio() {
-    Dio dio = Dio(
+    return Dio(
       BaseOptions(
         baseUrl: baseUrl,
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: {'Content-Type': 'application/json'},
       ),
     );
+  }
 
-    return dio;
+  /// Build a full URL for an API path (avoids double slashes).
+  static String endpoint(String path) {
+    if (path.isEmpty) return baseUrl;
+    return Uri.parse(baseUrl).resolve(path).toString();
   }
 }
