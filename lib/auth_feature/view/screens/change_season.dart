@@ -26,7 +26,6 @@ class ChangeSeason extends StatelessWidget {
     final labelFontSize = screenWidth * 0.04;
     final inputSpacing = screenHeight * 0.025;
     final buttonSpacing = screenHeight * 0.06;
-    final bottomSpacing = screenHeight / 6;
     return BlocProvider(
       create: (_) => ChangeSeasonCubit(ChangeSeasonRepository()),
       child: Builder(

@@ -5,6 +5,12 @@ plugins {
     id "com.google.gms.google-services"
 }
 
+def keystorePropertiesFile = rootProject.file('key.properties')
+def keystoreProperties = new Properties()
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
 android {
     namespace = "com.example.uot_transport"
     compileSdk = 35
@@ -29,9 +35,29 @@ android {
         multiDexEnabled true
     }
 
-    buildTypes {
+    signingConfigs {
         release {
-            signingConfig = signingConfigs.debug // Replace with release signing config
+            if (keystorePropertiesFile.exists()) {
+                storeFile file(keystoreProperties['storeFile'])
+                storePassword keystoreProperties['storePassword']
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+            }
+        }
+    }
+
+    buildTypes {
+        debug {
+            // Ensure debug builds do not enable code shrinking or resource shrinking
+            minifyEnabled false
+            shrinkResources false
+        }
+        release {
+            signingConfig = signingConfigs.release // Updated to use release signing config
+            minifyEnabled false
+            shrinkResources false
+            // Add proguard rules if needed
+            // shrinkResources should only be enabled when minifyEnabled is true
         }
     }
 }

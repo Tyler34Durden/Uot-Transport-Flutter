@@ -5,6 +5,8 @@ import 'package:uot_transport/auth_feature/view/widgets/uot_button.dart';
 import 'package:uot_transport/core/app_colors.dart';
 import 'package:uot_transport/auth_feature/view/screens/signup_screen.dart';
 import 'package:uot_transport/auth_feature/view/screens/login_screen.dart';
+import 'package:uot_transport/core/permissions_helper.dart';
+import 'package:uot_transport/core/app_urls.dart';
 
 class OnBoardingScreen extends StatelessWidget {
   @override
@@ -61,6 +63,15 @@ class OnBoardingScreen extends StatelessWidget {
                   textColor: AppColors.primaryColor,
                   text: 'تسجيل دخول',
                 ),
+              ),
+            ),
+            SizedBox(height: 12),
+            Center(
+              child: TextButton(
+                onPressed: () async {
+                  await PermissionsHelper.confirmAndOpenPrivacyPolicy(context, privacyPolicyUrl);
+                },
+                child: Text('سياسة الخصوصية', style: TextStyle(color: AppColors.primaryColor)),
               ),
             ),
             // ElevatedButton(

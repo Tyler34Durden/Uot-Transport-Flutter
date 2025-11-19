@@ -7,6 +7,7 @@ import 'package:uot_transport/core/core_widgets/back_header.dart';
 import 'package:uot_transport/core/app_colors.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lottie/lottie.dart';
+import 'package:uot_transport/core/permissions_helper.dart';
 
 import '../../../core/core_widgets/dt_loading.dart';
 
@@ -27,6 +28,21 @@ class _QRScanScreenState extends State<QRScanScreen> {
   final Logger logger = Logger();
 
   @override
+  void initState() {
+    super.initState();
+    _ensureCameraPermission();
+  }
+
+  Future<void> _ensureCameraPermission() async {
+    final granted = await PermissionsHelper.requestCameraPermission(context);
+    if (!granted) {
+      setState(() {
+        errorMessage = 'كاميرا غير متاحة أو تم رفض الإذن';
+      });
+    }
+  }
+
+  @override
   void dispose() {
     controller.dispose();
     super.dispose();
@@ -39,6 +55,15 @@ class _QRScanScreenState extends State<QRScanScreen> {
     });
     
     try {
+      final allowed = await PermissionsHelper.requestPhotosPermission(context);
+      if (!allowed) {
+        setState(() {
+          isLoading = false;
+          errorMessage = 'تم رفض إذن الوصول إلى الصور';
+        });
+        return;
+      }
+
       final ImagePicker picker = ImagePicker();
       final XFile? image = await picker.pickImage(source: ImageSource.gallery);
       

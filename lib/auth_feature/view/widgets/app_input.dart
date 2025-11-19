@@ -4,6 +4,7 @@ import 'package:uot_transport/core/app_colors.dart';
 
 class AppInput extends StatelessWidget {
   const AppInput({
+    Key? key,
     this.hintText,
     this.br,
     this.style,
@@ -12,7 +13,7 @@ class AppInput extends StatelessWidget {
     this.prefixIcon,
     this.hintStyle,
     this.suffixIcon,
-    this.obscureText,
+    this.obscureText = false,
     this.enabledBorder,
     this.focusedBorder,
     this.onChanged,
@@ -24,15 +25,14 @@ class AppInput extends StatelessWidget {
     this.locale,
     this.maxLength,
     this.inputFormatters,
-    this.readOnly, // <-- Add this line
-    this.onSuffixIconTap, // <-- Add this line
-    super.key,
-  });
+    this.readOnly = false,
+    this.onSuffixIconTap,
+  }) : super(key: key);
 
   final double? br;
   final String? hintText;
   final Color? fillColor;
-  final bool? obscureText;
+  final bool obscureText;
   final Widget? prefixIcon;
   final Widget? suffixIcon;
   final InputBorder? border;
@@ -49,83 +49,55 @@ class AppInput extends StatelessWidget {
   final List<TextInputFormatter>? inputFormatters;
   final Locale? locale;
   final int? maxLength;
-  final bool? readOnly; // <-- Add this line
-  final VoidCallback? onSuffixIconTap; // <-- Add this line
+  final bool readOnly;
+  final VoidCallback? onSuffixIconTap;
 
   @override
   Widget build(BuildContext context) {
-    // Create a wrapped suffix icon with tap detection if onSuffixIconTap is provided
-    Widget? wrappedSuffixIcon = suffixIcon;
+    // Wrap the suffix icon with gesture detector if a tap handler is provided
+    Widget? wrappedSuffix = suffixIcon;
     if (suffixIcon != null && onSuffixIconTap != null) {
-      wrappedSuffixIcon = GestureDetector(
-        onTap: onSuffixIconTap,
-        child: suffixIcon!,
-      );
+      wrappedSuffix = GestureDetector(onTap: onSuffixIconTap, child: suffixIcon);
     }
 
+    final baseDecoration = decoration ?? InputDecoration();
+
+    final effectiveDecoration = baseDecoration.copyWith(
+      hintText: hintText,
+      fillColor: fillColor ?? Colors.white,
+      filled: true,
+      hintStyle: hintStyle ?? TextStyle(color: Colors.grey[400], fontSize: 15),
+      enabledBorder: enabledBorder ?? OutlineInputBorder(
+        borderSide: const BorderSide(color: AppColors.primaryColor, width: .5),
+        borderRadius: BorderRadius.circular(br ?? 15),
+      ),
+      focusedBorder: focusedBorder ?? OutlineInputBorder(
+        borderSide: const BorderSide(color: AppColors.primaryColor, width: 1),
+        borderRadius: BorderRadius.circular(br ?? 15),
+      ),
+      border: border ?? OutlineInputBorder(borderRadius: BorderRadius.circular(br ?? 15)),
+      prefixIcon: prefixIcon,
+      suffixIcon: wrappedSuffix,
+      isDense: true,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+    );
+
     return TextFormField(
-      decoration: decoration?.copyWith(
-        hintText: hintText,
-        fillColor: fillColor ?? Colors.white,
-        hintStyle:
-        hintStyle ?? TextStyle(color: Colors.grey[400], fontSize: 15),
-        enabledBorder: enabledBorder ??
-            OutlineInputBorder(
-              borderSide:
-              const BorderSide(color: AppColors.primaryColor, width: .5),
-              borderRadius: BorderRadius.circular(br ?? 15),
-            ),
-        focusedBorder: focusedBorder ??
-            OutlineInputBorder(
-              borderSide: const BorderSide(color: AppColors.secondaryColor, width: 1),
-              borderRadius: BorderRadius.circular(br ?? 15),
-            ),
-        border: border ??
-            OutlineInputBorder(
-              borderRadius: BorderRadius.circular(br ?? 15),
-            ),
-        prefixIcon: prefixIcon,
-        suffixIcon: wrappedSuffixIcon,
-      ) ??
-          InputDecoration(
-            contentPadding: const EdgeInsets.symmetric(
-                vertical: 10, horizontal: 20),
-            hintText: hintText,
-            fillColor: fillColor ?? Colors.white,
-            hintStyle:
-            hintStyle ?? TextStyle(color: Colors.grey[400], fontSize: 15),
-            enabledBorder: enabledBorder ??
-                OutlineInputBorder(
-                  borderSide:
-                  const BorderSide(color: AppColors.primaryColor, width: .5),
-                  borderRadius: BorderRadius.circular(br ?? 15),
-                ),
-            focusedBorder: focusedBorder ??
-                OutlineInputBorder(
-                  borderSide: const BorderSide(color: AppColors.primaryColor, width: 1),
-                  borderRadius: BorderRadius.circular(br ?? 15),
-                ),
-            border: border ??
-                OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(br ?? 15),
-                ),
-            prefixIcon: prefixIcon,
-            suffixIcon: wrappedSuffixIcon,
-          ),
+      controller: controller,
+      decoration: effectiveDecoration,
       autofocus: false,
       autocorrect: false,
-      obscureText: obscureText ?? false,
+      obscureText: obscureText,
       onChanged: onChanged,
       style: style ?? const TextStyle(color: Colors.black, fontSize: 14),
       textAlign: textAlign ?? TextAlign.right,
-      controller: controller,
       validator: validator,
       keyboardType: keyboardType,
+      inputFormatters: inputFormatters,
+      readOnly: readOnly,
       maxLength: maxLength,
       maxLengthEnforcement: MaxLengthEnforcement.enforced,
       buildCounter: (BuildContext context, {int? currentLength, bool? isFocused, int? maxLength}) => null,
-      inputFormatters: inputFormatters,
-      readOnly: readOnly ?? false, // <-- Add this line
     );
   }
 }

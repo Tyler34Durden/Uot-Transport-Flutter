@@ -60,23 +60,14 @@ class ChangeSeasonOtp extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       SizedBox(height: screenHeight * 0.04),
-                      const Center(
-                        child: AppText(
-                          lbl: 'تحقق من بريدك  ',
+                      Center(
+                        child: Text(
+                          'التحقق',
                           style: TextStyle(
-                            color: AppColors.primaryColor,
-                            fontSize: 28,
+                            fontSize: 20,
                             fontWeight: FontWeight.bold,
+                            color: AppColors.primaryColor,
                           ),
-                        ),
-                      ),
-                      SizedBox(height: screenHeight * 0.02),
-                      AppText(
-                        textAlign: TextAlign.center,
-                        lbl: 'تم إرسال رمز مكون من ستة ارقام إلى $email',
-                        style: const TextStyle(
-                          color: AppColors.textColor,
-                          fontSize: 20,
                         ),
                       ),
                       SizedBox(height: screenHeight * 0.06),

@@ -5,6 +5,7 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:uot_transport/core/core_widgets/back_header.dart';
 import 'package:uot_transport/trips_feature/view/screens/mytrip_details_screen.dart';
 import 'package:uot_transport/trips_feature/view_model/cubit/trips_cubit.dart';
+import 'package:uot_transport/core/permissions_helper.dart';
 
 class MyTripScanner extends StatefulWidget {
   final dynamic tripRouteId;
@@ -29,6 +30,19 @@ class MyTripScanner extends StatefulWidget {
 class _MyTripScannerState extends State<MyTripScanner> {
   bool _scanned = false;
   final Logger _logger = Logger();
+
+  @override
+  void initState() {
+    super.initState();
+    _ensureCameraPermission();
+  }
+
+  Future<void> _ensureCameraPermission() async {
+    final granted = await PermissionsHelper.requestCameraPermission(context);
+    if (!granted) {
+      _logger.w('Camera permission not granted');
+    }
+  }
 
   Map<String, String> _parseQrData(String data) {
     final parts = data.split(',');

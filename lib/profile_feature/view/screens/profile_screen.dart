@@ -1,5 +1,3 @@
-
-
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
@@ -10,6 +8,8 @@ import 'package:uot_transport/auth_feature/view/widgets/app_input.dart';
 import 'package:uot_transport/auth_feature/view/widgets/app_text.dart';
 import 'package:uot_transport/core/app_colors.dart';
 import 'package:uot_transport/core/api_service.dart';
+import 'package:uot_transport/core/permissions_helper.dart';
+import 'package:uot_transport/core/app_urls.dart';
 import 'package:uot_transport/core/response_dialog.dart';
 import 'package:uot_transport/profile_feature/view/screens/change_password_scren.dart';
 import 'package:uot_transport/profile_feature/view/widgets/profile_image.dart';
@@ -29,6 +29,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String _token = '';
   Map<String, dynamic> _user = {};
   final Logger _logger = Logger();
+
+  // Privacy policy URL (centralized)
+  static const String _privacyPolicyUrl = privacyPolicyUrl;
 
   @override
   void initState() {
@@ -257,6 +260,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ],
                     ),
                     const SizedBox(height: 20),
+                    // Privacy Policy Button
+                    AppButton(
+                      lbl: 'سياسة الخصوصية',
+                      width: double.infinity,
+                      color: AppColors.secondaryColor,
+                      textColor: AppColors.primaryColor,
+                      onPressed: () async {
+                        await PermissionsHelper.confirmAndOpenPrivacyPolicy(context, _privacyPolicyUrl);
+                      },
+                    ),
+                    const SizedBox(height: 12),
                     const AppText(
                       lbl:
                       ' *في حالة الرغبة في تغيير أي من الإسم أو البريد الإلكتروني أو الكلية الرجاء التواصل مع إدارة النقل الطلابي',

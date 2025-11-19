@@ -12,6 +12,8 @@ import 'package:uot_transport/auth_feature/view_model/cubit/student_auth_cubit.d
 import 'package:uot_transport/auth_feature/view_model/cubit/student_auth_state.dart';
 import 'package:logger/logger.dart';
 import 'package:lottie/lottie.dart';
+import 'package:uot_transport/core/permissions_helper.dart';
+import 'package:uot_transport/core/app_urls.dart';
 
 import 'change_season.dart';
 
@@ -346,6 +348,17 @@ class _LoginScreenState extends State<LoginScreen> {
                           },
                         ),
                         SizedBox(height: inputSpacing * 0.8),
+                        Center(
+                          child: TextButton(
+                            onPressed: () async {
+                              await PermissionsHelper.confirmAndOpenPrivacyPolicy(context, privacyPolicyUrl);
+                            },
+                            child: Text(
+                              'سياسة الخصوصية',
+                              style: TextStyle(color: AppColors.primaryColor),
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   );
@@ -358,3 +371,4 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
+

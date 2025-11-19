@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class AppText extends StatelessWidget {
   const AppText({
-    required this.lbl,
+    this.lbl = '',
     this.style,
     this.overflow,
     this.maxLines,
