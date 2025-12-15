@@ -26,24 +26,42 @@ import 'package:uot_transport/core/app_colors.dart';
 import 'auth_feature/view/screens/splash_screen.dart';
 
 // تعريف مفتاح ScaffoldMessenger
-final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
+final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
+    GlobalKey<ScaffoldMessengerState>();
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
+
+Future<bool> _tryInitializeFirebase() async {
+  try {
+    await Firebase.initializeApp();
+    return true;
+  } catch (e) {
+    debugPrint(
+        'Firebase.initializeApp failed (continuing without Firebase): $e');
+    return false;
+  }
+}
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
+  try {
+    await Firebase.initializeApp();
+  } catch (_) {
+    return;
+  }
   // Handle background message
   print('Handling a background message: ${message.messageId}');
 }
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  final firebaseInitialized = await _tryInitializeFirebase();
 
   // Force system UI overlays (no immersive), and set nav bar color to match app bar to avoid overlap/transparent issues.
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [SystemUiOverlay.top, SystemUiOverlay.bottom]);
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+      overlays: [SystemUiOverlay.top, SystemUiOverlay.bottom]);
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
     statusBarIconBrightness: Brightness.dark,
@@ -52,15 +70,18 @@ Future<void> main() async {
     systemNavigationBarDividerColor: Colors.transparent,
   ));
 
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  if (firebaseInitialized) {
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  }
 
   // تهيئة خدمة الإشعارات وتمرير مفتاح Navigator
   // final notificationService = NotificationService();
   // await notificationService.init(scaffoldMessengerKey);
 
   const AndroidInitializationSettings androidInitSettings =
-  AndroidInitializationSettings('@mipmap/ic_launcher');
-  final DarwinInitializationSettings iosInitSettings = DarwinInitializationSettings();
+      AndroidInitializationSettings('@mipmap/ic_launcher');
+  final DarwinInitializationSettings iosInitSettings =
+      DarwinInitializationSettings();
   final InitializationSettings initSettings = InitializationSettings(
     android: androidInitSettings,
     iOS: iosInitSettings,
@@ -74,16 +95,17 @@ Future<void> main() async {
     importance: Importance.max,
   );
   await flutterLocalNotificationsPlugin
-      .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+      .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>()
       ?.createNotificationChannel(channel);
-
 
   final studentRepository = StudentAuthRepository();
   final homeRepository = HomeRepository();
   final stationsRepository = StationsRepository();
   final profileRepository = ProfileRepository();
   final stationTripsRepository = StationTripsRepository();
-  final tripsRepository = TripsRepository(); // Pass ApiService to TripsRepository
+  final tripsRepository =
+      TripsRepository(); // Pass ApiService to TripsRepository
   final changeSeasonRepository = ChangeSeasonRepository();
 
   runApp(
@@ -122,15 +144,15 @@ Future<void> main() async {
           BlocProvider(
             create: (context) => AdvertisingsCubit(homeRepository),
           ),
-
           BlocProvider(
             create: (context) => StationTripsCubit(stationTripsRepository),
           ),
           BlocProvider(
-              create: (context) => TripsCubit(tripsRepository),
+            create: (context) => TripsCubit(tripsRepository),
           ),
           BlocProvider(
-            create: (context) => StationsCubit(stationsRepository)..fetchStations(),
+            create: (context) =>
+                StationsCubit(stationsRepository)..fetchStations(),
           ),
           BlocProvider(
             create: (context) => ProfileCubit(profileRepository),
@@ -169,7 +191,8 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      scaffoldMessengerKey: scaffoldMessengerKey, // تمرير المفتاح هنا حتى يتمكن ScaffoldMessenger من عرض الـ SnackBar
+      scaffoldMessengerKey:
+          scaffoldMessengerKey, // تمرير المفتاح هنا حتى يتمكن ScaffoldMessenger من عرض الـ SnackBar
       navigatorKey: navigatorKey, // تمرير navigatorKey هنا
       navigatorObservers: [routeObserver],
       debugShowCheckedModeBanner: false,

@@ -4,7 +4,8 @@ import 'package:uot_transport/core/app_colors.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
 
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   flutterLocalNotificationsPlugin.show(
@@ -30,19 +31,28 @@ class NotificationService {
     BuildContext context,
     GlobalKey<NavigatorState> navigatorKey,
   ) async {
-    NotificationSettings settings = await _firebaseMessaging.requestPermission();
-    print('User granted permission: ${settings.authorizationStatus}');
+    try {
+      NotificationSettings settings =
+          await _firebaseMessaging.requestPermission();
+      print('User granted permission: ${settings.authorizationStatus}');
 
-    String? token = await _firebaseMessaging.getToken();
-    print('Firebase Messaging Token: $token');
+      String? token = await _firebaseMessaging.getToken();
+      print('Firebase Messaging Token: $token');
 
-    // Register background handler
-    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+      // Register background handler
+      FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+    } catch (e) {
+      debugPrint('NotificationService init skipped (Firebase not ready): $e');
+      return;
+    }
 
     // Foreground notifications
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      final notificationBody = message.notification?.body ?? message.data['body'] ?? 'No message body';
-      final notificationTitle = message.notification?.title ?? message.data['title'] ?? 'إشعار جديد';
+      final notificationBody = message.notification?.body ??
+          message.data['body'] ??
+          'No message body';
+      final notificationTitle =
+          message.notification?.title ?? message.data['title'] ?? 'إشعار جديد';
 
       Flushbar(
         title: notificationTitle,
@@ -60,8 +70,11 @@ class NotificationService {
 
     // When notification is tapped
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      final notificationBody = message.notification?.body ?? message.data['body'] ?? 'Notification clicked!';
-      final notificationTitle = message.notification?.title ?? message.data['title'] ?? 'إشعار جديد';
+      final notificationBody = message.notification?.body ??
+          message.data['body'] ??
+          'Notification clicked!';
+      final notificationTitle =
+          message.notification?.title ?? message.data['title'] ?? 'إشعار جديد';
 
       Flushbar(
         titleText: Directionality(

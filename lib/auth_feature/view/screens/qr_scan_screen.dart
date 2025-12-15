@@ -53,7 +53,7 @@ class _QRScanScreenState extends State<QRScanScreen> {
       isLoading = true;
       errorMessage = null;
     });
-    
+
     try {
       final allowed = await PermissionsHelper.requestPhotosPermission(context);
       if (!allowed) {
@@ -66,7 +66,7 @@ class _QRScanScreenState extends State<QRScanScreen> {
 
       final ImagePicker picker = ImagePicker();
       final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-      
+
       if (image == null) {
         setState(() {
           isLoading = false;
@@ -76,13 +76,14 @@ class _QRScanScreenState extends State<QRScanScreen> {
 
       // Scan QR from the image
       final scannedCode = await _scanQRFromImage(image.path);
-      
+
       setState(() {
         isLoading = false;
       });
-      
+
       if (scannedCode != null) {
-        if (widget.uotNumber == null || scannedCode.contains(widget.uotNumber!)) {
+        if (widget.uotNumber == null ||
+            scannedCode.contains(widget.uotNumber!)) {
           setState(() {
             hasScanned = true;
           });
@@ -108,9 +109,10 @@ class _QRScanScreenState extends State<QRScanScreen> {
 
   Future<String?> _scanQRFromImage(String imagePath) async {
     try {
-      final MobileScannerController scannerController = MobileScannerController();
+      final MobileScannerController scannerController =
+          MobileScannerController();
       final result = await scannerController.analyzeImage(imagePath);
-      
+
       if (result != null && result.barcodes.isNotEmpty) {
         for (final barcode in result.barcodes) {
           if (barcode.rawValue != null) {
@@ -153,14 +155,16 @@ class _QRScanScreenState extends State<QRScanScreen> {
                         final String code = barcode.rawValue!;
                         logger.e('Barcode found! $code');
                         // If uotNumber is provided, check for match, else accept any scan
-                        if (widget.uotNumber == null || code.contains(widget.uotNumber!)) {
+                        if (widget.uotNumber == null ||
+                            code.contains(widget.uotNumber!)) {
                           setState(() {
                             hasScanned = true;
                           });
                           Navigator.pop(context, code);
                         } else {
                           setState(() {
-                            errorMessage = 'الرمز المسحوب لا يتطابق مع الرقم المطلوب';
+                            errorMessage =
+                                'الرمز المسحوب لا يتطابق مع الرقم المطلوب';
                           });
                           logger.e('Scanned code does not match UOT number.');
                         }
@@ -168,7 +172,7 @@ class _QRScanScreenState extends State<QRScanScreen> {
                       }
                     }
                   },
-                  errorBuilder: (context, error, child) {
+                  errorBuilder: (context, error) {
                     logger.e('MobileScanner error: $error');
                     return Center(
                       child: Text(
@@ -181,9 +185,7 @@ class _QRScanScreenState extends State<QRScanScreen> {
                 if (isLoading)
                   Container(
                     color: Colors.white.withOpacity(0.8),
-                    child: Center(
-                      child: DTLoading()
-                    ),
+                    child: Center(child: DTLoading()),
                   ),
               ],
             ),

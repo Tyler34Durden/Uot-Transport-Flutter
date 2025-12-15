@@ -6,8 +6,9 @@ import 'package:uot_transport/core/app_colors.dart';
 import 'package:logger/logger.dart';
 
 class ChangeSeasonScan extends StatefulWidget {
-
-  const ChangeSeasonScan({super.key,});
+  const ChangeSeasonScan({
+    super.key,
+  });
 
   @override
   _ChangeSeasonScanState createState() => _ChangeSeasonScanState();
@@ -54,7 +55,7 @@ class _ChangeSeasonScanState extends State<ChangeSeasonScan> {
                   }
                 }
               },
-              errorBuilder: (context, error, child) {
+              errorBuilder: (context, error) {
                 logger.e('MobileScanner error: $error');
                 return Center(
                   child: Text(
