@@ -24,19 +24,18 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 }
 
 class NotificationService {
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
-
   Future<void> init(
     GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey,
     BuildContext context,
     GlobalKey<NavigatorState> navigatorKey,
   ) async {
     try {
+      final FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
       NotificationSettings settings =
-          await _firebaseMessaging.requestPermission();
+          await firebaseMessaging.requestPermission();
       print('User granted permission: ${settings.authorizationStatus}');
 
-      String? token = await _firebaseMessaging.getToken();
+      String? token = await firebaseMessaging.getToken();
       print('Firebase Messaging Token: $token');
 
       // Register background handler
