@@ -1,8 +1,6 @@
-//added after emeoved
 import 'package:flutter/material.dart';
 import 'package:uot_transport/auth_feature/view/screens/onboarding_screen.dart';
 import 'package:uot_transport/core/app_colors.dart';
-import 'package:uot_transport/core/app_icons.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -39,7 +37,7 @@ class _SplashScreenState extends State<SplashScreen> {
           width: 275,
           decoration: BoxDecoration(
             image: DecorationImage(
-              image: AssetImage(AppIcons.logoPath),
+              image: AssetImage('assets/images/logo.png'),
               fit: BoxFit.cover,
             ),
           ),
