@@ -10,16 +10,23 @@ class StudentAuthCubit extends Cubit<StudentAuthState> {
   StudentAuthCubit(this._studentRepository) : super(StudentAuthInitial());
 
   String _handleError(dynamic e) {
+    if (e is Map) {
+      final message = e['message'];
+      if (message != null) {
+        return message.toString();
+      }
+    }
     if (e is DioException) {
       final errorData = e.response?.data;
       if (errorData is Map && errorData['message'] != null) {
         return errorData['message'];
       }
     }
-    return e.toString();
+    return e.toString().replaceFirst('Exception: ', '');
   }
 
-  Future<void> registerStudent(Map<String, dynamic> studentData, BuildContext context) async {
+  Future<void> registerStudent(
+      Map<String, dynamic> studentData, BuildContext context) async {
     emit(StudentAuthLoading());
     try {
       await _studentRepository.registerStudent(studentData);
