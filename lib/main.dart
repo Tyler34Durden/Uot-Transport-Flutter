@@ -22,6 +22,8 @@ import 'package:uot_transport/profile_feature/view_model/cubit/profile_cubit.dar
 import 'package:uot_transport/auth_feature/model/repository/change_season_repository.dart';
 import 'package:uot_transport/auth_feature/view_model/cubit/change_season_cubit.dart';
 import 'package:uot_transport/core/app_colors.dart';
+import 'package:uot_transport_flutter/core/app_bloc.dart';
+import 'package:uot_transport_flutter/core/locator.dart';
 
 import 'auth_feature/view/screens/splash_screen.dart';
 
@@ -57,6 +59,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  setupLocator(); // Initialize DI
   final firebaseInitialized = await _tryInitializeFirebase();
 
   // Force system UI overlays (no immersive), and set nav bar color to match app bar to avoid overlap/transparent issues.
@@ -99,67 +102,25 @@ Future<void> main() async {
           AndroidFlutterLocalNotificationsPlugin>()
       ?.createNotificationChannel(channel);
 
-  final studentRepository = StudentAuthRepository();
-  final homeRepository = HomeRepository();
-  final stationsRepository = StationsRepository();
-  final profileRepository = ProfileRepository();
-  final stationTripsRepository = StationTripsRepository();
-  final tripsRepository =
-      TripsRepository(); // Pass ApiService to TripsRepository
-  final changeSeasonRepository = ChangeSeasonRepository();
-
   runApp(
     MultiRepositoryProvider(
       providers: [
-        RepositoryProvider<StudentAuthRepository>(
-          create: (context) => studentRepository,
-        ),
-        RepositoryProvider<HomeRepository>(
-          create: (context) => homeRepository,
-        ),
-        RepositoryProvider<StationsRepository>(
-          create: (context) => stationsRepository,
-        ),
-        RepositoryProvider<ProfileRepository>(
-          create: (context) => profileRepository,
-        ),
-        RepositoryProvider<StationTripsRepository>(
-          create: (context) => stationTripsRepository,
-        ),
-        RepositoryProvider<TripsRepository>(
-          create: (context) => tripsRepository, // Provide TripsRepository
-        ),
-        RepositoryProvider<ChangeSeasonRepository>(
-          create: (context) => changeSeasonRepository,
-        ),
+        // You can remove these if you want to use get_it for repositories as well
+        // RepositoryProvider<StudentAuthRepository>(
+        //   create: (context) => studentRepository,
+        // ),
+        // ...other RepositoryProviders...
       ],
       child: MultiBlocProvider(
         providers: [
-          BlocProvider(
-            create: (context) => StudentAuthCubit(studentRepository),
-          ),
-          BlocProvider(
-            create: (context) => HomeStationCubit(homeRepository),
-          ),
-          BlocProvider(
-            create: (context) => AdvertisingsCubit(homeRepository),
-          ),
-          BlocProvider(
-            create: (context) => StationTripsCubit(stationTripsRepository),
-          ),
-          BlocProvider(
-            create: (context) => TripsCubit(tripsRepository),
-          ),
-          BlocProvider(
-            create: (context) =>
-                StationsCubit(stationsRepository)..fetchStations(),
-          ),
-          BlocProvider(
-            create: (context) => ProfileCubit(profileRepository),
-          ),
-          BlocProvider(
-            create: (context) => ChangeSeasonCubit(changeSeasonRepository),
-          ),
+          BlocProvider(create: (context) => getIt<StudentAuthCubit>()),
+          BlocProvider(create: (context) => getIt<HomeStationCubit>()),
+          BlocProvider(create: (context) => getIt<AdvertisingsCubit>()),
+          BlocProvider(create: (context) => getIt<StationTripsCubit>()),
+          BlocProvider(create: (context) => getIt<TripsCubit>()),
+          BlocProvider(create: (context) => getIt<StationsCubit>()..fetchStations()),
+          BlocProvider(create: (context) => getIt<ProfileCubit>()),
+          BlocProvider(create: (context) => getIt<ChangeSeasonCubit>()),
         ],
         child: const MyApp(),
       ),
@@ -190,17 +151,20 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      scaffoldMessengerKey:
-          scaffoldMessengerKey, // تمرير المفتاح هنا حتى يتمكن ScaffoldMessenger من عرض الـ SnackBar
-      navigatorKey: navigatorKey, // تمرير navigatorKey هنا
-      navigatorObservers: [routeObserver],
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        fontFamily: 'Almarai',
+    return BlocProvider(
+      create: (_) => getIt<AppBloc>(),
+      child: MaterialApp(
+        scaffoldMessengerKey:
+            scaffoldMessengerKey, // تمرير المفتاح هنا حتى يتمكن ScaffoldMessenger من عرض الـ SnackBar
+        navigatorKey: navigatorKey, // تمرير navigatorKey هنا
+        navigatorObservers: [routeObserver],
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          fontFamily: 'Almarai',
+        ),
+        home: const SplashScreen(),
+        //dd
       ),
-      home: const SplashScreen(),
-      //dd
     );
   }
 }

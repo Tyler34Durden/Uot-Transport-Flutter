@@ -3,8 +3,10 @@ import 'package:uot_transport/core/api_service.dart';
 import 'package:logger/logger.dart';
 
 class StationsRepository {
-  final ApiService _apiService = ApiService();
+  final ApiService _apiService;
   final Logger logger = Logger();
+
+  StationsRepository(this._apiService);
 
   Future<Response> fetchStations({int page = 1, int pageSize = 20}) async {
     try {
@@ -12,10 +14,10 @@ class StationsRepository {
       final response = await _apiService.getRequest(endpoint);
       logger.i('Stations fetched successfully');
       return response;
-    } on DioError catch (e) {
-      logger.e('DioError in fetchStations: ${e.message}');
+    } on DioException catch (e) {
+      logger.e('DioException in fetchStations: ${e.message}');
       if (e.response != null) {
-        logger.e('DioError Response: ${e.response?.data}');
+        logger.e('DioException Response: ${e.response?.data}');
       }
       rethrow;
     }
@@ -27,10 +29,10 @@ class StationsRepository {
       final response = await _apiService.getRequest(endpoint);
       logger.i('Filtered stations fetched successfully');
       return response;
-    } on DioError catch (e) {
-      logger.e('DioError in fetchFilteredStations: ${e.message}');
+    } on DioException catch (e) {
+      logger.e('DioException in fetchFilteredStations: ${e.message}');
       if (e.response != null) {
-        logger.e('DioError Response: ${e.response?.data}');
+        logger.e('DioException Response: ${e.response?.data}');
       }
       rethrow;
     }
@@ -45,10 +47,10 @@ class StationsRepository {
       final response = await _apiService.getRequest(endpoint);
       logger.i('Search stations fetched successfully');
       return response;
-    } on DioError catch (e) {
-      logger.e('DioError during searchStations: ${e.message}');
+    } on DioException catch (e) {
+      logger.e('DioException during searchStations: ${e.message}');
       if (e.response != null) {
-        logger.e('DioError Response during searchStations: ${e.response?.data}');
+        logger.e('DioException Response during searchStations: ${e.response?.data}');
       }
       rethrow;
     }

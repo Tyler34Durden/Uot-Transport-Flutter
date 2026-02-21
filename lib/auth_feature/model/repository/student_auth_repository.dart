@@ -8,8 +8,10 @@ import 'package:logger/logger.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 class StudentAuthRepository {
-  final ApiService _apiService = ApiService();
+  final ApiService _apiService;
   final logger = Logger();
+
+  StudentAuthRepository(this._apiService);
 
   Future<String> _getRequiredFcmToken() async {
     final FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
@@ -84,10 +86,10 @@ class StudentAuthRepository {
           await _apiService.postRequest('student/register', studentData);
       logger.i('Student registered successfully');
       return response;
-    } on DioError catch (e) {
-      logger.e('DioError: ${e.message}');
+    } on DioException catch (e) {
+      logger.e('DioException: ${e.message}');
       if (e.response != null) {
-        logger.e('DioError Response: ${e.response?.data}');
+        logger.e('DioException Response: ${e.response?.data}');
         throw e.response?.data;
       }
       rethrow;
@@ -100,10 +102,10 @@ class StudentAuthRepository {
           await _apiService.postRequest('student/register/verifyOtp', otpData);
       logger.i('OTP verified successfully');
       return response;
-    } on DioError catch (e) {
-      logger.e('DioError: ${e.message}');
+    } on DioException catch (e) {
+      logger.e('DioException: ${e.message}');
       if (e.response != null) {
-        logger.e('DioError Response: ${e.response?.data}');
+        logger.e('DioException Response: ${e.response?.data}');
       }
       rethrow;
     }
@@ -149,11 +151,10 @@ class StudentAuthRepository {
       logger.i(
           'Token saved: $token, user data saved: $user, and FCM Token: $fcmToken');
       return response;
-    } on DioError catch (e) {
-      logger.e('DioError: [31m${e.message}[0m');
+    } on DioException catch (e) {
+      logger.e('DioException: \u001b[31m${e.message}\u001b[0m');
       if (e.response != null) {
-        logger.e('DioError Response: ${e.response?.data}');
-        //throw e.response?.data;
+        logger.e('DioException Response: ${e.response?.data}');
         throw {'statusCode': e.response?.statusCode, ...?e.response?.data};
       }
       rethrow;
@@ -166,10 +167,10 @@ class StudentAuthRepository {
           await _apiService.postRequest('forgotPassword', {'email': email});
       logger.i('Forgot password request sent successfully');
       return response;
-    } on DioError catch (e) {
-      logger.e('DioError: ${e.message}');
+    } on DioException catch (e) {
+      logger.e('DioException: ${e.message}');
       if (e.response != null) {
-        logger.e('DioError Response: ${e.response?.data}');
+        logger.e('DioException Response: ${e.response?.data}');
       }
       rethrow;
     }
@@ -181,10 +182,10 @@ class StudentAuthRepository {
           await _apiService.postRequest('forgotPassword/validateOtp', otpData);
       logger.i('OTP validated successfully');
       return response;
-    } on DioError catch (e) {
-      logger.e('DioError: ${e.message}');
+    } on DioException catch (e) {
+      logger.e('DioException: ${e.message}');
       if (e.response != null) {
-        logger.e('DioError Response: ${e.response?.data}');
+        logger.e('DioException Response: ${e.response?.data}');
       }
       rethrow;
     }
@@ -196,10 +197,10 @@ class StudentAuthRepository {
           await _apiService.postRequest('resetPassword', passwordData);
       logger.i('Password reset successfully');
       return response;
-    } on DioError catch (e) {
-      logger.e('DioError: ${e.message}');
+    } on DioException catch (e) {
+      logger.e('DioException: ${e.message}');
       if (e.response != null) {
-        logger.e('DioError Response: ${e.response?.data}');
+        logger.e('DioException Response: ${e.response?.data}');
       }
       rethrow;
     }
