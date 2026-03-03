@@ -1,22 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:uot_transport/core/app_colors.dart';
-import 'package:uot_transport/core/app_icons.dart';
 import 'package:uot_transport/core/core_widgets/uot_appbar.dart';
-import 'package:uot_transport/home_feature/view/screens/home_screen.dart';
-import 'package:uot_transport/profile_feature/model/repository/profile_repository.dart';
-import 'package:uot_transport/profile_feature/view/screens/profile_screen.dart';
-import 'package:uot_transport/station_feature/model/repository/stations_repository.dart';
-import 'package:uot_transport/station_feature/view/screens/station_screen.dart';
-import 'package:uot_transport/station_feature/view_model/cubit/stations_cubit.dart';
-import 'package:uot_transport/trips_feature/view/screens/trips_screen.dart';
-import 'dart:io' show Platform;
-import 'package:uot_transport/auth_feature/view/screens/login_screen.dart';
-import 'package:uot_transport/core/permissions_helper.dart';
+import 'package:uot_transport/features/notifications_feature/presentation/cubit/notifications_cubit.dart';
+import 'package:uot_transport/features/profile_feature/presentation/cubit/profile_cubit.dart';
+import 'package:uot_transport/features/profile_feature/presentation/pages/profile_screen.dart' as clean_profile;
+import 'package:uot_transport/features/profile_feature/domain/usecases/logout_usecase.dart';
+import 'package:uot_transport/features/auth_feature/presentation/cubit/auth_cubit.dart' as clean;
+import 'package:uot_transport/features/auth_feature/presentation/screens/login_screen.dart' as clean;
+import 'package:uot_transport/core/locator.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:uot_transport/core/app_colors.dart';
 
+// Remove legacy trips imports
+
+// Replace legacy station imports with clean ones
+import 'package:uot_transport/features/station_feature/presentation/pages/station_screen.dart' as station_page;
+import 'package:uot_transport/features/station_feature/presentation/cubit/stations_cubit.dart' as station_cubit;
+import 'package:uot_transport/features/station_feature/presentation/cubit/station_trips_cubit.dart'
+    as station_trips_cubit;
+import 'package:uot_transport/features/home_feature/presentation/pages/home_screen.dart' as clean_home;
+import 'package:uot_transport/features/trips_feature/presentation/pages/trips_screen.dart' as clean_trips;
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -29,9 +34,6 @@ class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 3;
   final PageController _pageController = PageController(initialPage: 3);
 
-  // Global navigator key for accessing navigation from anywhere
-  static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-
   // Logger instance
   final Logger _logger = Logger();
 
@@ -41,17 +43,17 @@ class _MainScreenState extends State<MainScreen> {
 
   // Lists for the icon paths
   final List<String> selectedIcons = [
-    AppIcons.solid_StationNavPath,
-    AppIcons.solid_TripsNavPath,
-    AppIcons.solid_ProfileNavPath,
-    AppIcons.solid_HomeNavPath,
+    'assets/icons/heroicons-solid/map.svg',
+    'assets/icons/heroicons-solid/calendar-days.svg',
+    'assets/icons/heroicons-solid/user.svg',
+    'assets/icons/heroicons-solid/home.svg',
   ];
 
   final List<String> unselectedIcons = [
-    AppIcons.outline_StationNavPath,
-    AppIcons.outline_TripsNavPath,
-    AppIcons.outline_ProfileNavPath,
-    AppIcons.outline_HomeNavPath,
+    'assets/icons/heroicons-outline/map.svg',
+    'assets/icons/heroicons-outline/calendar-days.svg',
+    'assets/icons/heroicons-outline/user.svg',
+    'assets/icons/heroicons-outline/home.svg',
   ];
 
   @override
@@ -81,186 +83,222 @@ class _MainScreenState extends State<MainScreen> {
   // Process logout and credentials clearing
   Future<void> _handleLogout() async {
     try {
-      // Call logout API
-      final profileRepo = ProfileRepository();
-      await profileRepo.logout(_token ?? '');
-      _logger.i('Logout successful');
-
-      // Clear stored credentials
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.remove('auth_token');
-      await prefs.remove('user_id');
-      _logger.i('Credentials cleared from storage');
+      await getIt<LogoutUseCase>()();
+      _logger.i('Logout handled');
     } catch (e) {
       _logger.e('Error during logout: $e');
-
-      // Still clear credentials even on API error
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.remove('auth_token');
-      await prefs.remove('user_id');
+      // best-effort clear; usecase should already clear
     }
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      // Prevent back button navigation
-      onWillPop: () async {
-        // Show exit confirmation dialog
-        final shouldExit = await showDialog<bool>(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Align(
-              alignment: Alignment.centerRight,
-              child: Text(
-                'هل تريد الخروج من التطبيق؟',
-                style: TextStyle(
-                  fontSize: MediaQuery.of(context).size.width * 0.05,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.primaryColor,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<NotificationsCubit>(create: (_) => getIt<NotificationsCubit>()),
+      ],
+      child: PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (didPop, result) async {
+          if (!didPop) {
+            final shouldExit = await showDialog<bool>(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: Align(
+                  alignment: Alignment.centerRight,
+                  child: Text(
+                    'هل تريد الخروج من التطبيق؟',
+                    style: TextStyle(
+                      fontSize: MediaQuery.of(context).size.width * 0.05,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            content: SizedBox(
-              width: MediaQuery.of(context).size.width * 0.9,
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'سيتم تسجيل الخروج عند الضغط على نعم',
-                      style: TextStyle(
-                        fontSize: MediaQuery.of(context).size.width * 0.04,
-                        color: Colors.grey[800],
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                    ElevatedButton(
-                      onPressed: () async {
-                        // First get the MaterialApp's navigator before dismissing dialog
-                        final navigator = Navigator.of(context);
-
-                        // Dismiss the dialog first
-                        navigator.pop(false);
-
-                        // Handle logout operations
-                        await _handleLogout();
-
-                        // Navigate to login screen using a new route
-                        navigator.pushAndRemoveUntil(
-                          MaterialPageRoute(builder: (_) => const LoginScreen()),
-                              (route) => false,
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primaryColor,
-                        foregroundColor: AppColors.backgroundColor,
-                        minimumSize: Size(
-                            MediaQuery.of(context).size.width * 0.7,
-                            MediaQuery.of(context).size.height * 0.06
-                        ),
-                      ),
-                      child: const Text("نعم"),
-                    ),
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.015),
-                    ElevatedButton(
-                      onPressed: () => Navigator.of(context).pop(false),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.secondaryColor,
-                        foregroundColor: AppColors.primaryColor,
-                        minimumSize: Size(double.infinity, MediaQuery.of(context).size.height * 0.06),
-                      ),
-                      child: const Text("لا"),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
-        return shouldExit ?? false;
-      },
-      child: Scaffold(
-        appBar: UotAppbar(),
-        body: PageView(
-          controller: _pageController,
-          onPageChanged: (index) {
-            setState(() {
-              _selectedIndex = index;
-            });
-            _logger.i('Page changed to index: $index');
-          },
-          // إزالة const ليتم تمرير المتغيرات للديناميكية
-          children: [
-            BlocProvider(
-              create: (_) => StationsCubit(StationsRepository())..fetchStations(),
-              child: const StationScreen(),
-            ),
-            const TripsScreen(),
-            ProfileScreen(token: _token ?? '', userId: _userId ?? 0),
-            const HomeScreen(),
-          ],
-        ),
-        bottomNavigationBar: SafeArea(
-          top: false,
-          child: Builder(
-            builder: (context) {
-              final bottomInset = MediaQuery.of(context).padding.bottom;
-              final extra = bottomInset == 0 ? 12.0 : bottomInset; // ensure some spacing even if inset 0
-              return Container(
-                height: 56 + extra,
-                padding: EdgeInsets.only(bottom: extra),
-                color: AppColors.primaryColor,
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    double widthPerItem = constraints.maxWidth / 4;
-                    double underlineLeft =
-                        widthPerItem * _selectedIndex + (widthPerItem - 40) / 2;
-
-                    return Stack(
+                content: SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.9,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        AnimatedPositioned(
-                          duration: const Duration(milliseconds: 250),
-                          curve: Curves.easeInOut,
-                          left: underlineLeft,
-                          bottom: extra - 4, // keep underline just above padding
-                          child: Container(
-                            width: 40,
-                            height: 4,
-                            decoration: BoxDecoration(
-                              color: AppColors.accentColor,
-                              borderRadius: BorderRadius.circular(4),
-                            ),
+                        Text(
+                          'سيتم تسجيل الخروج عند الضغط على نعم',
+                          style: TextStyle(
+                            fontSize: MediaQuery.of(context).size.width * 0.04,
+                            color: Colors.grey[800],
                           ),
+                          textAlign: TextAlign.center,
                         ),
-                        Positioned.fill(
-                          child: Align(
-                            alignment: Alignment.topCenter,
-                            child: Row(
-                              children: List.generate(4, (index) {
-                                return Expanded(
-                                  child: GestureDetector(
-                                    onTap: () => _onItemTapped(index),
-                                    child: Center(
-                                      child: SvgPicture.asset(
-                                        _selectedIndex == index
-                                            ? selectedIcons[index]
-                                            : unselectedIcons[index],
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              }),
+                        SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                        ElevatedButton(
+                          onPressed: () async {
+                            // First get the MaterialApp's navigator before dismissing dialog
+                            final navigator = Navigator.of(context);
+
+                            // Dismiss the dialog first
+                            navigator.pop(false);
+
+                            // Handle logout operations
+                            await _handleLogout();
+
+                            // Navigate to login screen using a new route
+                            navigator.pushAndRemoveUntil(
+                              MaterialPageRoute(
+                                builder: (_) => BlocProvider<clean.AuthCubit>(
+                                  create: (_) => getIt<clean.AuthCubit>(),
+                                  child: clean.LoginScreen(),
+                                ),
+                              ),
+                              (route) => false,
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Theme.of(context).primaryColor,
+                            foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                            minimumSize: Size(
+                                MediaQuery.of(context).size.width * 0.7,
+                                MediaQuery.of(context).size.height * 0.06
                             ),
                           ),
+                          child: const Text("نعم"),
+                        ),
+                        SizedBox(height: MediaQuery.of(context).size.height * 0.015),
+                        ElevatedButton(
+                          onPressed: () => Navigator.of(context).pop(false),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.secondaryColor,
+                            foregroundColor: AppColors.primaryColor,
+                            minimumSize: Size(double.infinity, MediaQuery.of(context).size.height * 0.06),
+                          ),
+                          child: const Text("لا"),
                         ),
                       ],
-                    );
-                  },
+                    ),
+                  ),
                 ),
+              ),
+            );
+            // If user confirms exit, handle logout and navigation
+            if (shouldExit == true) {
+              await _handleLogout();
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(
+                  builder: (_) => BlocProvider<clean.AuthCubit>(
+                    create: (_) => getIt<clean.AuthCubit>(),
+                    child: clean.LoginScreen(),
+                  ),
+                ),
+                (route) => false,
               );
+            }
+          }
+        },
+        child: Scaffold(
+          appBar: UotAppbar(),
+          body: PageView(
+            controller: _pageController,
+            onPageChanged: (index) {
+              setState(() {
+                _selectedIndex = index;
+              });
+              _logger.i('Page changed to index: $index');
             },
+            children: [
+              MultiBlocProvider(
+                providers: [
+                  BlocProvider<station_cubit.StationsCubit>(
+                    create: (_) => getIt<station_cubit.StationsCubit>(),
+                  ),
+                  BlocProvider<station_trips_cubit.StationTripsCubit>(
+                    create: (_) => getIt<station_trips_cubit.StationTripsCubit>(),
+                  ),
+                ],
+                child: station_page.StationScreen(),
+              ),
+              clean_trips.TripsScreen(token: _token ?? ''),
+              // Replace legacy ProfileScreen
+              BlocProvider<ProfileCubit>(
+                create: (_) => getIt<ProfileCubit>(),
+                child: const clean_profile.ProfileScreen(),
+              ),
+              const clean_home.CleanHomeScreen(),
+            ],
+          ),
+          bottomNavigationBar: SafeArea(
+            top: false,
+            child: Builder(
+              builder: (context) {
+                final bottomInset = MediaQuery.of(context).padding.bottom;
+                final extra = bottomInset == 0 ? 12.0 : bottomInset; // ensure some spacing even if inset 0
+                return Container(
+                  height: 56 + extra,
+                  padding: EdgeInsets.only(bottom: extra),
+                  color: AppColors.primaryColor,
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      double widthPerItem = constraints.maxWidth / 4;
+                      double underlineLeft =
+                          widthPerItem * _selectedIndex + (widthPerItem - 40) / 2;
+
+                      return Stack(
+                        children: [
+                          AnimatedPositioned(
+                            duration: const Duration(milliseconds: 250),
+                            curve: Curves.easeInOut,
+                            left: underlineLeft,
+                            bottom: extra - 4, // keep underline just above padding
+                            child: Container(
+                              width: 40,
+                              height: 4,
+                              decoration: BoxDecoration(
+                                color: AppColors.accentColor,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                            ),
+                          ),
+                          Positioned.fill(
+                            child: Align(
+                              alignment: Alignment.topCenter,
+                              child: Row(
+                                children: List.generate(4, (index) {
+                                  return Expanded(
+                                    child: GestureDetector(
+                                      onTap: () => _onItemTapped(index),
+                                      child: Center(
+                                        child: SvgPicture.asset(
+                                          _selectedIndex == index
+                                              ? selectedIcons[index]
+                                              : unselectedIcons[index],
+                                          width: 26,
+                                          height: 26,
+                                          colorFilter: const ColorFilter.mode(
+                                            Colors.white,
+                                            BlendMode.srcIn,
+                                          ),
+                                          placeholderBuilder: (_) => Icon(
+                                            [Icons.directions_bus, Icons.route, Icons.person, Icons.home][index],
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                }),
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                );
+              },
+            ),
           ),
         ),
       ),

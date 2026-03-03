@@ -15,6 +15,7 @@ class ApiService {
   }
 
   Future<Response> getRequest(String endpoint, {String? token, Map<String, dynamic>? queryParams}) async {
+    if (token != null && token.trim().isEmpty) token = null;
     token ??= await _getTokenFromPrefs();
     print('Bearer token used in GET: $token');
     try {
@@ -22,14 +23,14 @@ class ApiService {
         endpoint,
         queryParameters: queryParams,
         options: Options(
-          headers: token != null ? {'Authorization': 'Bearer $token'} : null,
+          headers: (token != null && token.isNotEmpty) ? {'Authorization': 'Bearer $token'} : null,
         ),
       );
       logger.i('GET $endpoint');
       logger.i('Status Code: ${response.statusCode}');
       logger.i('Response Data: ${response.data}');
       return response;
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       _logDioError(e, endpoint);
       rethrow;
     } catch (e) {
@@ -39,6 +40,7 @@ class ApiService {
   }
 
   Future<Response> postRequest(String endpoint, Map<String, dynamic> data, {String? token}) async {
+    if (token != null && token.trim().isEmpty) token = null;
     token ??= await _getTokenFromPrefs();
     print('Bearer token used in POST: $token');
     try {
@@ -46,14 +48,14 @@ class ApiService {
         endpoint,
         data: data,
         options: Options(
-          headers: token != null ? {'Authorization': 'Bearer $token'} : null,
+          headers: (token != null && token.isNotEmpty) ? {'Authorization': 'Bearer $token'} : null,
         ),
       );
       logger.i('POST $endpoint');
       logger.i('Status Code: ${response.statusCode}');
       logger.i('Response Data: ${response.data}');
       return response;
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       _logDioError(e, endpoint);
       rethrow;
     } catch (e) {
@@ -63,6 +65,7 @@ class ApiService {
   }
 
   Future<Response> putRequest(String endpoint, Map<String, dynamic> data, {String? token}) async {
+    if (token != null && token.trim().isEmpty) token = null;
     token ??= await _getTokenFromPrefs();
     print('Bearer token used in PUT: $token');
     try {
@@ -70,7 +73,7 @@ class ApiService {
         endpoint,
         data: data,
         options: Options(
-          headers: token != null ? {'Authorization': 'Bearer $token'} : null,
+          headers: (token != null && token.isNotEmpty) ? {'Authorization': 'Bearer $token'} : null,
           followRedirects: false,
           validateStatus: (status) => status != null && status < 400,
         ),
@@ -86,7 +89,7 @@ class ApiService {
       logger.i('Status Code: ${response.statusCode}');
       logger.i('Response Data: ${response.data}');
       return response;
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       _logDioError(e, endpoint);
       rethrow;
     } catch (e) {
@@ -96,6 +99,7 @@ class ApiService {
   }
 
   Future<Response> patchRequest(String endpoint, Map<String, dynamic> data, {String? token}) async {
+    if (token != null && token.trim().isEmpty) token = null;
     token ??= await _getTokenFromPrefs();
     print('Bearer token used in PATCH: $token');
     try {
@@ -103,14 +107,14 @@ class ApiService {
         endpoint,
         data: data,
         options: Options(
-          headers: token != null ? {'Authorization': 'Bearer $token'} : null,
+          headers: (token != null && token.isNotEmpty) ? {'Authorization': 'Bearer $token'} : null,
         ),
       );
       logger.i('PATCH $endpoint');
       logger.i('Status Code: ${response.statusCode}');
       logger.i('Response Data: ${response.data}');
       return response;
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       _logDioError(e, endpoint);
       rethrow;
     } catch (e) {
@@ -119,7 +123,7 @@ class ApiService {
     }
   }
 
-  void _logDioError(DioError e, String endpoint) {
+  void _logDioError(DioException e, String endpoint) {
     logger.e('DioError on $endpoint: ${e.message}');
     if (e.response != null) {
       logger.e('Status Code: ${e.response?.statusCode}');
