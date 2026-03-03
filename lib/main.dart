@@ -1,29 +1,13 @@
-//added the code after i removed it
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter/services.dart';
-import 'package:uot_transport/auth_feature/model/repository/student_auth_repository.dart';
-import 'package:uot_transport/auth_feature/view_model/cubit/student_auth_cubit.dart';
-import 'package:uot_transport/home_feature/model/repository/home_repository.dart';
-import 'package:uot_transport/home_feature/view_model/cubit/advertising_cubit.dart';
-import 'package:uot_transport/home_feature/view_model/cubit/home_station_cubit.dart';
-import 'package:uot_transport/notification_service.dart';
-import 'package:uot_transport/station_feature/model/repository/station_trips_repository.dart';
-import 'package:uot_transport/station_feature/model/repository/stations_repository.dart';
-import 'package:uot_transport/station_feature/view_model/cubit/station_trips_cubit.dart';
-import 'package:uot_transport/station_feature/view_model/cubit/stations_cubit.dart';
-import 'package:uot_transport/trips_feature/model/repository/trips_repository.dart';
-import 'package:uot_transport/trips_feature/view_model/cubit/trips_cubit.dart';
-import 'package:uot_transport/profile_feature/model/repository/profile_repository.dart';
-import 'package:uot_transport/profile_feature/view_model/cubit/profile_cubit.dart';
-import 'package:uot_transport/auth_feature/model/repository/change_season_repository.dart';
-import 'package:uot_transport/auth_feature/view_model/cubit/change_season_cubit.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uot_transport/core/app_colors.dart';
-
-import 'auth_feature/view/screens/splash_screen.dart';
+import 'package:uot_transport/core/locator.dart';
+import 'package:uot_transport/core/splash_screen.dart';
 
 // تعريف مفتاح ScaffoldMessenger
 final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
@@ -35,11 +19,10 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 
 Future<bool> _tryInitializeFirebase() async {
   try {
-    await Firebase.initializeApp();
+    // Firebase is initialized in main().
     return true;
   } catch (e) {
-    debugPrint(
-        'Firebase.initializeApp failed (continuing without Firebase): $e');
+    debugPrint('Firebase initialize check failed (continuing without Firebase): $e');
     return false;
   }
 }
@@ -57,6 +40,27 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  final prefs = await SharedPreferences.getInstance();
+
+  if (kIsWeb) {
+    await Firebase.initializeApp(
+      options: FirebaseOptions(
+        apiKey: "AIzaSyCSGIJeWX719AG2uXrABx6R4LPsvRspw2g",
+        authDomain: "uot-transport.firebaseapp.com",
+        databaseURL: "https://uot-transport-default-rtdb.europe-west1.firebasedatabase.app",
+        projectId: "uot-transport",
+        storageBucket: "uot-transport.firebasestorage.app",
+        messagingSenderId: "940757879830",
+        appId: "1:940757879830:web:6be003dc34edac627cf937",
+        measurementId: "G-6BH868DGH5",
+      ),
+    );
+  } else {
+    await Firebase.initializeApp();
+  }
+  setupLocator(prefs: prefs); // Initialize DI
+
   final firebaseInitialized = await _tryInitializeFirebase();
 
   // Force system UI overlays (no immersive), and set nav bar color to match app bar to avoid overlap/transparent issues.
@@ -99,108 +103,17 @@ Future<void> main() async {
           AndroidFlutterLocalNotificationsPlugin>()
       ?.createNotificationChannel(channel);
 
-  final studentRepository = StudentAuthRepository();
-  final homeRepository = HomeRepository();
-  final stationsRepository = StationsRepository();
-  final profileRepository = ProfileRepository();
-  final stationTripsRepository = StationTripsRepository();
-  final tripsRepository =
-      TripsRepository(); // Pass ApiService to TripsRepository
-  final changeSeasonRepository = ChangeSeasonRepository();
-
+  // Remove MultiBlocProvider and BlocProvider for cubits
   runApp(
-    MultiRepositoryProvider(
-      providers: [
-        RepositoryProvider<StudentAuthRepository>(
-          create: (context) => studentRepository,
-        ),
-        RepositoryProvider<HomeRepository>(
-          create: (context) => homeRepository,
-        ),
-        RepositoryProvider<StationsRepository>(
-          create: (context) => stationsRepository,
-        ),
-        RepositoryProvider<ProfileRepository>(
-          create: (context) => profileRepository,
-        ),
-        RepositoryProvider<StationTripsRepository>(
-          create: (context) => stationTripsRepository,
-        ),
-        RepositoryProvider<TripsRepository>(
-          create: (context) => tripsRepository, // Provide TripsRepository
-        ),
-        RepositoryProvider<ChangeSeasonRepository>(
-          create: (context) => changeSeasonRepository,
-        ),
-      ],
-      child: MultiBlocProvider(
-        providers: [
-          BlocProvider(
-            create: (context) => StudentAuthCubit(studentRepository),
-          ),
-          BlocProvider(
-            create: (context) => HomeStationCubit(homeRepository),
-          ),
-          BlocProvider(
-            create: (context) => AdvertisingsCubit(homeRepository),
-          ),
-          BlocProvider(
-            create: (context) => StationTripsCubit(stationTripsRepository),
-          ),
-          BlocProvider(
-            create: (context) => TripsCubit(tripsRepository),
-          ),
-          BlocProvider(
-            create: (context) =>
-                StationsCubit(stationsRepository)..fetchStations(),
-          ),
-          BlocProvider(
-            create: (context) => ProfileCubit(profileRepository),
-          ),
-          BlocProvider(
-            create: (context) => ChangeSeasonCubit(changeSeasonRepository),
-          ),
-        ],
-        child: const MyApp(),
-      ),
-    ),
-  );
-}
-
-class MyApp extends StatefulWidget {
-  const MyApp({super.key});
-
-  @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  @override
-  void initState() {
-    super.initState();
-    // Initialize NotificationService after the widget tree is built
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      NotificationService().init(
-        scaffoldMessengerKey,
-        navigatorKey.currentContext!,
-        navigatorKey,
-      );
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      scaffoldMessengerKey:
-          scaffoldMessengerKey, // تمرير المفتاح هنا حتى يتمكن ScaffoldMessenger من عرض الـ SnackBar
-      navigatorKey: navigatorKey, // تمرير navigatorKey هنا
+    MaterialApp(
+      scaffoldMessengerKey: scaffoldMessengerKey,
+      navigatorKey: navigatorKey,
       navigatorObservers: [routeObserver],
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         fontFamily: 'Almarai',
       ),
       home: const SplashScreen(),
-      //dd
-    );
-  }
+    ),
+  );
 }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:uot_transport/core/app_colors.dart';
 import 'package:uot_transport/core/app_icons.dart';
-import 'package:uot_transport/core/notifications_screen.dart';
+import 'package:uot_transport/features/notifications_feature/presentation/pages/notifications_screen.dart';
 
 class UotAppbar extends StatelessWidget implements PreferredSizeWidget {
   const UotAppbar({super.key});
@@ -27,7 +27,7 @@ class UotAppbar extends StatelessWidget implements PreferredSizeWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => const Notifications()),
+                    builder: (context) => const NotificationsScreen()),
               );
             },
           ),
